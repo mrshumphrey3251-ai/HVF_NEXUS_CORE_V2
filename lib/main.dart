@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V23.0 - THE MARKETPLACE DOMINANCE BUILD
+// HVF NEXUS CORE V23.1 - THE MARKET REALITY BUILD
+// FIXED: REMOVED INVALID CONST CONSTRUCTORS 
 // FEATURE: VIRTUAL STOCKYARD / PRODUCER & BUYER VISIBILITY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
@@ -32,9 +33,9 @@ class HVFCommandDashboard extends StatelessWidget {
             children: [
               _buildLargeHeader("SOVEREIGN STOCKYARD"),
               _buildBigButton(context, "VIRTUAL STOCKYARD", Icons.agriculture, StockyardScreen()),
-              _buildBigButton(context, "SITE MAP: SLAB ROAD", Icons.map, const PlaceholderScreen("SITE MAP")),
-              _buildBigButton(context, "SME ADMIN & SEAL", Icons.gavel_rounded, const PlaceholderScreen("SME ADMIN")),
-              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, const PlaceholderScreen("FINANCIALS")),
+              _buildBigButton(context, "SITE MAP: SLAB ROAD", Icons.map, PlaceholderScreen("SITE MAP")),
+              _buildBigButton(context, "SME ADMIN & SEAL", Icons.gavel_rounded, PlaceholderScreen("SME ADMIN")),
+              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, PlaceholderScreen("FINANCIALS")),
               const SizedBox(height: 40),
               const Text("MARKET STATUS: 850 BUYERS ACTIVE", 
                 style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2)),
@@ -78,7 +79,7 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW SECTOR: VIRTUAL STOCKYARD ---
+// --- SECTOR: VIRTUAL STOCKYARD (THE SELLING POINT) ---
 class StockyardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -86,7 +87,7 @@ class StockyardScreen extends StatelessWidget {
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("LIVE STOCKYARD", style: TextStyle(color: gold)), backgroundColor: cardGray),
       body: ListView(padding: const EdgeInsets.all(20), children: [
-        _buildSummaryBox("MARKET DISCLOSURE: This portal connects the 500 Producers per city to the \$25/mo Buyer community. Only assets with the 'SME SEAL' are permitted for transaction. Total transparency on lineage, diet, and health is mandatory."),
+        _buildSummaryBox("MARKET DISCLOSURE: Connecting 500 Producers per city to \$25/mo Buyer community. Total transparency on lineage and health is mandatory."),
         const SizedBox(height: 20),
         const Text("PREMIUM INVENTORY", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900)),
         const Divider(color: gold, thickness: 2),
@@ -94,7 +95,7 @@ class StockyardScreen extends StatelessWidget {
         _buildAssetCard("HEREFORD UNIT #112", "PRODUCER: DOE RANCH", "GRADE: SUPERIOR", "STATUS: PENDING"),
         const SizedBox(height: 30),
         const Text("BUYER DEMAND", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900)),
-        _buildBuyerTicker("ACTIVE BUYERS IN JOHNSTON CO.", "850"),
+        _buildBuyerTicker("ACTIVE BUYERS: JOHNSTON CO.", "850"),
       ]),
     );
   }
@@ -153,9 +154,13 @@ class StockyardScreen extends StatelessWidget {
 
 class PlaceholderScreen extends StatelessWidget {
   final String t;
-  PlaceholderScreen(this.t);
+  PlaceholderScreen(this.t, {super.key}); // Const removed to prevent build errors
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: Text(t, style: const TextStyle(color: gold))), body: Center(child: Text("$t SECURE", style: const TextStyle(color: Colors.white, fontSize: 30))));
+    return Scaffold(
+      backgroundColor: bgBlack, 
+      appBar: AppBar(title: Text(t, style: const TextStyle(color: gold)), backgroundColor: cardGray),
+      body: Center(child: Text("$t SECURE", style: const TextStyle(color: Colors.white, fontSize: 30))),
+    );
   }
 }
