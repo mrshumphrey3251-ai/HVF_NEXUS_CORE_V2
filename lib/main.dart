@@ -1,28 +1,17 @@
 import 'package:flutter/material.dart';
-import 'great_hall_ui.dart';
 
-// HVF NEXUS CORE V2 - COMMANDER IGNITION
+// HVF NEXUS CORE V2.8 - UNIFIED SOVEREIGN BUILD
+// Consolidated Architecture for Build Stability
+// Authorized by Jeffery Donnell Humphrey
+
 void main() {
-  runApp(const HVFNexusApp());
+  runApp(const MaterialApp(
+    debugShowCheckedModeBanner: false,
+    home: HVFCommandDashboard(),
+  ));
 }
 
-class HVFNexusApp extends StatelessWidget {
-  const HVFNexusApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'HVF NEXUS CORE V2',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: const Color(0xFF3E2723), // CEO Cedar
-      ),
-      home: const HVFCommandDashboard(),
-    );
-  }
-}
-
+// --- SCREEN 1: THE COMMAND CENTER ---
 class HVFCommandDashboard extends StatelessWidget {
   const HVFCommandDashboard({super.key});
 
@@ -32,7 +21,7 @@ class HVFCommandDashboard extends StatelessWidget {
       backgroundColor: const Color(0xFF211007), // Aged Walnut
       appBar: AppBar(
         title: const Text("HVF NEXUS COMMAND"),
-        backgroundColor: const Color(0xFF3E2723),
+        backgroundColor: const Color(0xFF3E2723), // CEO Cedar
       ),
       body: Center(
         child: Column(
@@ -59,6 +48,49 @@ class HVFCommandDashboard extends StatelessWidget {
                 child: const Text("ENTER SOCIAL CLUB INTERIOR", 
                             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// --- SCREEN 2: THE GREAT HALL INTERIOR ---
+class GreatHallScreen extends StatelessWidget {
+  const GreatHallScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFF211007),
+      appBar: AppBar(
+        title: const Text("SOCIAL CLUB: GREAT HALL"),
+        backgroundColor: const Color(0xFF3E2723),
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+            const Icon(Icons.holiday_village, color: Colors.amber, size: 100),
+            const Text("INTERIOR ASSETS", 
+                 style: TextStyle(color: Colors.amber, fontSize: 24, fontWeight: FontWeight.bold)),
+            const Divider(color: Colors.amber, indent: 50, endIndent: 50),
+            const Padding(
+              padding: EdgeInsets.all(25),
+              child: Text(
+                "• 20ft Fieldstone Spine (Masonry Secure)\n"
+                "• 12x12 Cedar Structural Columns\n"
+                "• Sovereign Seating: CEO Wingbacks Anchored\n"
+                "• Veteran Club Chairs: ADA Compliant",
+                style: TextStyle(color: Colors.white, fontSize: 18, height: 1.5),
+              ),
+            ),
+            const SizedBox(height: 30),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.white10),
+              onPressed: () => Navigator.pop(context),
+              child: const Text("RETURN TO COMMAND"),
             ),
           ],
         ),
