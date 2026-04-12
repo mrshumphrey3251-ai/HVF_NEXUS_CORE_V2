@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'great_hall_ui.dart'; // SME: This link must be exact
+import 'great_hall_ui.dart'; 
 
 void main() => runApp(HVFNexusApp());
 
@@ -19,11 +19,19 @@ class HVFNexusApp extends StatelessWidget {
               Text("SYSTEM OPERATIONAL", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
               SizedBox(height: 30),
               ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.amber, foregroundColor: Colors.black),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, 
+                  foregroundColor: Colors.black,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
                 onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) => GreatHallScreen()));
+                  // Direct logic link to the structural file
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => GreatHallScreen())
+                  );
                 },
-                child: Text("ENTER SOCIAL CLUB INTERIOR"),
+                child: Text("ENTER SOCIAL CLUB INTERIOR", style: TextStyle(fontWeight: FontWeight.bold)),
               ),
             ],
           ),
