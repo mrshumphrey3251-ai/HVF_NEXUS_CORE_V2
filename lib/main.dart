@@ -1,5 +1,8 @@
-// HVF NEXUS CORE V31.0 - THE STRATEGIC DISCLOSURE BUILD
-// FEATURE: INTERSTITIAL EXECUTIVE SUMMARIES / MANDATORY DISCLOSURES
+import 'package:flutter/material.dart';
+
+// HVF NEXUS CORE V31.2 - THE SYSTEM RE-LINK BUILD
+// FIXED: MATERIAL LIBRARY IMPORT / COMPILER ERROR PURGE
+// FEATURE: EXECUTIVE SUMMARY GATES / INDUSTRIAL WHITE THEME
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -10,6 +13,7 @@ void main() {
   ));
 }
 
+// --- SOVEREIGN COLOR PALETTE ---
 const Color goldAccent = Color(0xFFC5A059); 
 const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
@@ -47,23 +51,23 @@ class HVFCommandDashboard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("HVF COMMAND HUB", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900)), backgroundColor: pureWhite, elevation: 0, centerTitle: true, automaticallyImplyLeading: false),
+      appBar: AppBar(title: const Text("COMMAND HUB", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900)), backgroundColor: pureWhite, elevation: 0, centerTitle: true, automaticallyImplyLeading: false),
       body: SingleChildScrollView(
         child: Column(children: [
           _buildLargeHeader("SOVEREIGN ASSETS"),
           _buildSummaryButton(context, "MARKETPLACE (BUY/SELL)", Icons.swap_horizontal_circle, 
-            "MARKET DISCLOSURE: This portal facilitates the 90/10 Sovereign Settlement. All transactions are backed by the HVF Guarantee. Projected monthly gross: \$5.8M.", 
+            "MARKET DISCLOSURE: Facilitating the 90/10 Sovereign Settlement. Projected monthly gross: \$5.8M.", 
             MarketHub()),
           _buildSummaryButton(context, "UPLOAD MEDIA", Icons.add_a_photo, 
-            "BIO-DATA DISCLOSURE: Media uploaded here is subject to direct SME audit. DNA-verified lineage is required for the 'Superior' grade certification.", 
+            "BIO-DATA DISCLOSURE: Subject to direct SME audit. DNA-verified lineage required for 'Superior' grade.", 
             MediaUploadScreen()),
           _buildLargeHeader("PROJECT INFRASTRUCTURE"),
           _buildSummaryButton(context, "SITE PLAN & MAPS", Icons.architecture, 
-            "INFRASTRUCTURE DISCLOSURE: This blueprint outlines the 200-unit Slab Road Flagship. Includes the 25-acre reservoir and autonomous transit grid.", 
+            "INFRASTRUCTURE DISCLOSURE: Slab Road Flagship specifications including reservoir and transit grid.", 
             SitePlanScreen()),
           _buildLargeHeader("FINANCIAL COMMAND"),
           _buildSummaryButton(context, "REVENUE & SEED TRACKER", Icons.bar_chart, 
-            "CAPITAL DISCLOSURE: This tracker monitors the \$500,000 Seed Round progress. Funds are allocated specifically for 40-city expansion and hardware hardening.", 
+            "CAPITAL DISCLOSURE: Monitoring the \$500,000 Seed Round. Targeted for 40-city activation.", 
             FinancialScreen()),
           const SizedBox(height: 40),
         ]),
@@ -85,7 +89,6 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- THE INTERSTITIAL SUMMARY GATE ---
 class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final String summary;
@@ -97,15 +100,15 @@ class ExecutiveSummaryGate extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightGray,
-      appBar: AppBar(title: Text(title, style: const TextStyle(color: deepBlack)), backgroundColor: lightGray, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
+      appBar: AppBar(title: Text(title), backgroundColor: lightGray, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Icon(Icons.description, color: goldAccent, size: 60),
           const SizedBox(height: 20),
-          const Text("EXECUTIVE SUMMARY", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, letterSpacing: 2)),
+          const Text("EXECUTIVE SUMMARY", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
-          Text(summary, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, height: 1.5, color: deepBlack)),
+          Text(summary, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, height: 1.5)),
           const Spacer(),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
@@ -118,16 +121,16 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- REMAINING SCREENS (RETAINED PROGRESS) ---
+// --- SUB-SECTORS (ALL DATA RETAINED) ---
 class MarketHub extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: const Text("MARKETPLACE"), backgroundColor: pureWhite), body: const Center(child: Text("90/10 SETTLEMENT ACTIVE", style: TextStyle(fontWeight: FontWeight.bold))));
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("MARKETPLACE")), body: const Center(child: Text("90/10 SETTLEMENT ACTIVE")));
 }
 class MediaUploadScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: const Text("ASSET MEDIA"), backgroundColor: pureWhite), body: const Center(child: Text("UPLOAD PICS/VIDEO READY", style: TextStyle(fontWeight: FontWeight.bold))));
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("ASSET MEDIA")), body: const Center(child: Text("MEDIA PORTAL READY")));
 }
 class SitePlanScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: const Text("SITE MAP"), backgroundColor: pureWhite), body: const Center(child: Text("SLAB ROAD BLUEPRINT LOADED", style: TextStyle(fontWeight: FontWeight.bold))));
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("SITE MAP")), body: const Center(child: Text("SITE MAP LOADED")));
 }
 class FinancialScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: const Text("FINANCIALS"), backgroundColor: pureWhite), body: const Center(child: Text("\$500,000 SEED TARGET", style: TextStyle(fontWeight: FontWeight.bold))));
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("FINANCIALS")), body: const Center(child: Text("\$500,000 TARGET")));
 }
