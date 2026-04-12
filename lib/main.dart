@@ -25,7 +25,6 @@ class HVFNexusApp extends StatelessWidget {
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                 ),
                 onPressed: () {
-                  // Direct logic link to the structural file
                   Navigator.push(
                     context, 
                     MaterialPageRoute(builder: (context) => GreatHallScreen())
