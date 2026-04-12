@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V10.0 - THE PREMIUM SOVEREIGN BUILD
+// HVF NEXUS CORE V10.1 - THE PREMIUM SOVEREIGN BUILD (DYNAMIC)
 // RATES: $200 FARMER / $25 BUYER (LOCKED FOREVER)
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
-  runApp(const MaterialApp(
+  runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     home: HVFCommandDashboard(),
   ));
@@ -34,6 +34,8 @@ class HVFCommandDashboard extends StatelessWidget {
               const SizedBox(height: 40),
               const Text("90/10 REVENUE ARCHITECTURE: ACTIVE", 
                 style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
+              const Text("SOVEREIGNTY STATUS: VERIFIED", 
+                style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),
@@ -119,6 +121,5 @@ class OnboardingPortal extends StatelessWidget {
   }
 }
 
-// Minimal versions of required classes to ensure build success
 class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME SEAL", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
 class AuditLedger extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
