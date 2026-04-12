@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V16.1 - THE TOTAL INTEGRATION BUILD
-// FEATURE: HELIOGRID POWER / REVENUE / WEATHER / MASSIVE UI
+// HVF NEXUS CORE V17.0 - THE AGENCY COMMAND BUILD
+// FEATURE: AGENCY LOGGING / 40-CITY QUOTA TRACKER / CEO OVERRIDE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -30,16 +30,14 @@ class HVFCommandDashboard extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _buildLiveStatusRibbon(),
-              const SizedBox(height: 10),
-              _buildBigButton(context, "HELIOGRID POWER", Icons.solar_power, HelioGridScreen()),
+              _buildLargeHeader("EXECUTIVE COMMAND"),
+              _buildBigButton(context, "AGENCY DASHBOARD", Icons.groups_3, AgencyDashboard()),
               _buildBigButton(context, "SME ADMIN & WEATHER", Icons.cloud_done, SMEAdminPortal()),
+              _buildBigButton(context, "HELIOGRID POWER", Icons.solar_power, HelioGridScreen()),
               _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, FinancialsScreen()),
-              _buildBigButton(context, "SOCIAL CLUB", Icons.gavel_rounded, SocialClubScreen()),
               const SizedBox(height: 40),
-              const Text("SYSTEMS INTEGRATED: 100%", 
+              const Text("AGENCY STATUS: AWAITING DEPLOYMENT", 
                 style: TextStyle(color: gold, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2)),
-              const Text("SOVEREIGNTY VERIFIED", style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),
@@ -47,18 +45,13 @@ class HVFCommandDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildLiveStatusRibbon() {
+  Widget _buildLargeHeader(String title) {
     return Container(
       width: double.infinity,
-      color: Colors.green.withOpacity(0.2),
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: const Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          Text("GRID: ONLINE", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w900, fontSize: 14)),
-          Text("REV: \$5.8M", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 14)),
-          Text("WX: CLEAR", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 14)),
-        ],
+      padding: const EdgeInsets.symmetric(vertical: 25),
+      color: gold,
+      child: Center(
+        child: Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 26)),
       ),
     );
   }
@@ -69,14 +62,14 @@ class HVFCommandDashboard extends StatelessWidget {
       child: InkWell(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
         child: Container(
-          height: 100,
+          height: 90,
           decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 4)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Icon(icon, color: gold, size: 40),
-              const SizedBox(width: 25),
-              Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24)),
+              const SizedBox(width: 20),
+              Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 22)),
             ],
           ),
         ),
@@ -85,105 +78,52 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- HELIOGRID POWER SECTOR ---
-class HelioGridScreen extends StatelessWidget {
+// --- NEW: THE AGENCY DASHBOARD ---
+class AgencyDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("HELIOGRID", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 28)), backgroundColor: cardGray),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(
-          children: [
-            const Icon(Icons.bolt, color: gold, size: 100),
-            const Text("SYSTEM OUTPUT", style: TextStyle(color: Colors.white70, fontSize: 18, fontWeight: FontWeight.bold)),
-            const Text("94.2 kW", style: TextStyle(color: gold, fontSize: 55, fontWeight: FontWeight.w900)),
-            const SizedBox(height: 30),
-            const Divider(color: gold, thickness: 3),
-            _buildGridMetric("STORAGE", "98%"),
-            _buildGridMetric("STATUS", "SOVEREIGN"),
-            _buildGridMetric("AREA", "JOHNSTON CO."),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildGridMetric(String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-          Text(value, style: const TextStyle(color: gold, fontSize: 26, fontWeight: FontWeight.w900)),
-        ],
-      ),
-    );
-  }
-}
-
-// --- SME ADMIN + WEATHER ---
-class SMEAdminPortal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("SME & WEATHER", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 28)), backgroundColor: cardGray),
+      appBar: AppBar(title: const Text("AGENCY PORTAL", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 26)), backgroundColor: cardGray),
       body: ListView(
         padding: const EdgeInsets.all(25),
         children: [
-          Container(
-            padding: const EdgeInsets.all(25),
-            decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 2)),
-            child: const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("LOCAL WEATHER", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 18)),
-                    Text("72°F / CLEAR", style: TextStyle(color: Colors.white, fontSize: 32, fontWeight: FontWeight.w900)),
-                  ],
-                ),
-                Icon(Icons.wb_sunny, color: gold, size: 50),
-              ],
-            ),
-          ),
+          const Text("QUOTA PROGRESS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 22)),
+          const SizedBox(height: 10),
+          const Text("TARGET: 500 PRODUCERS PER CITY", style: TextStyle(color: Colors.white70, fontSize: 14)),
+          const SizedBox(height: 30),
+          _buildAgencyTile("CURRENT ENROLLMENT", "120", "24% OF GOAL"),
+          _buildAgencyTile("AGENCY COMMISSION (10%)", "\$2,400", "CURRENT ACCRUED"),
           const SizedBox(height: 40),
-          const Text("PENDING AUTHORIZATION", style: TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.w900)),
-          const Divider(color: gold, thickness: 2),
-          const ListTile(
-            leading: Icon(Icons.check_circle, color: gold, size: 35),
-            title: Text("BULL UNIT #044", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-            subtitle: Text("READY FOR CEO SEAL", style: TextStyle(color: Colors.green, fontSize: 16, fontWeight: FontWeight.bold)),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, minimumSize: const Size(double.infinity, 80)),
+            onPressed: () {}, 
+            icon: const Icon(Icons.person_add, size: 30),
+            label: const Text("LOG NEW PRODUCER", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAgencyTile(String label, String value, String sub) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(20),
+      color: cardGray,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white70, fontSize: 16)),
+          Text(value, style: const TextStyle(color: gold, fontSize: 36, fontWeight: FontWeight.w900)),
+          Text(sub, style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 }
 
-// --- REMAINING SECTORS ---
-class FinancialsScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(child: Text("\$5,850,000 / MO", style: const TextStyle(color: gold, fontSize: 40, fontWeight: FontWeight.w900))),
-    );
-  }
-}
-
-class SocialClubScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("CLUB", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: const Center(child: Text("CEO: JEFFERY", style: TextStyle(color: gold, fontSize: 45, fontWeight: FontWeight.w900))),
-    );
-  }
-}
+// Support Classes
+class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME & WEATHER", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
+class HelioGridScreen extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("HELIOGRID", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
+class FinancialsScreen extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
