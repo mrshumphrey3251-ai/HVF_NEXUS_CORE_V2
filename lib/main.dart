@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V10.1 - THE PREMIUM SOVEREIGN BUILD (DYNAMIC)
-// RATES: $200 FARMER / $25 BUYER (LOCKED FOREVER)
+// HVF NEXUS CORE V11.0 - THE TOTAL TRANSPARENCY BUILD
+// FEATURE: DEEP-DETAIL DISCLOSURE / SME VERIFIED SPECS
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -27,15 +27,12 @@ class HVFCommandDashboard extends StatelessWidget {
             children: [
               _buildPriceLockBanner(),
               const SizedBox(height: 20),
-              _buildTile(context, "SME ADMIN PORTAL", Icons.verified_user_sharp, SMEAdminPortal()),
-              _buildTile(context, "FARMER SUBSCRIPTION (\$200)", Icons.agriculture, OnboardingPortal("FARMER", "\$200")),
-              _buildTile(context, "BUYER SUBSCRIPTION (\$25)", Icons.shopping_cart_checkout, OnboardingPortal("BUYER", "\$25")),
-              _buildTile(context, "FINANCIAL AUDIT", Icons.analytics, AuditLedger()),
+              _buildTile(context, "VIRTUAL STOCKYARD", Icons.account_balance, LivestockMarketplace()),
+              _buildTile(context, "SME ADMIN PORTAL", Icons.verified_user_sharp, const Scaffold()),
+              _buildTile(context, "FINANCIAL AUDIT", Icons.analytics, const Scaffold()),
               const SizedBox(height: 40),
-              const Text("90/10 REVENUE ARCHITECTURE: ACTIVE", 
+              const Text("DATA TRANSPARENCY: ABSOLUTE", 
                 style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
-              const Text("SOVEREIGNTY STATUS: VERIFIED", 
-                style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),
@@ -54,7 +51,7 @@ class HVFCommandDashboard extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 4)),
-              const Text("PREMIUM COMMAND CORE", style: TextStyle(color: Colors.white54, fontSize: 10)),
+              const Text("SOVEREIGN TRANSPARENCY ENGINE", style: TextStyle(color: Colors.white54, fontSize: 10)),
             ],
           ),
         ),
@@ -66,12 +63,9 @@ class HVFCommandDashboard extends StatelessWidget {
     return Container(
       width: double.infinity,
       color: gold.withOpacity(0.1),
-      padding: const EdgeInsets.all(15),
-      child: const Column(
-        children: [
-          Text("LEGACY PRICE PROTECTION: GUARANTEED", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-          Text("Rates Fixed Permanently by Sovereign Decree", style: TextStyle(color: Colors.white54, fontSize: 10)),
-        ],
+      padding: const EdgeInsets.all(10),
+      child: const Center(
+        child: Text("LEGACY LOCK: $25 BUYER ACCESS ACTIVE", style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -84,42 +78,70 @@ class HVFCommandDashboard extends StatelessWidget {
         tileColor: cardGray,
         leading: Icon(icon, color: gold),
         title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
-        trailing: const Icon(Icons.arrow_forward_ios, color: gold, size: 12),
         shape: Border.all(color: gold.withOpacity(0.3)),
       ),
     );
   }
 }
 
-class OnboardingPortal extends StatelessWidget {
-  final String role;
-  final String rate;
-  OnboardingPortal(this.role, this.rate);
-
+class LivestockMarketplace extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: Text("$role ACCESS", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text("LOCKED LEGACY RATE: $rate/MO", style: const TextStyle(color: gold, fontSize: 24, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            const Text("Non-Escalating Membership Agreement", style: TextStyle(color: Colors.white54)),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, minimumSize: const Size(280, 70)),
-              onPressed: () {}, 
-              child: const Text("INITIALIZE SOVEREIGN LINK", style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+      appBar: AppBar(title: const Text("STOCKYARD", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: ListView(
+        padding: const EdgeInsets.all(20),
+        children: [
+          _buildAssetCard(context, "BLACK ANGUS UNIT #001", "Weight: 1,450 lbs", "SME VERIFIED"),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAssetCard(BuildContext context, String title, String weight, String status) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      color: cardGray,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: const TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 18)),
+              const Icon(Icons.verified, color: Colors.green, size: 20),
+            ],
+          ),
+          Text(weight, style: const TextStyle(color: Colors.white70)),
+          const Divider(color: Colors.white10, height: 30),
+          const Text("TOTAL DISCLOSURE LEDGER:", style: TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          _buildInfoRow("LINEAGE:", "Purebred / Certified"),
+          _buildInfoRow("DIET:", "Non-GMO Grass Fed"),
+          _buildInfoRow("HEALTH:", "All Vax Current / Nexus Logged"),
+          _buildInfoRow("SME NOTES:", "Superior Frame / Calm Temperament"),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, minimumSize: const Size(double.infinity, 50)),
+            onPressed: () {}, 
+            child: const Text("SECURE UNIT (\$200/MO PRODUCER LINKED)", style: TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildInfoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white38, fontSize: 10, fontWeight: FontWeight.bold)),
+          const SizedBox(width: 10),
+          Text(value, style: const TextStyle(color: Colors.white, fontSize: 12)),
+        ],
       ),
     );
   }
 }
-
-class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME SEAL", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
-class AuditLedger extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
