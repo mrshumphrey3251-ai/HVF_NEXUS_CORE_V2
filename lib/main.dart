@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V31.2 - THE SYSTEM RE-LINK BUILD
-// FIXED: MATERIAL LIBRARY IMPORT / COMPILER ERROR PURGE
-// FEATURE: EXECUTIVE SUMMARY GATES / INDUSTRIAL WHITE THEME
+// HVF NEXUS CORE V32.0 - THE REVENUE RECRUITMENT BUILD
+// PIVOT: REMOVED SLAB ROAD / ADDED DUAL SIGNUP PORTALS
+// FOCUS: $500K SEED CAPITAL GENERATION
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -13,13 +13,11 @@ void main() {
   ));
 }
 
-// --- SOVEREIGN COLOR PALETTE ---
 const Color goldAccent = Color(0xFFC5A059); 
 const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- SECTOR 0: THE SOVEREIGN GATE ---
 class HVFAuthGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -54,21 +52,24 @@ class HVFCommandDashboard extends StatelessWidget {
       appBar: AppBar(title: const Text("COMMAND HUB", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900)), backgroundColor: pureWhite, elevation: 0, centerTitle: true, automaticallyImplyLeading: false),
       body: SingleChildScrollView(
         child: Column(children: [
-          _buildLargeHeader("SOVEREIGN ASSETS"),
+          _buildLargeHeader("RECRUITMENT & REVENUE"),
+          _buildSummaryButton(context, "PRODUCER ENROLLMENT", Icons.agriculture, 
+            "ENROLLMENT DISCLOSURE: \$200/mo License Fee. Direct access to SME Grading and the 90/10 Sovereign Settlement protocol.", 
+            SignupScreen(type: "PRODUCER", fee: "\$200/mo")),
+          _buildSummaryButton(context, "BUYER SUBSCRIPTION", Icons.person_add, 
+            "SUBSCRIPTION DISCLOSURE: \$25/mo Access Fee. Secured priority on SME 'Superior' Grade local assets.", 
+            SignupScreen(type: "BUYER", fee: "\$25/mo")),
+          _buildLargeHeader("SOVEREIGN OPERATIONS"),
           _buildSummaryButton(context, "MARKETPLACE (BUY/SELL)", Icons.swap_horizontal_circle, 
-            "MARKET DISCLOSURE: Facilitating the 90/10 Sovereign Settlement. Projected monthly gross: \$5.8M.", 
-            MarketHub()),
+            "MARKET DISCLOSURE: Live asset transactions with 90/10 split. Projected \$5.8M monthly gross at saturation.", 
+            const PlaceholderScreen("MARKETPLACE")),
           _buildSummaryButton(context, "UPLOAD MEDIA", Icons.add_a_photo, 
-            "BIO-DATA DISCLOSURE: Subject to direct SME audit. DNA-verified lineage required for 'Superior' grade.", 
-            MediaUploadScreen()),
-          _buildLargeHeader("PROJECT INFRASTRUCTURE"),
-          _buildSummaryButton(context, "SITE PLAN & MAPS", Icons.architecture, 
-            "INFRASTRUCTURE DISCLOSURE: Slab Road Flagship specifications including reservoir and transit grid.", 
-            SitePlanScreen()),
-          _buildLargeHeader("FINANCIAL COMMAND"),
-          _buildSummaryButton(context, "REVENUE & SEED TRACKER", Icons.bar_chart, 
-            "CAPITAL DISCLOSURE: Monitoring the \$500,000 Seed Round. Targeted for 40-city activation.", 
-            FinancialScreen()),
+            "BIO-DATA DISCLOSURE: Mandatory media for SME grading. Lineage and health verification required.", 
+            const PlaceholderScreen("MEDIA UPLOAD")),
+          _buildLargeHeader("CAPITAL TRACKER"),
+          _buildSummaryButton(context, "SEED FUNDING PROGRESS", Icons.bar_chart, 
+            "CAPITAL DISCLOSURE: Tracking progress toward the \$500,000 Seed Capital goal via enrollment fees.", 
+            const PlaceholderScreen("FINANCIALS")),
           const SizedBox(height: 40),
         ]),
       ),
@@ -93,7 +94,6 @@ class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final String summary;
   final Widget target;
-
   ExecutiveSummaryGate({required this.title, required this.summary, required this.target});
 
   @override
@@ -121,16 +121,39 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- SUB-SECTORS (ALL DATA RETAINED) ---
-class MarketHub extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("MARKETPLACE")), body: const Center(child: Text("90/10 SETTLEMENT ACTIVE")));
+class SignupScreen extends StatelessWidget {
+  final String type;
+  final String fee;
+  SignupScreen({required this.type, required this.fee});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("$type SIGNUP")),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(children: [
+          Text("$type LICENSE: $fee", style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: goldAccent)),
+          const SizedBox(height: 30),
+          const TextField(decoration: InputDecoration(labelText: "LEGAL NAME / ENTITY", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(decoration: InputDecoration(labelText: "CONTACT NUMBER", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(decoration: InputDecoration(labelText: "CITY / COUNTY", border: OutlineInputBorder())),
+          const Spacer(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () {}, 
+            child: const Text("SUBMIT ENROLLMENT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          )
+        ]),
+      ),
+    );
+  }
 }
-class MediaUploadScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("ASSET MEDIA")), body: const Center(child: Text("MEDIA PORTAL READY")));
-}
-class SitePlanScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("SITE MAP")), body: const Center(child: Text("SITE MAP LOADED")));
-}
-class FinancialScreen extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("FINANCIALS")), body: const Center(child: Text("\$500,000 TARGET")));
+
+class PlaceholderScreen extends StatelessWidget {
+  final String t;
+  const PlaceholderScreen(this.t, {super.key});
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(t)), body: Center(child: Text("$t SECURE")));
 }
