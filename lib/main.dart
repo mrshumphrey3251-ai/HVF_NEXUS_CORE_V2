@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V13.0 - THE EXPANSION DYNAMICS BUILD
-// FEATURES: SOCIAL CLUB MEMBERSHIP & TOUR MOMENTUM TRACKER
+// HVF NEXUS CORE V13.1 - HIGH-VISIBILITY COMMAND BUILD
+// FEATURE: ENHANCED TEXT CONTRAST / BRIGHTENED CITY METRICS
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -37,8 +37,8 @@ class HVFCommandDashboard extends StatelessWidget {
               _buildSovereignButton(context, "SME RAPID AUDIT", Icons.fact_check, SMEAdminPortal()),
               _buildSovereignButton(context, "FINANCIAL AUDIT", Icons.analytics, AuditLedger()),
               const SizedBox(height: 40),
-              const Text("40-CITY TOUR STATUS: READY FOR ACTIVATION", 
-                style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+              const Text("40-CITY TOUR STATUS: ACTIVE", 
+                style: TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
             ],
           ),
         ),
@@ -49,11 +49,11 @@ class HVFCommandDashboard extends StatelessWidget {
   Widget _buildPriceLockBanner() {
     return Container(
       width: double.infinity,
-      color: gold.withOpacity(0.1),
+      color: gold.withOpacity(0.15),
       padding: const EdgeInsets.all(10),
       child: const Center(
         child: Text("LEGACY LOCK: \$25 BUYER / \$200 PRODUCER", 
-          style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold)),
+          style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
       ),
     );
   }
@@ -61,23 +61,18 @@ class HVFCommandDashboard extends StatelessWidget {
   Widget _buildSovereignButton(BuildContext context, String label, IconData icon, Widget target) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: cardGray, 
-          foregroundColor: gold, 
-          minimumSize: const Size(double.infinity, 70),
-          side: const BorderSide(color: gold, width: 1),
-          shape: const RoundedRectangleBorder(),
-        ),
-        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
-        icon: Icon(icon),
-        label: Text(label, style: const TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+      child: ListTile(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
+        tileColor: cardGray,
+        leading: Icon(icon, color: gold, size: 28),
+        title: Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+        shape: Border.all(color: gold, width: 1.5),
       ),
     );
   }
 }
 
-// --- NEW: TOUR MOMENTUM TRACKER ---
+// --- TOUR MOMENTUM: HARDENED VISIBILITY ---
 class TourMomentumScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -87,8 +82,8 @@ class TourMomentumScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("CITY INTEREST LEADERBOARD", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
+          const Text("CITY INTEREST LEADERBOARD", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 18)),
+          const SizedBox(height: 30),
           _buildMomentumTile("JOHNSTON COUNTY, OK", 0.85, "850 BUYERS / 120 PRODUCERS"),
           _buildMomentumTile("ATOKA COUNTY, OK", 0.62, "620 BUYERS / 45 PRODUCERS"),
           _buildMomentumTile("MARSHALL COUNTY, OK", 0.45, "450 BUYERS / 30 PRODUCERS"),
@@ -101,18 +96,24 @@ class TourMomentumScreen extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(city, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 5),
-        LinearProgressIndicator(value: progress, color: gold, backgroundColor: Colors.white10),
-        const SizedBox(height: 5),
-        Text(stats, style: const TextStyle(color: Colors.white38, fontSize: 10)),
-        const SizedBox(height: 20),
+        Text(city, style: const TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 16)),
+        const SizedBox(height: 8),
+        LinearProgressIndicator(
+          value: progress, 
+          color: gold, 
+          backgroundColor: Colors.white24, 
+          minHeight: 10,
+        ),
+        const SizedBox(height: 8),
+        // SME FIX: Brighter white and bold for the metrics
+        Text(stats, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600, letterSpacing: 1.1)),
+        const SizedBox(height: 25),
+        const Divider(color: Colors.white10),
       ],
     );
   }
 }
 
-// --- NEW: HUMPHREY SOCIAL CLUB (BUYER VALUE) ---
 class SocialClubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -120,32 +121,23 @@ class SocialClubScreen extends StatelessWidget {
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("SOCIAL CLUB", style: TextStyle(color: gold)), backgroundColor: cardGray),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(30),
-              decoration: BoxDecoration(border: Border.all(color: gold, width: 2), color: cardGray),
-              child: const Column(
-                children: [
-                  Text("OFFICIAL MEMBER", style: TextStyle(color: gold, letterSpacing: 4)),
-                  SizedBox(height: 10),
-                  Icon(Icons.gavel_rounded, color: gold, size: 50),
-                  SizedBox(height: 10),
-                  Text("JEFFERY HUMPHREY", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                  Text("SOVEREIGN FOUNDER", style: TextStyle(color: Colors.white38, fontSize: 10)),
-                ],
-              ),
-            ),
-            const SizedBox(height: 30),
-            const Text("ACCESS STATUS: UNLOCKED", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-          ],
+        child: Container(
+          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(border: Border.all(color: gold, width: 2), color: cardGray),
+          child: const Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text("OFFICIAL MEMBER", style: TextStyle(color: gold, letterSpacing: 4, fontWeight: FontWeight.bold)),
+              SizedBox(height: 15),
+              Text("JEFFERY HUMPHREY", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+              Text("SOVEREIGN FOUNDER", style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold)),
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
-// Support Classes
 class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
 class AuditLedger extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("FINANCIAL AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
