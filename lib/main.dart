@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V27.0 - THE REVENUE ENGINE BUILD
+// HVF NEXUS CORE V27.1 - THE REVENUE ENGINE FINALIZED
+// FIXED: REMOVED ALL INVALID CONST CONSTRUCTORS
 // FEATURE: BUY/SELL HUB / SOVEREIGN SETTLEMENT LOGIC
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
@@ -35,9 +36,9 @@ class HVFCommandDashboard extends StatelessWidget {
             children: [
               _buildLargeHeader("MARKET OPERATIONS"),
               _buildBigButton(context, "BUY & SELL HUB", Icons.swap_horizontal_circle, BuySellHub()),
-              _buildBigButton(context, "SLAB ROAD MASTER PLAN", Icons.architecture, const PlaceholderScreen("SITE PLAN")),
-              _buildBigButton(context, "BIO-ASSET LEDGER", Icons.analytics, const PlaceholderScreen("BIO-DATA")),
-              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, const PlaceholderScreen("FINANCE")),
+              _buildBigButton(context, "SLAB ROAD MASTER PLAN", Icons.architecture, PlaceholderScreen("SITE PLAN")),
+              _buildBigButton(context, "BIO-ASSET LEDGER", Icons.analytics, PlaceholderScreen("BIO-DATA")),
+              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, PlaceholderScreen("FINANCE")),
               const SizedBox(height: 40),
             ],
           ),
@@ -72,7 +73,6 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW SECTOR: BUY & SELL HUB ---
 class BuySellHub extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -89,9 +89,9 @@ class BuySellHub extends StatelessWidget {
         Container(
           padding: const EdgeInsets.all(20),
           color: lightGray,
-          child: const Column(children: [
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("Producer Share (90%)"), Text("\$2,205.00", style: TextStyle(fontWeight: FontWeight.bold))]),
-            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("HVF Platform (10%)"), Text("\$245.00", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent))]),
+          child: Column(children: [
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("Producer Share (90%)"), const Text("\$2,205.00", style: TextStyle(fontWeight: FontWeight.bold))]),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("HVF Platform (10%)"), Text("\$245.00", style: const TextStyle(fontWeight: FontWeight.bold, color: goldAccent))]),
           ]),
         ),
       ]),
@@ -128,6 +128,6 @@ class PlaceholderScreen extends StatelessWidget {
   PlaceholderScreen(this.t, {super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: Text(t, style: const TextStyle(color: deepBlack)), backgroundColor: pureWhite), body: Center(child: Text("$t SECURE", style: const TextStyle(fontSize: 30))));
+    return Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: Text(t, style: const TextStyle(color: deepBlack)), backgroundColor: pureWhite, iconTheme: const IconThemeData(color: deepBlack)), body: Center(child: Text("$t SECURE", style: const TextStyle(fontSize: 30))));
   }
 }
