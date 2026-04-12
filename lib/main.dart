@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V9.1 - THE DYNAMIC AUTHORITY BUILD
-// STATUS: CONST CONFLICT RESOLVED / SME SEAL OPERATIONAL
+// HVF NEXUS CORE V10.0 - THE PREMIUM SOVEREIGN BUILD
+// RATES: $200 FARMER / $25 BUYER (LOCKED FOREVER)
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -16,8 +16,6 @@ const Color bgBlack = Color(0xFF0A0A0A);
 const Color cardGray = Color(0xFF1A1A1A);
 
 class HVFCommandDashboard extends StatelessWidget {
-  const HVFCommandDashboard({super.key});
-
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -27,18 +25,15 @@ class HVFCommandDashboard extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _buildStatusRibbon(),
+              _buildPriceLockBanner(),
               const SizedBox(height: 20),
-              // SME FIX: Removed 'const' to allow dynamic navigation
               _buildTile(context, "SME ADMIN PORTAL", Icons.verified_user_sharp, SMEAdminPortal()),
-              _buildTile(context, "BUYER SUBSCRIPTION", Icons.shopping_cart_checkout, BuyerPortal()),
-              _buildTile(context, "FARMER ONBOARDING", Icons.agriculture, OnboardingPortal()),
+              _buildTile(context, "FARMER SUBSCRIPTION (\$200)", Icons.agriculture, OnboardingPortal("FARMER", "\$200")),
+              _buildTile(context, "BUYER SUBSCRIPTION (\$25)", Icons.shopping_cart_checkout, OnboardingPortal("BUYER", "\$25")),
               _buildTile(context, "FINANCIAL AUDIT", Icons.analytics, AuditLedger()),
               const SizedBox(height: 40),
-              const Text("90/10 PROTOCOL: ENFORCED", 
-                style: TextStyle(color: gold, fontSize: 10, letterSpacing: 2, fontWeight: FontWeight.bold)),
-              const Text("SME CERTIFICATION: ACTIVE", 
-                style: TextStyle(color: Colors.white24, fontSize: 10)),
+              const Text("90/10 REVENUE ARCHITECTURE: ACTIVE", 
+                style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 2)),
             ],
           ),
         ),
@@ -56,10 +51,8 @@ class HVFCommandDashboard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("HVF NEXUS", 
-                style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 3)),
-              const Text("SOVEREIGN COMMAND CORE", 
-                style: TextStyle(color: Colors.white54, fontSize: 10)),
+              const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 4)),
+              const Text("PREMIUM COMMAND CORE", style: TextStyle(color: Colors.white54, fontSize: 10)),
             ],
           ),
         ),
@@ -67,14 +60,16 @@ class HVFCommandDashboard extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusRibbon() {
+  Widget _buildPriceLockBanner() {
     return Container(
       width: double.infinity,
-      color: Colors.green.withOpacity(0.1),
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: const Center(
-        child: Text("LEGACY LOCK PRICING ACTIVE | SME SEAL: READY", 
-        style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
+      color: gold.withOpacity(0.1),
+      padding: const EdgeInsets.all(15),
+      child: const Column(
+        children: [
+          Text("LEGACY PRICE PROTECTION: GUARANTEED", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+          Text("Rates Fixed Permanently by Sovereign Decree", style: TextStyle(color: Colors.white54, fontSize: 10)),
+        ],
       ),
     );
   }
@@ -88,70 +83,34 @@ class HVFCommandDashboard extends StatelessWidget {
         leading: Icon(icon, color: gold),
         title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
         trailing: const Icon(Icons.arrow_forward_ios, color: gold, size: 12),
-        shape: const Border(left: BorderSide(color: gold, width: 4)),
+        shape: Border.all(color: gold.withOpacity(0.3)),
       ),
     );
   }
 }
 
-// --- SME ADMIN PORTAL ---
-class SMEAdminPortal extends StatelessWidget {
+class OnboardingPortal extends StatelessWidget {
+  final String role;
+  final String rate;
+  OnboardingPortal(this.role, this.rate);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("SME VERIFICATION", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text("PENDING LISTINGS FOR SEAL", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          _buildSealCard("Angus Unit #091", "Status: Unverified"),
-          _buildSealCard("Cedar Timber Lot #12", "Status: Unverified"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSealCard(String title, String status) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 15),
-      padding: const EdgeInsets.all(15),
-      color: cardGray,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(title, style: const TextStyle(color: Colors.white)),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black),
-            onPressed: () {}, 
-            child: const Text("APPLY SME SEAL"),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// --- BUYER PORTAL ---
-class BuyerPortal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("BUYER SUBSCRIPTION", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      appBar: AppBar(title: Text("$role ACCESS", style: TextStyle(color: gold)), backgroundColor: cardGray),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.shopping_cart, color: gold, size: 80),
-            const Text("\$10.00 / MONTH", style: TextStyle(color: gold, fontSize: 32, fontWeight: FontWeight.bold)),
-            const Text("LEGACY RATE GUARANTEED", style: TextStyle(color: Colors.white54)),
-            const SizedBox(height: 30),
+            Text("LOCKED LEGACY RATE: $rate/MO", style: const TextStyle(color: gold, fontSize: 24, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text("Non-Escalating Membership Agreement", style: TextStyle(color: Colors.white54)),
+            const SizedBox(height: 40),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green, foregroundColor: Colors.white, minimumSize: const Size(250, 60)),
+              style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, minimumSize: const Size(280, 70)),
               onPressed: () {}, 
-              child: const Text("SUBSCRIBE NOW", style: TextStyle(fontWeight: FontWeight.bold)),
+              child: const Text("INITIALIZE SOVEREIGN LINK", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -160,5 +119,6 @@ class BuyerPortal extends StatelessWidget {
   }
 }
 
-class OnboardingPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("FARMER ONBOARDING", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
+// Minimal versions of required classes to ensure build success
+class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME SEAL", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
 class AuditLedger extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
