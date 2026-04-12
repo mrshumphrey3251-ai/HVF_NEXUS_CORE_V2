@@ -1,7 +1,4 @@
-import 'package:flutter/material.dart';
-
-// HVF Nexus - Social Club: Great Hall Module V2.4
-// Vertical Build: Structural Masonry & Heavy Timber
+// Vertical Build: Masonry & Structural Timber
 // Authorized by Jeffery Donnell Humphrey
 
 class GreatHallScreen extends StatelessWidget {
@@ -21,16 +18,10 @@ class GreatHallScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // LEVEL 1: VERTICAL ASSETS
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("STRUCTURAL ASSETS", style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-                  Icon(Icons.foundation, color: Colors.amber, size: 20),
-                ],
-              ),
+              Text("STRUCTURAL ASSETS: VERTICAL", 
+                   style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
               Text("Status: MASONRY & TIMBER ERECTED", style: TextStyle(color: Colors.green, fontSize: 12)),
-              Divider(color: Colors.amber.withOpacity(0.5)),
+              Divider(color: Colors.amber),
               
               SizedBox(height: 15),
               Text("VERTICAL SPECIFICATIONS:", style: TextStyle(color: Colors.amber, fontSize: 14)),
@@ -39,23 +30,9 @@ class GreatHallScreen extends StatelessWidget {
               Text("• Hand-Hewn Reclaimed Cedar Mantle", style: TextStyle(color: Colors.white)),
 
               SizedBox(height: 30),
-              
-              // LEVEL 0: FOUNDATION (RETAINED)
               Text("FOUNDATION (BASE LAYER):", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 12)),
               Text("• Monolithic Slab: VERIFIED", style: TextStyle(color: Colors.green, fontSize: 11)),
               Text("• Aged Walnut Concrete: CURED", style: TextStyle(color: Colors.green, fontSize: 11)),
-              
-              SizedBox(height: 40),
-              
-              // SME STRUCTURAL FOOTER
-              Container(
-                padding: EdgeInsets.all(12),
-                color: Colors.black45,
-                child: Center(
-                  child: Text("SME LOGIC: VERTICAL LOAD VERIFIED", 
-                             style: TextStyle(color: Colors.amber, fontSize: 10, letterSpacing: 1.2)),
-                ),
-              ),
             ],
           ),
         ),
