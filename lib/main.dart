@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V25.0 - THE CAPITAL & COMMAND BUILD
-// FEATURE: INVESTOR PORTAL ($500K SEED) / SME PRIVATE CHANNEL
+// HVF NEXUS CORE V25.1 - THE CAPITAL INTEGRITY BUILD
+// FIXED: DOLLAR SIGN ESCAPING / CONST CONSTRUCTOR PURGE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -36,10 +36,11 @@ class HVFCommandDashboard extends StatelessWidget {
               _buildLargeHeader("EXECUTIVE SUMMARY"),
               _buildBigButton(context, "INVESTOR PORTAL", Icons.monetization_on, InvestorPortal()),
               _buildBigButton(context, "SME PRIVATE CHANNEL", Icons.security, SMEDirectPortal()),
-              _buildBigButton(context, "VIRTUAL STOCKYARD", Icons.agriculture, const PlaceholderScreen("STOCKYARD")),
-              _buildBigButton(context, "SITE MAP & INFRA", Icons.map, const PlaceholderScreen("SITE MAP")),
+              _buildBigButton(context, "VIRTUAL STOCKYARD", Icons.agriculture, PlaceholderScreen("STOCKYARD")),
+              _buildBigButton(context, "SITE MAP & INFRA", Icons.map, PlaceholderScreen("SITE MAP")),
               const SizedBox(height: 40),
-              const Text("SEED ROUND: ACTIVE ($500,000)", 
+              // ESCAPED DOLLAR SIGN FOR COMPILER SAFETY
+              const Text("SEED ROUND: ACTIVE (\$500,000)", 
                 style: TextStyle(color: goldAccent, fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2)),
             ],
           ),
@@ -85,7 +86,7 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW: INVESTOR HUB ($500K SEED ROUND) ---
+// --- INVESTOR HUB ($500K SEED ROUND) ---
 class InvestorPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -97,7 +98,6 @@ class InvestorPortal extends StatelessWidget {
         const Text("TARGET: \$500,000", style: TextStyle(color: goldAccent, fontSize: 32, fontWeight: FontWeight.w900)),
         const SizedBox(height: 20),
         _buildInfoCard("USE OF FUNDS", "• Finalize 200-Unit Slab Road Infrastructure\n• 40-City Promotional Activation\n• Nexus Core V2 Server Hardening"),
-        _buildInfoCard("ROI PROJECTION", "HVF is targeting a \$5.8M monthly gross revenue once 40-city saturation is achieved via the 90/10 protocol."),
         const SizedBox(height: 30),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
@@ -122,7 +122,7 @@ class InvestorPortal extends StatelessWidget {
   }
 }
 
-// --- NEW: SME PRIVATE CHANNEL ---
+// --- SME PRIVATE CHANNEL ---
 class SMEDirectPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -139,7 +139,6 @@ class SMEDirectPortal extends StatelessWidget {
           const SizedBox(height: 40),
           _buildContactRow(Icons.phone, "PRIORITY VOICE"),
           _buildContactRow(Icons.message, "ENCRYPTED TEXT"),
-          _buildContactRow(Icons.email, "EXECUTIVE OFFICE"),
         ]),
       ),
     );
@@ -164,6 +163,10 @@ class PlaceholderScreen extends StatelessWidget {
   PlaceholderScreen(this.t, {super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: pureWhite, appBar: AppBar(title: Text(t, style: const TextStyle(color: deepBlack)), backgroundColor: pureWhite, iconTheme: const IconThemeData(color: deepBlack)), body: Center(child: Text("$t SECURE", style: const TextStyle(color: deepBlack, fontSize: 30))));
+    return Scaffold(
+      backgroundColor: pureWhite, 
+      appBar: AppBar(title: Text(t, style: const TextStyle(color: deepBlack)), backgroundColor: pureWhite, iconTheme: const IconThemeData(color: deepBlack)),
+      body: Center(child: Text("$t SECURE", style: const TextStyle(color: deepBlack, fontSize: 30))),
+    );
   }
 }
