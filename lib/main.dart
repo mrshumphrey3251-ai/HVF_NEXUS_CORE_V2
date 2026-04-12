@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V15.0 - THE SOVEREIGN HANDSHAKE BUILD
-// FEATURE: DIGITAL DEED / ESCROW SETTLEMENT / NO-LOGISTICS MODEL
+// HVF NEXUS CORE V15.1 - THE GRAND INTEGRATION BUILD
+// INTEGRATED: WEATHER CORE / REVENUE PROJECTIONS / DIGITAL DEEDS
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -30,13 +30,14 @@ class HVFCommandDashboard extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _buildLargeHeader("TRANSACTION HUB"),
+              _buildLargeHeader("INTEGRATED COMMAND"),
+              _buildBigButton(context, "SME ADMIN & WEATHER", Icons.cloud_done, SMEAdminPortal()),
+              _buildBigButton(context, "FINANCIAL PROJECTIONS", Icons.payments, FinancialsScreen()),
               _buildBigButton(context, "DIGITAL DEEDS", Icons.verified, DigitalDeedScreen()),
-              _buildBigButton(context, "PENDING SETTLEMENTS", Icons.handshake, const PlaceholderScreen("SETTLEMENTS")),
-              _buildBigButton(context, "FINANCIALS", Icons.payments, const PlaceholderScreen("FINANCIALS")),
+              _buildBigButton(context, "SOCIAL CLUB", Icons.gavel_rounded, SocialClubScreen()),
               const SizedBox(height: 40),
-              const Text("CEO PROTOCOL: TRANSACTION OVERSIGHT ONLY", 
-                style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
+              const Text("SYSTEM STATUS: ALL SECTORS ONLINE", 
+                style: TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold, letterSpacing: 1.5)),
             ],
           ),
         ),
@@ -61,14 +62,14 @@ class HVFCommandDashboard extends StatelessWidget {
       child: InkWell(
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
         child: Container(
-          height: 100,
-          decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 4)),
+          height: 90,
+          decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 3)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: gold, size: 40),
+              Icon(icon, color: gold, size: 35),
               const SizedBox(width: 20),
-              Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 24)),
+              Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 22)),
             ],
           ),
         ),
@@ -77,49 +78,79 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW: DIGITAL DEED (THE PROOF OF SOVEREIGNTY) ---
-class DigitalDeedScreen extends StatelessWidget {
+// --- SME ADMIN + WEATHER INTEGRATION ---
+class SMEAdminPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("DIGITAL DEED", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 28)), backgroundColor: cardGray),
-      body: ListView(
+      appBar: AppBar(title: const Text("SME & WEATHER", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: Padding(
         padding: const EdgeInsets.all(20),
-        children: [
-          _buildDeedCard("DEED #HVF-0001", "ANGUS UNIT #001", "STATUS: SETTLED"),
-          const SizedBox(height: 30),
-          _buildDeedCard("DEED #HVF-0002", "CEDAR LOT #12", "STATUS: ESCROW"),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDeedCard(String deedNo, String asset, String status) {
-    return Container(
-      padding: const EdgeInsets.all(30),
-      decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 2)),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(deedNo, style: const TextStyle(color: gold, fontSize: 24, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 10),
-          Text(asset, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-          const Divider(color: gold, height: 30),
-          Text(status, style: TextStyle(color: status.contains("SETTLED") ? Colors.green : Colors.orange, fontSize: 18, fontWeight: FontWeight.w900)),
-          const SizedBox(height: 10),
-          const Text("AUTHORITY: JEFFERY D. HUMPHREY", style: TextStyle(color: Colors.white38, fontSize: 10)),
-        ],
+        child: Column(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(20),
+              color: cardGray,
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("JOHNSTON CO. WEATHER", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+                      Text("72°F - CLEAR SKIES", style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
+                    ],
+                  ),
+                  Icon(Icons.wb_sunny, color: gold, size: 40),
+                ],
+              ),
+            ),
+            const SizedBox(height: 30),
+            const Text("PENDING SME SEALS", style: TextStyle(color: gold, fontWeight: FontWeight.bold)),
+            const Divider(color: gold),
+            const ListTile(
+              leading: Icon(Icons.check_circle_outline, color: gold),
+              title: Text("BULL UNIT #044", style: TextStyle(color: Colors.white)),
+              subtitle: Text("Awaiting CEO Authorization", style: TextStyle(color: Colors.white38)),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
 
-class PlaceholderScreen extends StatelessWidget {
-  final String title;
-  const PlaceholderScreen(this.title);
+// --- REMAINING SECTORS (REVENUE, DEEDS, CLUB) ---
+class FinancialsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: Text(title, style: const TextStyle(color: gold))), body: Center(child: Text("$title SECURE", style: const TextStyle(color: Colors.white, fontSize: 30))));
+    return Scaffold(
+      backgroundColor: bgBlack,
+      appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: Center(child: Text("\$5.8M / MO PROJECTED", style: const TextStyle(color: gold, fontSize: 30, fontWeight: FontWeight.w900))),
+    );
+  }
+}
+
+class DigitalDeedScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: bgBlack,
+      appBar: AppBar(title: const Text("DIGITAL DEEDS", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: const Center(child: Text("DEEDS VERIFIED", style: TextStyle(color: Colors.white, fontSize: 24))),
+    );
+  }
+}
+
+class SocialClubScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: bgBlack,
+      appBar: AppBar(title: const Text("SOCIAL CLUB", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: const Center(child: Text("MEMBER: JEFFERY", style: TextStyle(color: gold, fontSize: 32, fontWeight: FontWeight.w900))),
+    );
   }
 }
