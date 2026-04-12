@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V13.2 - ULTRA-CONTRAST "CEO VISION" BUILD
-// FEATURE: MAXIMUM FONT SCALING / HIGH-INTENSITY COLOR SCHEME
+// HVF NEXUS CORE V14.0 - THE FINANCIAL COMMAND BUILD
+// FEATURE: 40-CITY REVENUE PROJECTION / 90% SOVEREIGN CALC
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -12,7 +12,7 @@ void main() {
 }
 
 const Color gold = Color(0xFFFFD700);
-const Color bgBlack = Color(0xFF000000); // Pure black for max contrast
+const Color bgBlack = Color(0xFF000000); 
 const Color cardGray = Color(0xFF1A1A1A);
 
 class HVFCommandDashboard extends StatelessWidget {
@@ -23,18 +23,19 @@ class HVFCommandDashboard extends StatelessWidget {
         backgroundColor: bgBlack,
         appBar: AppBar(
           automaticallyImplyLeading: false,
-          title: const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 30, letterSpacing: 5)),
+          title: const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 5)),
           backgroundColor: cardGray,
           centerTitle: true,
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _buildLargeHeader("COMMAND CORE"),
-              _buildBigButton(context, "TOUR MOMENTUM", Icons.speed, TourMomentumScreen()),
-              _buildBigButton(context, "SOCIAL CLUB", Icons.gavel_rounded, SocialClubScreen()),
-              _buildBigButton(context, "SME AUDIT", Icons.fact_check, const Scaffold()),
-              _buildBigButton(context, "FINANCIALS", Icons.analytics, const Scaffold()),
+              _buildLargeHeader("REVENUE COMMAND"),
+              _buildBigButton(context, "FINANCIAL PROJECTIONS", Icons.payments, FinancialsScreen()),
+              _buildBigButton(context, "TOUR MOMENTUM", Icons.speed, const PlaceholderScreen("MOMENTUM")),
+              _buildBigButton(context, "SME AUDIT", Icons.fact_check, const PlaceholderScreen("SME AUDIT")),
+              const SizedBox(height: 40),
+              const Text("90/10 SETTLEMENT PROTOCOL: ACTIVE", style: TextStyle(color: gold, fontSize: 12, fontWeight: FontWeight.bold)),
             ],
           ),
         ),
@@ -45,10 +46,10 @@ class HVFCommandDashboard extends StatelessWidget {
   Widget _buildLargeHeader(String title) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(vertical: 20),
+      padding: const EdgeInsets.symmetric(vertical: 25),
       color: gold,
       child: Center(
-        child: Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 22)),
+        child: Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 26)),
       ),
     );
   }
@@ -60,7 +61,7 @@ class HVFCommandDashboard extends StatelessWidget {
         onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
         child: Container(
           height: 100,
-          decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 3)),
+          decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold, width: 4)),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -75,53 +76,51 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- TOUR MOMENTUM: MAXIMUM READABILITY ---
-class TourMomentumScreen extends StatelessWidget {
+// --- NEW: FINANCIAL PROJECTION SCREEN ---
+class FinancialsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("MOMENTUM", style: TextStyle(color: gold, fontWeight: FontWeight.bold)), backgroundColor: cardGray),
+      appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold, fontWeight: FontWeight.bold, fontSize: 28)), backgroundColor: cardGray),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          _buildUltraTile("JOHNSTON CO.", "850 BUYERS", "120 PRODUCERS", 0.85),
-          _buildUltraTile("ATOKA CO.", "620 BUYERS", "45 PRODUCERS", 0.62),
-          _buildUltraTile("MARSHALL CO.", "450 BUYERS", "30 PRODUCERS", 0.45),
+          _buildRevenueCard("40-CITY TOTAL (MONTHLY)", "\$5,850,000", "90% SOVEREIGN SHARE"),
+          const SizedBox(height: 30),
+          _buildRevenueCard("PER CITY SATURATION", "\$146,250", "BASED ON 500 PRODUCERS / 2.5K BUYERS"),
+          const SizedBox(height: 30),
+          _buildRevenueCard("AGENCY PAYOUT (10%)", "\$650,000", "TOTAL 40-CITY COMMISSION"),
+          const SizedBox(height: 50),
+          const Text("ALL RATES LOCKED PERMANENTLY", style: TextStyle(color: gold, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2), textAlign: TextAlign.center),
         ],
       ),
     );
   }
 
-  Widget _buildUltraTile(String city, String buyers, String producers, double val) {
+  Widget _buildRevenueCard(String title, String amount, String sub) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 40),
+      padding: const EdgeInsets.all(30),
+      decoration: BoxDecoration(color: cardGray, border: Border(left: BorderSide(color: gold, width: 8))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(city, style: const TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 28)),
+          Text(title, style: const TextStyle(color: gold, fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 10),
-          LinearProgressIndicator(value: val, color: gold, backgroundColor: Colors.white24, minHeight: 15),
-          const SizedBox(height: 15),
-          // MAX VISIBILITY TEXT
-          Text(buyers, style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.w900)),
-          Text(producers, style: const TextStyle(color: gold, fontSize: 20, fontWeight: FontWeight.bold)),
-          const Divider(color: gold, thickness: 2, height: 40),
+          Text(amount, style: const TextStyle(color: Colors.white, fontSize: 42, fontWeight: FontWeight.w900)),
+          const SizedBox(height: 5),
+          Text(sub, style: const TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold)),
         ],
       ),
     );
   }
 }
 
-class SocialClubScreen extends StatelessWidget {
+class PlaceholderScreen extends StatelessWidget {
+  final String title;
+  const PlaceholderScreen(this.title);
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("CLUB", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(
-        child: Text("MEMBER: JEFFERY", style: const TextStyle(color: gold, fontSize: 30, fontWeight: FontWeight.w900)),
-      ),
-    );
+    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: Text(title, style: const TextStyle(color: gold))), body: Center(child: Text("$title SECURE", style: const TextStyle(color: Colors.white, fontSize: 30))));
   }
 }
