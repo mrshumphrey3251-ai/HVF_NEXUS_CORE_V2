@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V20.0 - THE TOTAL CIRCUIT INTEGRATION
-// ALL SECTORS HARD-WIRED: HELIOGRID, SME SEAL, FINANCIALS, AGENCY
+// HVF NEXUS CORE V21.0 - THE SOVEREIGN TRUST BUILD
+// FEATURE: EMBEDDED EXECUTIVE SUMMARIES / TOTAL DISCLOSURE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -100,6 +100,21 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
+// --- SHARED UI COMPONENT FOR SUMMARIES ---
+class SummaryBox extends StatelessWidget {
+  final String text;
+  SummaryBox(this.text);
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(20),
+      margin: const EdgeInsets.symmetric(vertical: 20),
+      decoration: BoxDecoration(color: gold.withOpacity(0.05), border: Border.all(color: gold.withOpacity(0.3))),
+      child: Text(text, style: const TextStyle(color: Colors.white70, fontSize: 14, height: 1.5, fontStyle: FontStyle.italic)),
+    );
+  }
+}
+
 // --- SECTOR 1: SME ADMIN & SEAL STATION ---
 class SMEAdminPortal extends StatefulWidget {
   @override
@@ -113,14 +128,18 @@ class _SMEAdminPortalState extends State<SMEAdminPortal> {
     return Scaffold(
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("SME SEAL STATION", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(
-        child: isSealed ? _buildCert() : _buildAudit(),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          SummaryBox("HVF SME DISCLOSURE: Every asset certified through this portal has undergone a multi-point biological and structural audit. We guarantee 'Superior' grade cattle by enforcing 1880s standards with 2026 technical oversight."),
+          isSealed ? _buildCert() : _buildAudit(),
+        ]),
       ),
     );
   }
 
   Widget _buildAudit() {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+    return Column(children: [
       const Text("UNIT #044: BLACK ANGUS", style: TextStyle(color: Colors.white, fontSize: 28, fontWeight: FontWeight.w900)),
       const SizedBox(height: 40),
       ElevatedButton(
@@ -140,7 +159,6 @@ class _SMEAdminPortalState extends State<SMEAdminPortal> {
         const Icon(Icons.verified, color: Colors.green, size: 80),
         const Text("UNIT #044", style: TextStyle(color: Colors.white, fontSize: 24)),
         const Text("SME GRADE: SUPERIOR", style: TextStyle(color: gold, fontSize: 20)),
-        const SizedBox(height: 20),
         TextButton(onPressed: () => setState(() => isSealed = false), child: const Text("RESET", style: TextStyle(color: Colors.white24)))
       ]),
     );
@@ -154,10 +172,10 @@ class HelioGridScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("HELIOGRID", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        SummaryBox("INFRASTRUCTURE DISCLOSURE: The HelioGrid 94.2 kW system provides 100% power sovereignty for the 200-acre Johnston County campus. This system ensures the Nexus Core remains online regardless of public grid failure."),
         const Icon(Icons.bolt, color: gold, size: 100),
         const Center(child: Text("94.2 kW", style: TextStyle(color: gold, fontSize: 60, fontWeight: FontWeight.w900))),
-        const Text("SYSTEM OUTPUT: SOVEREIGN", style: TextStyle(color: Colors.white70, fontSize: 18)),
       ]),
     );
   }
@@ -171,11 +189,9 @@ class AgencyDashboard extends StatelessWidget {
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("AGENCY PORTAL", style: TextStyle(color: gold)), backgroundColor: cardGray),
       body: ListView(padding: const EdgeInsets.all(20), children: [
-        const Text("CURRENT ENROLLMENT", style: TextStyle(color: gold, fontSize: 20)),
+        SummaryBox("AGENCY DISCLOSURE: The 40-City Tour is governed by the 500-producer saturation quota. This dashboard tracks real-time licensing progress. Agency payout is strictly 10% of gross processed volume."),
         const Text("120 PRODUCERS", style: TextStyle(color: Colors.white, fontSize: 40, fontWeight: FontWeight.w900)),
-        const Divider(color: gold, height: 40),
-        const Text("AGENCY COMMISSION (10%)", style: TextStyle(color: gold)),
-        const Text("\$2,400", style: TextStyle(color: Colors.green, fontSize: 36, fontWeight: FontWeight.w900)),
+        const Text("\$2,400 ACCRUED", style: TextStyle(color: Colors.green, fontSize: 30, fontWeight: FontWeight.w900)),
       ]),
     );
   }
@@ -188,11 +204,11 @@ class FinancialsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: bgBlack,
       appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("MONTHLY REVENUE SHARE", style: TextStyle(color: Colors.white, fontSize: 20)),
-        const Text("\$5,850,000", style: TextStyle(color: gold, fontSize: 50, fontWeight: FontWeight.w900)),
-        const Text("90% SOVEREIGN SETTLEMENT", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-      ])),
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        SummaryBox("REVENUE DISCLOSURE: Financial projections are calculated on the 90/10 Sovereign Settlement Protocol. \$25/mo Buyer Access and \$200/mo Producer Access rates are locked for 'Legacy' status users."),
+        const Center(child: Text("\$5,850,000", style: TextStyle(color: gold, fontSize: 50, fontWeight: FontWeight.w900))),
+        const Center(child: Text("PROJECTED MONTHLY REVENUE", style: TextStyle(color: Colors.white, fontSize: 16))),
+      ]),
     );
   }
 }
