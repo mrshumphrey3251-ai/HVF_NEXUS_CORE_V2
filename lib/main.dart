@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V5.0 - THE ALL-POWERFUL EXECUTIVE COMMAND
-// STYLE: EXPENSIVE INDUSTRIAL / SOVEREIGN GOLD / DEEP SLATE
+// HVF NEXUS CORE V5.1 - THE HARDENED COMMAND CONSOLE
+// STYLE: ALL-POWERFUL INDUSTRIAL / SOVEREIGN GOLD / DEEP SLATE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -22,6 +22,7 @@ class HVFCommandDashboard extends StatelessWidget {
         appBar: PreferredSize(
           preferredSize: const Size.fromHeight(100.0),
           child: AppBar(
+            automaticallyImplyLeading: false,
             backgroundColor: const Color(0xFF1A1A1A),
             elevation: 20,
             flexibleSpace: Center(
@@ -37,11 +38,13 @@ class HVFCommandDashboard extends StatelessWidget {
                       letterSpacing: 4.0,
                     ),
                   ),
+                  const SizedBox(height: 5),
                   Container(
                     height: 2,
                     width: 150,
                     color: const Color(0xFFFFD700),
                   ),
+                  const SizedBox(height: 5),
                   const Text(
                     "AUDIT & COMMAND CORE",
                     style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 2),
@@ -154,7 +157,7 @@ class LivestockMarketplace extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.between,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(title, style: const TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold, fontSize: 18)),
               Text(status, style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
@@ -175,13 +178,22 @@ class GreatHallScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFF0A0A0A),
-      appBar: AppBar(
-        title: const Text("SOCIAL CLUB INTERIOR", style: TextStyle(color: Color(0xFFFFD700))),
-        backgroundColor: const Color(0xFF1A1A1A),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFF0A0A0A),
+        appBar: AppBar(
+          title: const Text("SOCIAL CLUB INTERIOR", style: TextStyle(color: Color(0xFFFFD700))),
+          backgroundColor: const Color(0xFF1A1A1A),
+          iconTheme: const IconThemeData(color: Color(0xFFFFD700)),
+        ),
+        body: const Center(
+          child: Text(
+            "ASSET INTERIOR LOADED\n12x12 CEDAR STATUS: SECURE", 
+            textAlign: TextAlign.center,
+            style: TextStyle(color: Color(0xFFFFD700), fontSize: 18, fontWeight: FontWeight.bold),
+          ),
+        ),
       ),
-      body: const Center(child: Text("ASSET INTERIOR LOADED", style: TextStyle(color: Color(0xFFFFD700)))),
     );
   }
 }
