@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V22.0 - THE GEOGRAPHIC DOMINANCE BUILD
-// FEATURE: SLAB ROAD SITE MAP / INFRASTRUCTURE OVERLAY
+// HVF NEXUS CORE V23.0 - THE MARKETPLACE DOMINANCE BUILD
+// FEATURE: VIRTUAL STOCKYARD / PRODUCER & BUYER VISIBILITY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -30,16 +30,14 @@ class HVFCommandDashboard extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _buildLargeHeader("SOVEREIGN LEADERBOARD"),
-              _buildLeaderboardTile("1. JOHNSTON CO.", "850 BUYERS", 0.9, Colors.green),
-              _buildLeaderboardTile("2. ATOKA CO.", "620 BUYERS", 0.65, gold),
-              const SizedBox(height: 20),
-              _buildBigButton(context, "SITE MAP: SLAB ROAD", Icons.map, SiteMapScreen()),
-              _buildBigButton(context, "SME ADMIN & SEAL", Icons.gavel_rounded, SMEAdminPortal()),
-              _buildBigButton(context, "HELIOGRID POWER", Icons.solar_power, HelioGridScreen()),
-              _buildBigButton(context, "AGENCY COMMAND", Icons.groups_3, AgencyDashboard()),
-              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, FinancialsScreen()),
+              _buildLargeHeader("SOVEREIGN STOCKYARD"),
+              _buildBigButton(context, "VIRTUAL STOCKYARD", Icons.agriculture, StockyardScreen()),
+              _buildBigButton(context, "SITE MAP: SLAB ROAD", Icons.map, const PlaceholderScreen("SITE MAP")),
+              _buildBigButton(context, "SME ADMIN & SEAL", Icons.gavel_rounded, const PlaceholderScreen("SME ADMIN")),
+              _buildBigButton(context, "FINANCIAL COMMAND", Icons.payments, const PlaceholderScreen("FINANCIALS")),
               const SizedBox(height: 40),
+              const Text("MARKET STATUS: 850 BUYERS ACTIVE", 
+                style: TextStyle(color: Colors.green, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 2)),
             ],
           ),
         ),
@@ -54,26 +52,6 @@ class HVFCommandDashboard extends StatelessWidget {
       color: gold,
       child: Center(
         child: Text(title, style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 24)),
-      ),
-    );
-  }
-
-  Widget _buildLeaderboardTile(String city, String count, double val, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(city, style: TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 20)),
-              Text(count, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
-            ],
-          ),
-          const SizedBox(height: 8),
-          LinearProgressIndicator(value: val, color: color, backgroundColor: Colors.white10, minHeight: 12),
-        ],
       ),
     );
   }
@@ -100,37 +78,65 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW SECTOR: SLAB ROAD SITE MAP ---
-class SiteMapScreen extends StatelessWidget {
+// --- NEW SECTOR: VIRTUAL STOCKYARD ---
+class StockyardScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("SLAB ROAD MAP", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      appBar: AppBar(title: const Text("LIVE STOCKYARD", style: TextStyle(color: gold)), backgroundColor: cardGray),
       body: ListView(padding: const EdgeInsets.all(20), children: [
-        _buildSummaryBox("GEOGRAPHIC DISCLOSURE: The 200-acre Johnston County Flagship features a 25-acre engineered reservoir, 94.2 kW HelioGrid array, and 200 planned livestock units. This site map dictates the infrastructure for the first 'Sovereign Campus'."),
+        _buildSummaryBox("MARKET DISCLOSURE: This portal connects the 500 Producers per city to the \$25/mo Buyer community. Only assets with the 'SME SEAL' are permitted for transaction. Total transparency on lineage, diet, and health is mandatory."),
         const SizedBox(height: 20),
-        _buildSiteLabel("25-ACRE RESERVOIR", "ENGINEERED WATER SOURCE", Colors.blue),
-        _buildSiteLabel("HELIOGRID ARRAY", "94.2 kW SOLAR DOMINANCE", gold),
-        _buildSiteLabel("SOCIAL CLUB HQ", "SME MEETING GROUNDS", Colors.white),
-        _buildSiteLabel("PRODUCER UNITS 1-200", "LIVESTOCK HOUSING GIRD", Colors.green),
-        const SizedBox(height: 40),
-        const Center(child: Icon(Icons.location_on, color: Colors.red, size: 50)),
-        const Center(child: Text("JOHNSTON COUNTY, OK", style: TextStyle(color: Colors.white38, fontSize: 12))),
+        const Text("PREMIUM INVENTORY", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900)),
+        const Divider(color: gold, thickness: 2),
+        _buildAssetCard("BLACK ANGUS #091", "PRODUCER: SMITH FARMS", "GRADE: SUPERIOR", "STATUS: AVAILABLE"),
+        _buildAssetCard("HEREFORD UNIT #112", "PRODUCER: DOE RANCH", "GRADE: SUPERIOR", "STATUS: PENDING"),
+        const SizedBox(height: 30),
+        const Text("BUYER DEMAND", style: TextStyle(color: gold, fontSize: 22, fontWeight: FontWeight.w900)),
+        _buildBuyerTicker("ACTIVE BUYERS IN JOHNSTON CO.", "850"),
       ]),
     );
   }
 
-  Widget _buildSiteLabel(String title, String sub, Color accent) {
+  Widget _buildAssetCard(String title, String producer, String grade, String status) {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 10),
       padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(color: cardGray, border: Border(left: BorderSide(color: accent, width: 10))),
+      decoration: BoxDecoration(color: cardGray, border: Border.all(color: gold.withOpacity(0.5))),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-          Text(sub, style: TextStyle(color: accent.withOpacity(0.8), fontSize: 14, fontWeight: FontWeight.bold)),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(title, style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              const Icon(Icons.verified, color: Colors.green, size: 25),
+            ],
+          ),
+          Text(producer, style: const TextStyle(color: Colors.white70, fontSize: 14)),
+          const SizedBox(height: 10),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(grade, style: const TextStyle(color: gold, fontWeight: FontWeight.bold)),
+              Text(status, style: TextStyle(color: status == "AVAILABLE" ? Colors.green : Colors.orange, fontWeight: FontWeight.bold)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBuyerTicker(String label, String count) {
+    return Container(
+      padding: const EdgeInsets.all(15),
+      color: gold.withOpacity(0.1),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          Text(count, style: const TextStyle(color: gold, fontSize: 24, fontWeight: FontWeight.w900)),
         ],
       ),
     );
@@ -145,8 +151,11 @@ class SiteMapScreen extends StatelessWidget {
   }
 }
 
-// Support Classes (Harden existing portals)
-class SMEAdminPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("SME ADMIN", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
-class HelioGridScreen extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("HELIOGRID", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
-class AgencyDashboard extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AGENCY", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
-class FinancialsScreen extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("FINANCIALS", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
+class PlaceholderScreen extends StatelessWidget {
+  final String t;
+  PlaceholderScreen(this.t);
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: Text(t, style: const TextStyle(color: gold))), body: Center(child: Text("$t SECURE", style: const TextStyle(color: Colors.white, fontSize: 30))));
+  }
+}
