@@ -1,84 +1,114 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V4.0 - THE LIVESTOCK MARKETPLACE BUILD
-// REVENUE MODEL: 90/10 RESIDUAL SPLIT ENABLED
+// HVF NEXUS CORE V5.0 - THE ALL-POWERFUL EXECUTIVE COMMAND
+// STYLE: EXPENSIVE INDUSTRIAL / SOVEREIGN GOLD / DEEP SLATE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
-    title: 'HVF NEXUS CORE',
     home: HVFCommandDashboard(),
   ));
 }
 
-// --- SCREEN 1: THE COMMAND CENTER ---
-class HVFCommandDashboard extends StatefulWidget {
+class HVFCommandDashboard extends StatelessWidget {
   const HVFCommandDashboard({super.key});
 
-  @override
-  State<HVFCommandDashboard> createState() => _HVFCommandDashboardState();
-}
-
-class _HVFCommandDashboardState extends State<HVFCommandDashboard> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF211007),
-        appBar: AppBar(
-          title: const Text("HVF NEXUS: AUDIT CORE", style: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold)),
-          centerTitle: true,
-          backgroundColor: const Color(0xFF3E2723),
-          elevation: 10,
+        backgroundColor: const Color(0xFF0A0A0A), // Deep Industrial Black
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(100.0),
+          child: AppBar(
+            backgroundColor: const Color(0xFF1A1A1A),
+            elevation: 20,
+            flexibleSpace: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Text(
+                    "HVF NEXUS",
+                    style: TextStyle(
+                      color: Color(0xFFFFD700), // Sovereign Gold
+                      fontWeight: FontWeight.w900,
+                      fontSize: 28,
+                      letterSpacing: 4.0,
+                    ),
+                  ),
+                  Container(
+                    height: 2,
+                    width: 150,
+                    color: const Color(0xFFFFD700),
+                  ),
+                  const Text(
+                    "AUDIT & COMMAND CORE",
+                    style: TextStyle(color: Colors.white54, fontSize: 10, letterSpacing: 2),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 40),
-              const Icon(Icons.shield_outlined, color: Colors.green, size: 80),
-              const Text("AGENT AUDIT ACTIVE", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 30),
-              
-              // --- MARKETPLACE NAVIGATION ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFFFC107),
-                    foregroundColor: Colors.black,
-                    minimumSize: const Size(double.infinity, 70),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
-                  ),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const LivestockMarketplace()));
-                  },
-                  icon: const Icon(Icons.agriculture, size: 28),
-                  label: const Text("ENTER LIVESTOCK MARKETPLACE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                ),
+              const SizedBox(height: 50),
+              _buildSovereignButton(
+                context, 
+                "LIVESTOCK MARKETPLACE", 
+                Icons.account_balance, 
+                const LivestockMarketplace()
               ),
               const SizedBox(height: 20),
-              
-              // --- INTERIOR ASSETS NAVIGATION ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: ElevatedButton.icon(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.white10,
-                    foregroundColor: Colors.amber,
-                    minimumSize: const Size(double.infinity, 60),
-                    side: const BorderSide(color: Colors.amber),
-                  ),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => const GreatHallScreen()));
-                  },
-                  icon: const Icon(Icons.meeting_room),
-                  label: const Text("SOCIAL CLUB INTERIOR"),
-                ),
+              _buildSovereignButton(
+                context, 
+                "SOCIAL CLUB INTERIOR", 
+                Icons.gavel_rounded, 
+                const GreatHallScreen()
               ),
-              
-              const SizedBox(height: 50),
-              const Text("90/10 REVENUE SPLIT: ACTIVE", style: TextStyle(color: Colors.white54, fontSize: 14)),
+              const SizedBox(height: 60),
+              const Icon(Icons.security, color: Color(0xFFFFD700), size: 40),
+              const Text(
+                "90/10 REVENUE PROTOCOL ACTIVE",
+                style: TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold, fontSize: 12),
+              ),
+              const Text(
+                "SOVEREIGN DATA ENCRYPTION: VERIFIED",
+                style: TextStyle(color: Colors.white24, fontSize: 10),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSovereignButton(BuildContext context, String title, IconData icon, Widget target) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 30),
+      child: GestureDetector(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
+        child: Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: const Color(0xFF1A1A1A),
+            border: Border.all(color: const Color(0xFFFFD700), width: 2),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.5), blurRadius: 10, offset: const Offset(0, 5))
+            ],
+          ),
+          child: Row(
+            children: [
+              Container(width: 10, color: const Color(0xFFFFD700)),
+              const SizedBox(width: 20),
+              Icon(icon, color: const Color(0xFFFFD700), size: 30),
+              const SizedBox(width: 20),
+              Text(
+                title,
+                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18, letterSpacing: 1.2),
+              ),
             ],
           ),
         ),
@@ -87,7 +117,6 @@ class _HVFCommandDashboardState extends State<HVFCommandDashboard> {
   }
 }
 
-// --- SCREEN 2: THE LIVESTOCK MARKETPLACE ---
 class LivestockMarketplace extends StatelessWidget {
   const LivestockMarketplace({super.key});
 
@@ -95,74 +124,64 @@ class LivestockMarketplace extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF211007),
+        backgroundColor: const Color(0xFF0A0A0A),
         appBar: AppBar(
-          title: const Text("VIRTUAL STOCKYARD", style: TextStyle(color: Color(0xFFFFC107))),
-          backgroundColor: const Color(0xFF3E2723),
+          title: const Text("VIRTUAL STOCKYARD", style: TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold)),
+          backgroundColor: const Color(0xFF1A1A1A),
+          iconTheme: const IconThemeData(color: Color(0xFFFFD700)),
         ),
         body: ListView(
           padding: const EdgeInsets.all(20),
           children: [
-            const Text("AVAILABLE INVENTORY", style: TextStyle(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.bold)),
-            const Divider(color: Colors.amber),
-            const SizedBox(height: 10),
-            
-            _buildAnimalCard("Black Angus Bull", "1,450 lbs", "Nexus-Verified", "Johnston County"),
-            _buildAnimalCard("Heifers (Batch of 5)", "800 lbs avg", "Organic Feed", "Marshall County"),
-            _buildAnimalCard("Boer Goats", "Ready for Transit", "SME Certified", "Atoka County"),
-            
-            const SizedBox(height: 30),
-            const Center(child: Text("TOTAL VIRTUAL HERD VALUE: \$245,000", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
+            _buildIndustrialAssetCard("BLACK ANGUS BULL", "ID: HVF-001", "1,450 LBS", "VERIFIED"),
+            _buildIndustrialAssetCard("HEIFER BATCH", "ID: HVF-002", "800 LBS AVG", "VERIFIED"),
+            _buildIndustrialAssetCard("BOER GOAT UNITS", "ID: HVF-003", "READY", "SME CERTIFIED"),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildAnimalCard(String title, String weight, String status, String location) {
-    return Card(
-      color: Colors.white10,
-      margin: const EdgeInsets.only(bottom: 15),
-      child: ListTile(
-        leading: const Icon(Icons.pets, color: Colors.amber),
-        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text("$weight • $status\n$location", style: const TextStyle(color: Colors.white70)),
-        trailing: const Icon(Icons.add_shopping_cart, color: Colors.green),
-        isThreeLine: true,
+  Widget _buildIndustrialAssetCard(String title, String id, String data, String status) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 20),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A1A1A),
+        border: Border.all(color: Colors.white10),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.between,
+            children: [
+              Text(title, style: const TextStyle(color: Color(0xFFFFD700), fontWeight: FontWeight.bold, fontSize: 18)),
+              Text(status, style: const TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const Divider(color: Colors.white10),
+          Text(id, style: const TextStyle(color: Colors.white54, fontSize: 12)),
+          const SizedBox(height: 5),
+          Text(data, style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w300)),
+        ],
       ),
     );
   }
 }
 
-// --- SCREEN 3: THE GREAT HALL INTERIOR ---
 class GreatHallScreen extends StatelessWidget {
   const GreatHallScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        backgroundColor: const Color(0xFF211007),
-        appBar: AppBar(
-          title: const Text("SOCIAL CLUB: GREAT HALL", style: TextStyle(color: Color(0xFFFFC107))),
-          backgroundColor: const Color(0xFF3E2723),
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.holiday_village, color: Color(0xFFFFC107), size: 100),
-              const Text("INTERIOR ASSETS ACTIVE", style: TextStyle(color: Colors.amber, fontSize: 24, fontWeight: FontWeight.bold)),
-              const Padding(
-                padding: EdgeInsets.all(20),
-                child: Text("• 20ft Fieldstone Spine\n• 12x12 Cedar Columns\n• Sovereign Seating", 
-                style: TextStyle(color: Colors.white, fontSize: 18), textAlign: TextAlign.center),
-              ),
-              ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("BACK")),
-            ],
-          ),
-        ),
+    return Scaffold(
+      backgroundColor: const Color(0xFF0A0A0A),
+      appBar: AppBar(
+        title: const Text("SOCIAL CLUB INTERIOR", style: TextStyle(color: Color(0xFFFFD700))),
+        backgroundColor: const Color(0xFF1A1A1A),
       ),
+      body: const Center(child: Text("ASSET INTERIOR LOADED", style: TextStyle(color: Color(0xFFFFD700)))),
     );
   }
 }
