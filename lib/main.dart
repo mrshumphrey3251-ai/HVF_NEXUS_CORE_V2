@@ -1,3 +1,7 @@
+import 'package:flutter/material.dart';
+
+// HVF NEXUS CORE V4.0 - THE LIVESTOCK MARKETPLACE BUILD
+// REVENUE MODEL: 90/10 RESIDUAL SPLIT ENABLED
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -17,102 +21,64 @@ class HVFCommandDashboard extends StatefulWidget {
 }
 
 class _HVFCommandDashboardState extends State<HVFCommandDashboard> {
-  final TextEditingController _agentIdController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
-    // SME FIX: Wrap in SafeArea to prevent hardware overlap
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color(0xFF211007), // Aged Walnut
-        appBar: PreferredSize(
-          preferredSize: const Size.fromHeight(80.0), // Hardened height for visibility
-          child: AppBar(
-            title: const Padding(
-              padding: EdgeInsets.only(top: 10.0),
-              child: Text(
-                "HVF NEXUS: AUDIT CORE",
-                style: TextStyle(
-                  color: Color(0xFFFFC107), // High-Visibility Amber
-                  fontWeight: FontWeight.black, // Maximum weight
-                  fontSize: 24,
-                  letterSpacing: 2.0,
-                ),
-              ),
-            ),
-            centerTitle: true,
-            backgroundColor: const Color(0xFF3E2723), // Deep Cedar
-            elevation: 20,
-            shadowColor: Colors.black,
-          ),
+        backgroundColor: const Color(0xFF211007),
+        appBar: AppBar(
+          title: const Text("HVF NEXUS: AUDIT CORE", style: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold)),
+          centerTitle: true,
+          backgroundColor: const Color(0xFF3E2723),
+          elevation: 10,
         ),
         body: SingleChildScrollView(
           child: Column(
             children: [
-              const SizedBox(height: 50),
-              const Icon(Icons.shield_outlined, color: Colors.green, size: 100),
-              const SizedBox(height: 10),
-              const Text(
-                "AGENT VERIFICATION ACTIVE", 
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 18),
-              ),
               const SizedBox(height: 40),
+              const Icon(Icons.shield_outlined, color: Colors.green, size: 80),
+              const Text("AGENT AUDIT ACTIVE", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 30),
               
-              // --- THE SOVEREIGN AGENT TRACKER ---
+              // --- MARKETPLACE NAVIGATION ---
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: TextField(
-                  controller: _agentIdController,
-                  decoration: const InputDecoration(
-                    labelText: "ENTER AGENT ID / CITY CODE",
-                    labelStyle: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold),
-                    hintText: "OK-JOHNSTON-001",
-                    hintStyle: TextStyle(color: Colors.white24),
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xFFFFC107), width: 3),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Colors.green, width: 4),
-                    ),
-                    filled: true,
-                    fillColor: Colors.white10,
-                  ),
-                  style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              
-              const SizedBox(height: 40),
-              
-              // --- PRIMARY ACCESS BAR ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 40),
-                child: ElevatedButton(
+                child: ElevatedButton.icon(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFFFC107),
                     foregroundColor: Colors.black,
-                    minimumSize: const Size(double.infinity, 75),
-                    elevation: 12,
+                    minimumSize: const Size(double.infinity, 70),
                     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const GreatHallScreen()),
-                    );
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const LivestockMarketplace()));
                   },
-                  child: const Text(
-                    "ACCESS INTERIOR ASSETS", 
-                    style: TextStyle(fontWeight: FontWeight.black, fontSize: 20),
+                  icon: const Icon(Icons.agriculture, size: 28),
+                  label: const Text("ENTER LIVESTOCK MARKETPLACE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              
+              // --- INTERIOR ASSETS NAVIGATION ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 40),
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white10,
+                    foregroundColor: Colors.amber,
+                    minimumSize: const Size(double.infinity, 60),
+                    side: const BorderSide(color: Colors.amber),
                   ),
+                  onPressed: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => const GreatHallScreen()));
+                  },
+                  icon: const Icon(Icons.meeting_room),
+                  label: const Text("SOCIAL CLUB INTERIOR"),
                 ),
               ),
               
-              const SizedBox(height: 60),
-              const Divider(color: Colors.white38, indent: 50, endIndent: 50, thickness: 2),
-              const Text("90/10 REVENUE SPLIT: ACTIVE", 
-                   style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
-              const Text("SOVEREIGNTY STATUS: VERIFIED", 
-                   style: TextStyle(color: Colors.white70, fontSize: 14, letterSpacing: 1.1)),
+              const SizedBox(height: 50),
+              const Text("90/10 REVENUE SPLIT: ACTIVE", style: TextStyle(color: Colors.white54, fontSize: 14)),
             ],
           ),
         ),
@@ -121,7 +87,54 @@ class _HVFCommandDashboardState extends State<HVFCommandDashboard> {
   }
 }
 
-// --- SCREEN 2: THE SOCIAL CLUB: GREAT HALL INTERIOR ---
+// --- SCREEN 2: THE LIVESTOCK MARKETPLACE ---
+class LivestockMarketplace extends StatelessWidget {
+  const LivestockMarketplace({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color(0xFF211007),
+        appBar: AppBar(
+          title: const Text("VIRTUAL STOCKYARD", style: TextStyle(color: Color(0xFFFFC107))),
+          backgroundColor: const Color(0xFF3E2723),
+        ),
+        body: ListView(
+          padding: const EdgeInsets.all(20),
+          children: [
+            const Text("AVAILABLE INVENTORY", style: TextStyle(color: Colors.amber, fontSize: 22, fontWeight: FontWeight.bold)),
+            const Divider(color: Colors.amber),
+            const SizedBox(height: 10),
+            
+            _buildAnimalCard("Black Angus Bull", "1,450 lbs", "Nexus-Verified", "Johnston County"),
+            _buildAnimalCard("Heifers (Batch of 5)", "800 lbs avg", "Organic Feed", "Marshall County"),
+            _buildAnimalCard("Boer Goats", "Ready for Transit", "SME Certified", "Atoka County"),
+            
+            const SizedBox(height: 30),
+            const Center(child: Text("TOTAL VIRTUAL HERD VALUE: \$245,000", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildAnimalCard(String title, String weight, String status, String location) {
+    return Card(
+      color: Colors.white10,
+      margin: const EdgeInsets.only(bottom: 15),
+      child: ListTile(
+        leading: const Icon(Icons.pets, color: Colors.amber),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text("$weight • $status\n$location", style: const TextStyle(color: Colors.white70)),
+        trailing: const Icon(Icons.add_shopping_cart, color: Colors.green),
+        isThreeLine: true,
+      ),
+    );
+  }
+}
+
+// --- SCREEN 3: THE GREAT HALL INTERIOR ---
 class GreatHallScreen extends StatelessWidget {
   const GreatHallScreen({super.key});
 
@@ -131,45 +144,21 @@ class GreatHallScreen extends StatelessWidget {
       child: Scaffold(
         backgroundColor: const Color(0xFF211007),
         appBar: AppBar(
-          title: const Text(
-            "SOCIAL CLUB: GREAT HALL",
-            style: TextStyle(color: Color(0xFFFFC107), fontWeight: FontWeight.bold),
-          ),
+          title: const Text("SOCIAL CLUB: GREAT HALL", style: TextStyle(color: Color(0xFFFFC107))),
           backgroundColor: const Color(0xFF3E2723),
-          centerTitle: true,
         ),
-        body: SingleChildScrollView(
+        body: Center(
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const SizedBox(height: 40),
-              const Icon(Icons.holiday_village, color: Color(0xFFFFC107), size: 120),
-              const SizedBox(height: 20),
-              const Text(
-                "INTERIOR ASSETS", 
-                style: TextStyle(color: Color(0xFFFFC107), fontSize: 28, fontWeight: FontWeight.bold),
-              ),
+              const Icon(Icons.holiday_village, color: Color(0xFFFFC107), size: 100),
+              const Text("INTERIOR ASSETS ACTIVE", style: TextStyle(color: Colors.amber, fontSize: 24, fontWeight: FontWeight.bold)),
               const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 60),
-                child: Divider(color: Color(0xFFFFC107), thickness: 4),
+                padding: EdgeInsets.all(20),
+                child: Text("• 20ft Fieldstone Spine\n• 12x12 Cedar Columns\n• Sovereign Seating", 
+                style: TextStyle(color: Colors.white, fontSize: 18), textAlign: TextAlign.center),
               ),
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 20),
-                child: Text(
-                  "• 20ft Fieldstone Spine (Masonry Secure)\n\n"
-                  "• 12x12 Cedar Structural Columns\n\n"
-                  "• Sovereign Seating: CEO Wingbacks Anchored\n\n"
-                  "• Veteran Club Chairs: ADA Compliant",
-                  style: TextStyle(color: Colors.white, fontSize: 20, height: 1.6, fontWeight: FontWeight.w500),
-                ),
-              ),
-              const SizedBox(height: 40),
-              
-              TextButton.icon(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back, color: Color(0xFFFFC107)),
-                label: const Text("RETURN TO COMMAND", style: TextStyle(color: Color(0xFFFFC107), fontSize: 18, fontWeight: FontWeight.bold)),
-              ),
-              const SizedBox(height: 40),
+              ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("BACK")),
             ],
           ),
         ),
