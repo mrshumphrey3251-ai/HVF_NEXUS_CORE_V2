@@ -1,4 +1,7 @@
-// Vertical Build: Masonry & Structural Timber
+import 'package:flutter/material.dart';
+
+// HVF Nexus - Social Club: Great Hall Module V2.5
+// Fix: Added missing Material Import
 // Authorized by Jeffery Donnell Humphrey
 
 class GreatHallScreen extends StatelessWidget {
