@@ -1,41 +1,37 @@
 import 'package:flutter/material.dart';
+import 'great_hall_ui.dart'; 
 
-// HVF Nexus - Social Club: Great Hall Module V2.5
-// Fix: Added missing Material Import
-// Authorized by Jeffery Donnell Humphrey
+void main() => runApp(HVFNexusApp());
 
-class GreatHallScreen extends StatelessWidget {
+class HVFNexusApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text("SOCIAL CLUB: THE GREAT HALL"),
-        backgroundColor: Color(0xFF3E2723), 
-      ),
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        padding: EdgeInsets.all(25),
-        decoration: BoxDecoration(color: Color(0xFF211007)), 
-        child: SingleChildScrollView(
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(brightness: Brightness.dark),
+      home: Scaffold(
+        appBar: AppBar(title: Text("HVF NEXUS CORE V2")),
+        body: Center(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text("STRUCTURAL ASSETS: VERTICAL", 
-                   style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold)),
-              Text("Status: MASONRY & TIMBER ERECTED", style: TextStyle(color: Colors.green, fontSize: 12)),
-              Divider(color: Colors.amber),
-              
-              SizedBox(height: 15),
-              Text("VERTICAL SPECIFICATIONS:", style: TextStyle(color: Colors.amber, fontSize: 14)),
-              Text("• 20ft Fieldstone Spine (Thermal Anchor)", style: TextStyle(color: Colors.white)),
-              Text("• 12x12 Load-Bearing Cedar Columns", style: TextStyle(color: Colors.white)),
-              Text("• Hand-Hewn Reclaimed Cedar Mantle", style: TextStyle(color: Colors.white)),
-
+              Icon(Icons.verified_user, color: Colors.green, size: 80),
+              Text("SYSTEM OPERATIONAL", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
               SizedBox(height: 30),
-              Text("FOUNDATION (BASE LAYER):", style: TextStyle(color: Colors.white70, fontWeight: FontWeight.bold, fontSize: 12)),
-              Text("• Monolithic Slab: VERIFIED", style: TextStyle(color: Colors.green, fontSize: 11)),
-              Text("• Aged Walnut Concrete: CURED", style: TextStyle(color: Colors.green, fontSize: 11)),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber, 
+                  foregroundColor: Colors.black,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                ),
+                onPressed: () {
+                  Navigator.push(
+                    context, 
+                    MaterialPageRoute(builder: (context) => GreatHallScreen())
+                  );
+                },
+                child: Text("ENTER SOCIAL CLUB INTERIOR", style: TextStyle(fontWeight: FontWeight.bold)),
+              ),
             ],
           ),
         ),
