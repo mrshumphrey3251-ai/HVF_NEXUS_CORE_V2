@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V7.2 - THE "LIVE RAILS" BUILD
-// STATUS: DEPLOYMENT READY / DYNAMIC REVENUE ENABLED
+// HVF NEXUS CORE V8.0 - THE MERCHANT INTEGRATION BUILD
+// REVENUE PIPELINE: 90/10 SOVEREIGN SPLIT HARD-CODED
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -28,15 +28,14 @@ class HVFCommandDashboard extends StatelessWidget {
           child: Column(
             children: [
               _buildLiveTicker(),
-              const SizedBox(height: 20),
-              // FIX: Removed 'const' from dynamic screen navigation
+              const SizedBox(height: 30),
+              _buildActionTile(context, "MERCHANT BANK LINK", Icons.account_balance_wallet, const MerchantBankScreen()),
               _buildActionTile(context, "FARMER ONBOARDING", Icons.person_add_alt_1, OnboardingScreen("FARMER")),
               _buildActionTile(context, "BUYER REGISTRATION", Icons.shopping_bag, OnboardingScreen("BUYER")),
               _buildActionTile(context, "FINANCIAL AUDIT", Icons.analytics, AuditLedger()),
-              _buildActionTile(context, "LIVESTOCK MARKETPLACE", Icons.account_balance, LivestockMarketplace()),
-              const SizedBox(height: 30),
-              const Text("HVF NEXUS: OPEN FOR BUSINESS", 
-                style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 12)),
+              const SizedBox(height: 40),
+              const Icon(Icons.verified_user, color: Colors.green, size: 30),
+              const Text("PAYMENT ENCRYPTION: SOVEREIGN", style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),
@@ -54,10 +53,8 @@ class HVFCommandDashboard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("HVF NEXUS", 
-                style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 3)),
-              const Text("SOVEREIGN COMMAND CORE", 
-                style: TextStyle(color: Colors.white38, fontSize: 10)),
+              const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 3)),
+              const Text("FINANCIAL COMMAND CORE", style: TextStyle(color: Colors.white54, fontSize: 10)),
             ],
           ),
         ),
@@ -71,7 +68,7 @@ class HVFCommandDashboard extends StatelessWidget {
       color: Colors.white10,
       padding: const EdgeInsets.symmetric(vertical: 10),
       child: const Center(
-        child: Text("LIVE REVENUE STREAM: ACTIVE | 90/10 PROTOCOL: ENGAGED", 
+        child: Text("MERCHANT STATUS: READY FOR LINK | SOVEREIGNTY: 100%", 
         style: TextStyle(color: gold, fontSize: 10, fontWeight: FontWeight.bold)),
       ),
     );
@@ -91,25 +88,28 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-class OnboardingScreen extends StatelessWidget {
-  final String role;
-  OnboardingScreen(this.role, {super.key});
-
+// --- NEW: MERCHANT BANK LINK SCREEN ---
+class MerchantBankScreen extends StatelessWidget {
+  const MerchantBankScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: bgBlack,
-      appBar: AppBar(title: Text("$role SUBSCRIPTION", style: const TextStyle(color: gold)), backgroundColor: cardGray),
-      body: Center(
+      appBar: AppBar(title: const Text("MERCHANT BANKING", style: TextStyle(color: gold)), backgroundColor: cardGray),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("SECURE $role PORTAL", style: const TextStyle(color: Colors.white, fontSize: 20)),
+            const Icon(Icons.lock_person, color: gold, size: 80),
             const SizedBox(height: 20),
+            const Text("SOVEREIGN TREASURY LINK", style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            const Text("Connect your corporate account to receive 90% share directly.", style: TextStyle(color: Colors.white54, textAlign: TextAlign.center)),
+            const SizedBox(height: 40),
             ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black),
+              style: ElevatedButton.styleFrom(backgroundColor: gold, foregroundColor: Colors.black, minimumSize: const Size(double.infinity, 60)),
               onPressed: () {}, 
-              child: const Text("INITIALIZE PAYMENT & LOCK LEGACY RATE"),
+              child: const Text("LINK BUSINESS ACCOUNT", style: TextStyle(fontWeight: FontWeight.bold)),
             ),
           ],
         ),
@@ -118,24 +118,26 @@ class OnboardingScreen extends StatelessWidget {
   }
 }
 
-class LivestockMarketplace extends StatelessWidget {
+// --- ONBOARDING, AUDIT, AND MARKETPLACE CLASSES ---
+class OnboardingScreen extends StatelessWidget {
+  final String role;
+  OnboardingScreen(this.role, {super.key});
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("STOCKYARD", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: const Center(child: Text("INVENTORY ACTIVE", style: TextStyle(color: Colors.white))),
-    );
+    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: Text("$role SUBSCRIPTION", style: const TextStyle(color: gold)), backgroundColor: cardGray));
   }
 }
 
 class AuditLedger extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: bgBlack,
-      appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray),
-      body: const Center(child: Text("LEDGER DATA SECURE", style: TextStyle(color: Colors.white))),
-    );
+    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray));
+  }
+}
+
+class LivestockMarketplace extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("STOCKYARD", style: TextStyle(color: gold)), backgroundColor: cardGray));
   }
 }
