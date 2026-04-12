@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V9.0 - THE SOVEREIGN AUTHORITY BUILD
-// INTEGRATED: SME ADMIN PORTAL & BUYER SUBSCRIPTION GATE
+// HVF NEXUS CORE V9.1 - THE DYNAMIC AUTHORITY BUILD
+// STATUS: CONST CONFLICT RESOLVED / SME SEAL OPERATIONAL
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -29,13 +29,16 @@ class HVFCommandDashboard extends StatelessWidget {
             children: [
               _buildStatusRibbon(),
               const SizedBox(height: 20),
-              _buildTile(context, "SME ADMIN PORTAL", Icons.verified_user_sharp, const SMEAdminPortal()),
-              _buildTile(context, "BUYER SUBSCRIPTION", Icons.shopping_cart_checkout, const BuyerPortal()),
-              _buildTile(context, "FARMER ONBOARDING", Icons.agriculture, const OnboardingPortal()),
-              _buildTile(context, "FINANCIAL AUDIT", Icons.analytics, const Scaffold()),
+              // SME FIX: Removed 'const' to allow dynamic navigation
+              _buildTile(context, "SME ADMIN PORTAL", Icons.verified_user_sharp, SMEAdminPortal()),
+              _buildTile(context, "BUYER SUBSCRIPTION", Icons.shopping_cart_checkout, BuyerPortal()),
+              _buildTile(context, "FARMER ONBOARDING", Icons.agriculture, OnboardingPortal()),
+              _buildTile(context, "FINANCIAL AUDIT", Icons.analytics, AuditLedger()),
               const SizedBox(height: 40),
-              const Text("90/10 PROTOCOL: ENFORCED", style: TextStyle(color: gold, fontSize: 10, letterSpacing: 2)),
-              const Text("SME CERTIFICATION: ACTIVE", style: TextStyle(color: Colors.white24, fontSize: 10)),
+              const Text("90/10 PROTOCOL: ENFORCED", 
+                style: TextStyle(color: gold, fontSize: 10, letterSpacing: 2, fontWeight: FontWeight.bold)),
+              const Text("SME CERTIFICATION: ACTIVE", 
+                style: TextStyle(color: Colors.white24, fontSize: 10)),
             ],
           ),
         ),
@@ -53,8 +56,10 @@ class HVFCommandDashboard extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("HVF NEXUS", style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 3)),
-              const Text("SOVEREIGN COMMAND CORE", style: TextStyle(color: Colors.white54, fontSize: 10)),
+              const Text("HVF NEXUS", 
+                style: TextStyle(color: gold, fontWeight: FontWeight.w900, fontSize: 24, letterSpacing: 3)),
+              const Text("SOVEREIGN COMMAND CORE", 
+                style: TextStyle(color: Colors.white54, fontSize: 10)),
             ],
           ),
         ),
@@ -89,9 +94,8 @@ class HVFCommandDashboard extends StatelessWidget {
   }
 }
 
-// --- NEW: SME ADMIN PORTAL ---
+// --- SME ADMIN PORTAL ---
 class SMEAdminPortal extends StatelessWidget {
-  const SMEAdminPortal({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -129,9 +133,8 @@ class SMEAdminPortal extends StatelessWidget {
   }
 }
 
-// --- NEW: BUYER PORTAL ---
+// --- BUYER PORTAL ---
 class BuyerPortal extends StatelessWidget {
-  const BuyerPortal({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -156,3 +159,6 @@ class BuyerPortal extends StatelessWidget {
     );
   }
 }
+
+class OnboardingPortal extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("FARMER ONBOARDING", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
+class AuditLedger extends StatelessWidget { @override Widget build(BuildContext context) { return Scaffold(backgroundColor: bgBlack, appBar: AppBar(title: const Text("AUDIT", style: TextStyle(color: gold)), backgroundColor: cardGray)); } }
