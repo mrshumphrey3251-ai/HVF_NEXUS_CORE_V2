@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V65.0 - THE LIVE-SYNC FOUNDATION
-// FEATURE: DYNAMIC DATA BRIDGING & SME STATUS PERSISTENCE
-// STATUS: DOMINANT UNIFIED BUILD | REVENUE-READY ARCHITECTURE
+// HVF NEXUS CORE V66.0 - THE SOVEREIGN SUPPORT BUILD
+// FEATURE: BUYER EXTENSION REQUESTS & CEO WAIVER AUTHORITY
+// STATUS: DOMINANT UNIFIED BUILD | RELATIONSHIP-BASED ECONOMY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -84,7 +84,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- 3. THE CEO COMMAND DESK (LIVE SYNC QUEUE) ---
+// --- 3. THE CEO COMMAND DESK (LIVE QUEUE) ---
 class CEODashboard extends StatelessWidget {
   const CEODashboard({super.key});
   @override
@@ -95,94 +95,44 @@ class CEODashboard extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("LIVE INDUCTION QUEUE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+          const Text("PENDING ACTIONS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
           const SizedBox(height: 20),
-          _liveQueueItem(context, "ASSET #ANGUS-V88", "DNA LOGGED | AWAITING CEO SIGNATURE"),
-          _liveQueueItem(context, "ASSET #BISON-K12", "DATA COMPLETE | SME REVIEW REQUIRED"),
-          const Divider(color: goldAccent, height: 40),
-          const Text("SYSTEM ACTIVITY", style: TextStyle(color: Colors.white38, fontSize: 10)),
-          const ListTile(
-            title: Text("Producer Sync Active", style: TextStyle(color: Colors.white70, fontSize: 12)),
-            trailing: Icon(Icons.sync, color: Colors.blue, size: 16),
-          ),
+          _queueItem(context, "GRACE PERIOD REQUEST", "Buyer: J. Doe | Asset: Angus-V88 | Reason: Medical", Icons.hourglass_top, true),
+          _queueItem(context, "ASSET INDUCTION", "Producer: S. Smith | DNA: Verified", Icons.verified_user, false),
         ],
       ),
     );
   }
 
-  Widget _liveQueueItem(BuildContext context, String title, String status) {
+  Widget _queueItem(BuildContext context, String title, String sub, IconData icon, bool isUrgent) {
     return Card(
-      color: const Color(0xFF1E1E1E),
+      color: isUrgent ? const Color(0xFF332211) : const Color(0xFF1E1E1E),
       child: ListTile(
-        leading: const Icon(Icons.document_scanner, color: goldAccent),
+        leading: Icon(icon, color: isUrgent ? Colors.orange : goldAccent),
         title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text(status, style: const TextStyle(color: Colors.white54, fontSize: 11)),
-        onTap: () => _executeSMEAuthority(context, title),
+        subtitle: Text(sub, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        onTap: () => _showExecutiveDecision(context, title),
       ),
     );
   }
 
-  void _executeSMEAuthority(BuildContext context, String title) {
+  void _showExecutiveDecision(BuildContext context, String title) {
     showModalBottomSheet(backgroundColor: deepBlack, context: context, builder: (context) => Container(
       padding: const EdgeInsets.all(30),
       child: Column(mainAxisSize: MainAxisSize.min, children: [
-        Text(title, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+        Text("CEO WAIVER AUTHORITY", style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
         const SizedBox(height: 20),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900, minimumSize: const Size(double.infinity, 50)),
           onPressed: () => Navigator.pop(context),
-          child: const Text("CERTIFY AS SUPERIOR", style: TextStyle(color: Colors.white)),
+          child: const Text("APPROVE 14-DAY WAIVER", style: TextStyle(color: Colors.white)),
         ),
       ]),
     ));
   }
 }
 
-// --- 4. PRODUCER PORTAL (DATA UPLINK) ---
-class ProducerDashboard extends StatelessWidget {
-  const ProducerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: warmBeige,
-      appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER COMMAND")),
-      body: ListView(padding: const EdgeInsets.all(20), children: [
-        const Text("UPLINK NEW ASSET DATA", style: TextStyle(fontWeight: FontWeight.w900, color: goldAccent)),
-        Card(child: ListTile(
-          leading: const Icon(Icons.add_a_photo, color: goldAccent),
-          title: const Text("INITIALIZE INDUCTION"),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AssetInductionScreen())),
-        )),
-      ]),
-    );
-  }
-}
-
-class AssetInductionScreen extends StatelessWidget {
-  const AssetInductionScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("ASSET INDUCTION")),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(children: [
-          const TextField(decoration: InputDecoration(labelText: "BREED", border: OutlineInputBorder())),
-          const SizedBox(height: 20),
-          const TextField(decoration: InputDecoration(labelText: "DNA TAG ID", border: OutlineInputBorder())),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 60)),
-            onPressed: () => Navigator.pop(context),
-            child: const Text("SYNC TO CEO COMMAND", style: TextStyle(color: goldAccent)),
-          ),
-        ]),
-      ),
-    );
-  }
-}
-
-// --- 5. BUYER VAULT (ISOLATED MARKETPLACE) ---
+// --- 4. BUYER DASHBOARD (WITH SUPPORT TRIGGER) ---
 class BuyerDashboard extends StatelessWidget {
   const BuyerDashboard({super.key});
   @override
@@ -191,24 +141,41 @@ class BuyerDashboard extends StatelessWidget {
       backgroundColor: warmBeige,
       appBar: AppBar(backgroundColor: warmBeige, title: const Text("BUYER VAULT")),
       body: ListView(padding: const EdgeInsets.all(20), children: [
-        const Text("HVF CERTIFIED ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
-        const SizedBox(height: 20),
-        _marketTile("ANGUS #044", "\$2,695.00"),
+        const Text("MY SECURED ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 15),
+        Card(child: ListTile(
+          title: const Text("ANGUS UNIT #V88"),
+          subtitle: const Text("Status: Installment Pending", style: TextStyle(color: Colors.red, fontSize: 10)),
+          trailing: OutlinedButton(
+            onPressed: () => _showExtensionForm(context),
+            child: const Text("REQUEST GRACE", style: TextStyle(fontSize: 10, color: Colors.brown)),
+          ),
+        )),
       ]),
     );
   }
 
-  Widget _marketTile(String name, String price) {
-    return Card(
-      child: ListTile(
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: const Row(children: [
-          Icon(Icons.verified, color: goldAccent, size: 14),
-          SizedBox(width: 5),
-          Text("CEO CERTIFIED", style: TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold)),
-        ]),
-        trailing: Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-      ),
+  void _showExtensionForm(BuildContext context) {
+    showDialog(context: context, builder: (context) => AlertDialog(
+      title: const Text("SOVEREIGN SUPPORT"),
+      content: const Text("Request a 14-day payment extension for CEO review?"),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
+        ElevatedButton(onPressed: () => Navigator.pop(context), child: const Text("SUBMIT REQUEST")),
+      ],
+    ));
+  }
+}
+
+// --- 5. PRODUCER CONSOLE (RE-HARDENED) ---
+class ProducerDashboard extends StatelessWidget {
+  const ProducerDashboard({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: warmBeige,
+      appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER COMMAND")),
+      body: const Center(child: Text("Induction Engine Active")),
     );
   }
 }
