@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V62.0 - THE IRONCLAD DOMINANCE BUILD
-// STATUS: 100% UNIFIED | CEO + BUYER + PRODUCER + VAULT
-// FOCUS: ZERO-LOSS RESTORATION & EXECUTIVE AUTHORITY
+// HVF NEXUS CORE V63.0 - PENDING ACTIONS ACTIVATION
+// FEATURE: LIVE CEO QUEUE & SME DECISION ENGINE
+// STATUS: 100% UNIFIED | IRONCLAD DOMINANCE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -84,7 +84,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- 3. THE CEO COMMAND DESK ---
+// --- 3. THE CEO COMMAND DESK & LIVE QUEUE ---
 class CEODashboard extends StatelessWidget {
   const CEODashboard({super.key});
   @override
@@ -95,25 +95,65 @@ class CEODashboard extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("SME ACTION QUEUE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-          _buildActionCard(context, "ASSET #ANGUS-77", "DNA: VERIFIED | REVIEW REQUIRED"),
-          _buildActionCard(context, "EXTENSION: BUYER-404", "14-DAY GRACE REQUEST"),
+          const Text("PENDING ACTIONS IN QUEUE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+          const SizedBox(height: 20),
+          _queueItem(context, "INDUCTION: #ANGUS-V77", "Producer: S. Smith | DNA: Pending", Icons.assignment_turned_in),
+          _queueItem(context, "INDUCTION: #BISON-K02", "Producer: R. Carter | DNA: Verified", Icons.assignment_ind),
+          _queueItem(context, "EXTENSION: BUYER-404", "14-Day Payment Grace Requested", Icons.hourglass_top),
+          const Divider(color: goldAccent, height: 40),
+          const Text("SME SYSTEM LOGS", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          const ListTile(
+            title: Text("System Ready for Settlement", style: TextStyle(color: Colors.white70, fontSize: 12)),
+            trailing: Icon(Icons.circle, color: Colors.green, size: 8),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActionCard(BuildContext context, String title, String sub) {
-    return Card(color: const Color(0xFF1E1E1E), child: ListTile(
-      leading: const Icon(Icons.gavel, color: goldAccent),
-      title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-      subtitle: Text(sub, style: const TextStyle(color: Colors.white54, fontSize: 11)),
-      onTap: () {},
-    ));
+  Widget _queueItem(BuildContext context, String title, String detail, IconData icon) {
+    return Card(
+      color: const Color(0xFF1E1E1E),
+      margin: const EdgeInsets.only(bottom: 10),
+      child: ListTile(
+        leading: Icon(icon, color: goldAccent),
+        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text(detail, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        trailing: const Icon(Icons.open_in_new, color: goldAccent, size: 16),
+        onTap: () => _showDecisionEngine(context, title, detail),
+      ),
+    );
+  }
+
+  void _showDecisionEngine(BuildContext context, String title, String detail) {
+    showModalBottomSheet(
+      backgroundColor: deepBlack,
+      context: context, 
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(30),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Text(title, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+          const SizedBox(height: 10),
+          Text(detail, style: const TextStyle(color: Colors.white70, fontSize: 12)),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900, minimumSize: const Size(double.infinity, 50)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("APPROVE & CERTIFY AS SUPERIOR", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red), minimumSize: const Size(double.infinity, 50)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("REJECT / RETURN TO PRODUCER", style: TextStyle(color: Colors.red)),
+          ),
+        ]),
+      ),
+    );
   }
 }
 
-// --- 4. THE BUYER DASHBOARD (FULLY RESTORED) ---
+// --- 4. BUYER DASHBOARD (RE-HARDENED) ---
 class BuyerDashboard extends StatelessWidget {
   const BuyerDashboard({super.key});
   @override
@@ -168,7 +208,7 @@ class _AssetsView extends StatelessWidget {
   }
 }
 
-// --- 5. THE PRODUCER CONSOLE (FULLY RESTORED) ---
+// --- 5. PRODUCER CONSOLE (RE-HARDENED) ---
 class ProducerDashboard extends StatelessWidget {
   const ProducerDashboard({super.key});
   @override
@@ -201,12 +241,12 @@ class CertificateView extends StatelessWidget {
         child: Container(
           width: 450, padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(color: const Color(0xFFFFFDF7), border: Border.all(color: certificateGold, width: 8)),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            const Text("HVF - EST. 1880", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent, fontSize: 20)),
-            const Divider(color: goldAccent),
-            const Text("CERTIFICATE OF LINEAGE", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 40),
-            const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          child: const Column(mainAxisSize: MainAxisSize.min, children: [
+            Text("HVF - EST. 1880", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent, fontSize: 20)),
+            Divider(color: goldAccent),
+            Text("CERTIFICATE OF LINEAGE", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
+            SizedBox(height: 40),
+            Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
               Text("PRODUCER", style: TextStyle(fontSize: 10)),
               Icon(Icons.shield, color: goldAccent, size: 40),
               Text("CEO J. HUMPHREY", style: TextStyle(fontSize: 10)),
