@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V35.0 - THE SOVEREIGN INTEGRATION BUILD
-// INTEGRATED: AUTH GATE, ROLE-BASED FORKING, & EXECUTIVE SUMMARIES
-// FOCUS: SECURITY, DISCLOSURE, AND INDIVIDUALIZED PORTALS
+// HVF NEXUS CORE V36.0 - THE CONVERSION FUNNEL BUILD
+// FLOW: V88 DASHBOARD -> DISCLOSURE -> SIGN-IN -> PAYMENT
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(brightness: Brightness.light),
-    home: HVFAuthGate(),
+    home: HVFCommandDashboard(), // Starts at the Dashboard to "Hook" the user
   ));
 }
 
@@ -18,116 +17,64 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- THE SOVEREIGN GATE (ROLE DETECTION) ---
-class HVFAuthGate extends StatefulWidget {
-  @override
-  _HVFAuthGateState createState() => _HVFAuthGateState();
-}
-
-class _HVFAuthGateState extends State<HVFAuthGate> {
-  final TextEditingController _idController = TextEditingController();
-
-  void _handleLogin() {
-    String id = _idController.text.toUpperCase();
-    if (id.contains("PRODUCER")) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProducerPortal()));
-    } else if (id.contains("BUYER")) {
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BuyerPortal()));
-    } else {
-      // Default Admin/CEO View
-      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProducerPortal()));
-    }
-  }
-
+// --- STAGE 1: THE V88 "HOOK" DASHBOARD ---
+class HVFCommandDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 40, letterSpacing: 8)),
-          const Text("COMMAND ACCESS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 50),
-          TextField(controller: _idController, decoration: const InputDecoration(labelText: "ACCESS ID (PRODUCER / BUYER)", border: OutlineInputBorder())),
+      appBar: AppBar(
+        title: const Text("HVF NEXUS", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900, fontSize: 30, letterSpacing: 4)),
+        backgroundColor: pureWhite, elevation: 0, centerTitle: true,
+      ),
+      body: SingleChildScrollView(
+        child: Column(children: [
+          _buildLargeHeader("SOVEREIGN COMMAND CENTER"),
+          _buildStrategicButton(context, "MARKETPLACE: BUY/SELL", Icons.swap_horizontal_circle),
+          _buildStrategicButton(context, "PRODUCER: UPLOAD ASSETS", Icons.add_a_photo),
+          _buildStrategicButton(context, "FINANCIAL COMMAND", Icons.account_balance),
           const SizedBox(height: 40),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-            onPressed: _handleLogin,
-            child: const Text("INITIALIZE COMMAND", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-          ),
+          const Text("GOAL: \$500,000 SEED CAPITAL", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
         ]),
       ),
     );
   }
-}
 
-// --- PORTAL A: PRODUCER COMMAND ---
-class ProducerPortal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("PRODUCER CONSOLE", style: TextStyle(color: deepBlack, fontWeight: FontWeight.bold)), backgroundColor: pureWhite, elevation: 0),
-      body: ListView(children: [
-        _buildSectionHeader("MANAGEMENT & MEDIA"),
-        _buildSummaryNav(context, "UPLOAD ASSET (MEDIA)", Icons.add_a_photo, 
-            "BIO-DATA DISCLOSURE: Media uploaded here is subject to direct SME audit. DNA-verified lineage required.", 
-            const PlaceholderScreen("MEDIA UPLOAD")),
-        _buildSummaryNav(context, "LICENSE SETTLEMENT", Icons.monetization_on, 
-            "ENROLLMENT: \$200.00 Monthly License Activation. Access 90/10 Sovereign Settlement path.", 
-            const PlaceholderScreen("LICENSE")),
-      ]),
-    );
+  Widget _buildLargeHeader(String title) {
+    return Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 20), color: lightGray, child: Center(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: goldAccent))));
+  }
+
+  Widget _buildStrategicButton(BuildContext context, String label, IconData icon) {
+    return Padding(padding: const EdgeInsets.all(12), child: InkWell(
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExecutiveDisclosureGate(goal: label))),
+      child: Container(height: 85, decoration: BoxDecoration(color: pureWhite, border: Border.all(color: goldAccent, width: 3), boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 8)]),
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(icon, color: goldAccent, size: 30), const SizedBox(width: 20), Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18))]),
+      ),
+    ));
   }
 }
 
-// --- PORTAL B: BUYER VAULT ---
-class BuyerPortal extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER VAULT", style: TextStyle(color: deepBlack, fontWeight: FontWeight.bold)), backgroundColor: pureWhite, elevation: 0),
-      body: ListView(children: [
-        _buildSectionHeader("MY PRIVATE COLLECTION"),
-        _buildSummaryNav(context, "VIEW MY ANIMALS", Icons.pets, 
-            "COLLECTION DISCLOSURE: View your secured, DNA-verified assets. Certificates of ownership stored here.", 
-            const PlaceholderScreen("MY ASSETS")),
-        _buildSectionHeader("MARKETPLACE"),
-        _buildSummaryNav(context, "LIVE MARKET ACCESS", Icons.shopping_cart, 
-            "MARKET DISCLOSURE: Browse SME 'Superior' Grade local assets. Direct-to-farm settlement active.", 
-            const PlaceholderScreen("MARKET")),
-      ]),
-    );
-  }
-}
-
-// --- EXECUTIVE SUMMARY INTERSTITIAL GATE ---
-class ExecutiveSummaryGate extends StatelessWidget {
-  final String title;
-  final String summary;
-  final Widget target;
-  ExecutiveSummaryGate({required this.title, required this.summary, required this.target});
+// --- STAGE 2: THE EXECUTIVE DISCLOSURE ---
+class ExecutiveDisclosureGate extends StatelessWidget {
+  final String goal;
+  ExecutiveDisclosureGate({required this.goal});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: lightGray,
-      appBar: AppBar(title: Text(title), backgroundColor: lightGray, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.description, color: goldAccent, size: 60),
-          const SizedBox(height: 20),
-          const Text("EXECUTIVE SUMMARY", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
+          const Icon(Icons.shield, color: goldAccent, size: 60),
+          const Text("EXECUTIVE DISCLOSURE", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
-          Text(summary, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, height: 1.5)),
+          Text("Accessing $goal requires SME authorization. By proceeding, you acknowledge the 90/10 Sovereign Settlement and HVF Superior Grading standards.", textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
           const Spacer(),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => target)),
-            child: const Text("PROCEED TO COMMAND", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignInGate())),
+            child: const Text("I AUTHORIZE & PROCEED", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -135,22 +82,65 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- SHARED UI TOOLS ---
-Widget _buildSectionHeader(String title) {
-  return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
+// --- STAGE 3: THE SIGN-IN ---
+class SignInGate extends StatelessWidget {
+  final TextEditingController _controller = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: pureWhite,
+      appBar: AppBar(title: const Text("IDENTITY VERIFICATION"), backgroundColor: pureWhite, elevation: 0),
+      body: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(children: [
+          const Text("SELECT YOUR ROLE", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent)),
+          const SizedBox(height: 30),
+          TextField(controller: _controller, decoration: const InputDecoration(labelText: "ACCESS ID (PRODUCER / BUYER)", border: OutlineInputBorder())),
+          const Spacer(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(role: _controller.text.toUpperCase()))),
+            child: const Text("CONFIRM ROLE", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
-Widget _buildSummaryNav(BuildContext context, String label, IconData icon, String summary, Widget target) {
-  return ListTile(
-    leading: Icon(icon, color: goldAccent),
-    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-    trailing: const Icon(Icons.chevron_right),
-    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExecutiveSummaryGate(title: label, summary: summary, target: target))),
-  );
-}
+// --- STAGE 4: THE BUY-IN (PAYMENT) ---
+class PaymentScreen extends StatelessWidget {
+  final String role;
+  PaymentScreen({required this.role});
 
-class PlaceholderScreen extends StatelessWidget {
-  final String t;
-  const PlaceholderScreen(this.t, {super.key});
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(t)), body: Center(child: Text("$t SECURE")));
+  @override
+  Widget build(BuildContext context) {
+    String fee = role.contains("PRODUCER") ? "\$200.00" : "\$25.00";
+
+    return Scaffold(
+      backgroundColor: pureWhite,
+      appBar: AppBar(title: Text("$role ACTIVATION"), backgroundColor: pureWhite),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(children: [
+          Text("LICENSE ACTIVATION FEE: $fee", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: goldAccent)),
+          const SizedBox(height: 40),
+          const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(decoration: InputDecoration(labelText: "CREDIT CARD NUMBER", border: OutlineInputBorder())),
+          const Spacer(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
+            onPressed: () {
+              // Final confirmation logic here
+            },
+            child: const Text("AUTHORIZE PAYMENT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 20)),
+          ),
+          const SizedBox(height: 10),
+          const Text("SECURE SOVEREIGN SETTLEMENT", style: TextStyle(fontSize: 10, color: Colors.black38)),
+        ]),
+      ),
+    );
+  }
 }
