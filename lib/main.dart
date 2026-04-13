@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V40.0 - THE BUYER REVENUE ENGINE
-// INTEGRATED: CREST, ROLE-FORK, BUYER MARKETPLACE, & 90/10 SETTLEMENT UI
-// FOCUS: ACTIVATING THE BUYER REVENUE STREAM
+// HVF NEXUS CORE V41.0 - THE PROPRIETARY SETTLEMENT BUILD
+// UPDATED: INTERNALIZED 90/10 LOGIC (HIDDEN FROM BUYER)
+// FEATURE: SOVEREIGN GUARANTEE & SIMPLIFIED CHECKOUT
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFC5A059)),
+    theme: ThemeData(brightness: Brightness.light),
     home: HVFCrestSignIn(),
   ));
 }
@@ -18,7 +18,7 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- STAGE 1: THE HUMPHREY CREST & OFFICIAL SIGN-IN ---
+// --- STAGE 1: THE HUMPHREY CREST ---
 class HVFCrestSignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,7 +45,7 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
-// --- STAGE 2: THE SOVEREIGN FORK ---
+// --- STAGE 2: ROLE SELECTION ---
 class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -82,7 +82,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- STAGE 3: THE MANDATORY SUMMARY GATE ---
+// --- STAGE 3: EXECUTIVE BRIEFING ---
 class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final Widget target;
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Accessing the Sovereign Marketplace requires acknowledgment of the 90/10 Settlement and SME DNA-Verification protocols.",
+            "Accessing the Sovereign Marketplace requires acknowledgment of HVF Superior Grading standards and secure DNA-verification protocols.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,20 +114,17 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: THE BUYER REVENUE DASHBOARD ---
+// --- STAGE 4: THE BUYER EXPERIENCE ---
 class BuyerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER VAULT & MARKET"), backgroundColor: pureWhite, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
+      appBar: AppBar(title: const Text("BUYER VAULT"), backgroundColor: pureWhite, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
       body: ListView(children: [
-        _buildSectionHeader("ACTIVE SUPERIOR MARKET"),
-        _buildMarketItem(context, "ANGUS UNIT #044", "\$2,450.00", "DNA VERIFIED"),
-        _buildMarketItem(context, "HEREFORD UNIT #102", "\$2,100.00", "SME GRADE: SUPERIOR"),
-        _buildSectionHeader("MY PRIVATE VAULT"),
-        const ListTile(leading: Icon(Icons.lock, color: goldAccent), title: Text("SECURED ASSETS (3)", style: TextStyle(fontWeight: FontWeight.bold))),
-        const ListTile(leading: Icon(Icons.verified, color: goldAccent), title: Text("DNA CERTIFICATES", style: TextStyle(fontWeight: FontWeight.bold))),
+        _buildSectionHeader("SUPERIOR MARKETPLACE"),
+        _buildMarketItem(context, "ANGUS UNIT #044", "\$2,695.00", "DNA VERIFIED | SUPERIOR"),
+        _buildMarketItem(context, "HEREFORD UNIT #102", "\$2,310.00", "SME GRADE: SUPERIOR"),
       ]),
     );
   }
@@ -142,40 +139,42 @@ class BuyerDashboard extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(border: Border.all(color: goldAccent, width: 2)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-          const Icon(Icons.qr_code_2, color: deepBlack),
-        ]),
-        Text(status, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+        Text(name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+        Text(status, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 12)),
         const Divider(height: 30),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(price, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: Colors.green)),
+          Text(price, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack),
-            onPressed: () => _showSettlementSheet(context, price),
-            child: const Text("EXECUTE BUY", style: TextStyle(color: goldAccent)),
+            onPressed: () => _showCheckoutSheet(context, name, price),
+            child: const Text("ACQUIRE ASSET", style: TextStyle(color: goldAccent)),
           )
         ]),
       ]),
     );
   }
 
-  void _showSettlementSheet(BuildContext context, String price) {
+  void _showCheckoutSheet(BuildContext context, String name, String price) {
     showModalBottomSheet(context: context, builder: (context) => Container(
       padding: const EdgeInsets.all(30),
-      height: 300,
+      height: 350,
       child: Column(children: [
-        const Text("90/10 SOVEREIGN SETTLEMENT", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+        const Text("SECURE ACQUISITION", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+        const SizedBox(height: 10),
+        Text("ASSET: $name", style: const TextStyle(color: Colors.black54)),
         const Divider(),
         const SizedBox(height: 20),
-        const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("Producer Payout (90%)"), Text("\$2,205.00", style: TextStyle(fontWeight: FontWeight.bold))]),
-        const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text("HVF Platform Fee (10%)"), Text("\$245.00", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent))]),
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("Total Purchase Price"), Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))]),
+        const SizedBox(height: 10),
+        const Text("Price includes DNA-Verification and Sovereign Guarantee.", style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
         const Spacer(),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 60)),
+          style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 60)),
           onPressed: () => Navigator.pop(context),
-          child: const Text("CONFIRM PURCHASE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-        )
+          child: const Text("CONFIRM SETTLEMENT", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
+        ),
+        const SizedBox(height: 10),
+        const Icon(Icons.lock_outline, size: 14, color: Colors.black26),
       ]),
     ));
   }
