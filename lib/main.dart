@@ -1,25 +1,26 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V50.0 - THE LEGAL ENFORCEMENT BUILD
-// FEATURE: DIGITAL SIGNATURE GATES FOR PRODUCERS & BUYERS
-// FOCUS: PRESERVING ALL PREVIOUS OPERATIONAL & MERCHANT LOGIC
+// HVF NEXUS CORE V51.0 - THE BUYER EXPERIENCE & SOVEREIGN RELATIONSHIP
+// FEATURE: FULL LEGAL SCROLL, WATERMARKED "WARM" UI, MULTI-TAB RELATIONSHIP MGMT
+// FOCUS: TRANSITION FROM CRISP COMMAND TO INCLUSIVE LEGACY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
-    theme: ThemeData(brightness: Brightness.light),
-    home: HVFCrestSignIn(),
+    theme: ThemeData(brightness: Brightness.light, primaryColor: const Color(0xFFC5A059)),
+    home: const HVFCrestSignIn(),
   ));
 }
 
 const Color goldAccent = Color(0xFFC5A059); 
 const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
-const Color lightGray = Color(0xFFF5F5F5);
+const Color warmBeige = Color(0xFFF9F6F0); // For the "Warm" inclusive transition
 
-// --- STAGE 1: THE HUMPHREY CREST ---
+// --- STAGE 1: PLAIN CRISP SIGN-IN ---
 class HVFCrestSignIn extends StatelessWidget {
+  const HVFCrestSignIn({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,12 +33,12 @@ class HVFCrestSignIn extends StatelessWidget {
           const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 6)),
           const Text("COMMAND ACCESS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           const SizedBox(height: 60),
-          const TextField(decoration: InputDecoration(labelText: "CEO ACCESS KEY", border: OutlineInputBorder())),
+          const TextField(decoration: InputDecoration(labelText: "BUYER ID", border: OutlineInputBorder())),
           const SizedBox(height: 40),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RoleSelectionScreen())),
-            child: const Text("INITIALIZE SYSTEM", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BuyerLegalGate())),
+            child: const Text("INITIALIZE SESSION", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -45,180 +46,151 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
-// --- STAGE 2: ROLE SELECTION ---
-class RoleSelectionScreen extends StatelessWidget {
+// --- STAGE 2: FULL LEGAL DOCUMENT GATE ---
+class BuyerLegalGate extends StatelessWidget {
+  const BuyerLegalGate({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("SELECT COMMAND ROLE"), backgroundColor: pureWhite, elevation: 0, automaticallyImplyLeading: false),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: [
-          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const ProducerAgreementScreen()),
-          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const BuyerAgreementScreen()),
-          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, const AgentDashboard()),
-        ]),
-      ),
+      appBar: AppBar(title: const Text("BUYER MASTER AGREEMENT"), backgroundColor: pureWhite, elevation: 0),
+      body: Column(children: [
+        Expanded(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(30),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text("HVF SOVEREIGN BUYER TERMS & CONDITIONS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+              const SizedBox(height: 20),
+              const Text(
+                "Article I: SME Standards Acknowledgment\nThe Buyer acknowledges that all livestock available through the Humphrey Virtual Farms Nexus is graded under strict SME (Subject Matter Expert) protocols. The 'Superior' grade represents the pinnacle of genetic and physical health standards...\n\n"
+                "Article II: The 90/10 Protocol\nBuyer understands that their purchase facilitates a direct 90% payout to the Producer, maintaining the economic sovereignty of the farming community...\n\n"
+                "Article III: Subscription Liability\nThe \$25/mo fee covers the digital vault, lineage tracking, and real-time sponsorship access. Non-payment results in vault suspension...",
+                style: TextStyle(fontSize: 14, height: 1.6),
+              ),
+              const SizedBox(height: 40),
+              const Divider(thickness: 2),
+              const Text("DIGITAL SIGNATURE", style: TextStyle(fontWeight: FontWeight.bold)),
+              const TextField(decoration: InputDecoration(hintText: "Enter Full Legal Name", border: UnderlineInputBorder())),
+              const SizedBox(height: 20),
+            ]),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(30),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BuyerMainDashboard())),
+            child: const Text("EXECUTE & ENTER VAULT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          ),
+        )
+      ]),
     );
   }
+}
 
-  Widget _buildRoleButton(BuildContext context, String title, IconData icon, Widget target) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: InkWell(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
-        child: Container(
-          height: 100,
-          decoration: BoxDecoration(color: lightGray, border: Border.all(color: goldAccent, width: 2)),
-          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            Icon(icon, color: goldAccent, size: 30),
-            const SizedBox(width: 20),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-          ]),
+// --- STAGE 3: WARM INCLUSIVE DASHBOARD (WATERMARKED) ---
+class BuyerMainDashboard extends StatelessWidget {
+  const BuyerMainDashboard({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        backgroundColor: warmBeige,
+        appBar: AppBar(
+          backgroundColor: warmBeige,
+          elevation: 0,
+          title: const Text("BUYER COMMAND", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900)),
+          bottom: const TabBar(
+            isScrollable: true,
+            labelColor: goldAccent,
+            unselectedLabelColor: Colors.black54,
+            indicatorColor: goldAccent,
+            tabs: [
+              Tab(text: "LEGAL & CONCERNS", icon: Icon(Icons.gavel)),
+              Tab(text: "SME STANDARDS", icon: Icon(Icons.verified)),
+              Tab(text: "MARKETPLACE", icon: Icon(Icons.shopping_cart)),
+              Tab(text: "MY ASSETS", icon: Icon(Icons.inventory)),
+            ],
+          ),
+        ),
+        body: Stack(
+          children: [
+            // THE CRISP HUMPHREY CREST WATERMARK
+            Center(
+              child: Opacity(
+                opacity: 0.05,
+                child: Icon(Icons.shield_rounded, size: MediaQuery.of(context).size.width * 0.8, color: goldAccent),
+              ),
+            ),
+            // THE TAB CONTENT
+            const TabBarView(
+              children: [
+                _LegalAndConcernsTab(),
+                _SMEStandardsTab(),
+                _MarketplaceTab(),
+                _MyAssetsTab(),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 }
 
-// --- LEGAL WRAPPERS: DIGITAL SIGNATURE GATES ---
+// --- TAB SUB-VIEWS ---
 
-class ProducerAgreementScreen extends StatelessWidget {
-  const ProducerAgreementScreen({super.key});
+class _LegalAndConcernsTab extends StatelessWidget {
+  const _LegalAndConcernsTab();
   @override
   Widget build(BuildContext context) {
-    return _buildAgreementTemplate(
-      context, 
-      "PRODUCER OPERATING AGREEMENT", 
-      "I hereby agree to the 90/10 Sovereign Settlement protocol, DNA-verification requirements for all 'Superior' assets, and the \$200 monthly licensing fee.", 
-      const ProducerDashboard()
-    );
-  }
-}
-
-class BuyerAgreementScreen extends StatelessWidget {
-  const BuyerAgreementScreen({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return _buildAgreementTemplate(
-      context, 
-      "BUYER ACCESS AGREEMENT", 
-      "I hereby acknowledge that all assets purchased through HVF Nexus are SME-certified. I agree to the \$25 monthly subscription for secure vault access.", 
-      const BuyerDashboard()
-    );
-  }
-}
-
-Widget _buildAgreementTemplate(BuildContext context, String title, String terms, Widget next) {
-  return Scaffold(
-    backgroundColor: pureWhite,
-    body: Padding(
-      padding: const EdgeInsets.all(30),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.gavel, color: goldAccent, size: 50),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-        const Divider(color: goldAccent, thickness: 2, height: 40),
-        Text(terms, textAlign: TextAlign.center, style: const TextStyle(fontSize: 16, height: 1.5)),
-        const SizedBox(height: 50),
-        const TextField(decoration: InputDecoration(labelText: "DIGITAL SIGNATURE (FULL LEGAL NAME)", border: OutlineInputBorder())),
-        const Spacer(),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
-          onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => next)),
-          child: const Text("EXECUTE & PROCEED", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-        ),
-      ]),
-    ),
-  );
-}
-
-// --- PRESERVED OPERATIONS & DASHBOARDS ---
-
-class ProducerDashboard extends StatelessWidget {
-  const ProducerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("PRODUCER COMMAND")),
-      body: ListView(children: [
-        _buildSectionHeader("MERCHANT STATUS"),
-        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY"), trailing: Icon(Icons.check_circle, color: goldAccent)),
-        _buildSectionHeader("ACTIVATION"),
-        _buildPaymentNav(context, "ACTIVATE PRODUCER LICENSE", "\$200.00"),
-      ]),
-    );
-  }
-}
-
-class BuyerDashboard extends StatelessWidget {
-  const BuyerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("BUYER VAULT")),
-      body: ListView(children: [
-        _buildSectionHeader("MERCHANT STATUS"),
-        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY"), trailing: Icon(Icons.check_circle, color: goldAccent)),
-        _buildSectionHeader("ACTIVATION"),
-        _buildPaymentNav(context, "ACTIVATE BUYER SUBSCRIPTION", "\$25.00"),
-      ]),
-    );
-  }
-}
-
-class AgentDashboard extends StatelessWidget {
-  const AgentDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("AGENT VELOCITY")),
-      body: ListView(children: [
-        _buildSectionHeader("REVENUE TRACKER"),
-        const ListTile(title: Text("SEED PROGRESS"), subtitle: Text("\$58,000 / \$500,000"), trailing: Icon(Icons.trending_up, color: Colors.green)),
-      ]),
-    );
-  }
-}
-
-// --- PRESERVED MERCHANT GATEWAY ---
-
-Widget _buildPaymentNav(BuildContext context, String label, String fee) {
-  return ListTile(
-    leading: const Icon(Icons.account_balance, color: goldAccent),
-    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-    onTap: () => _initiateStripePayment(context, label, fee),
-  );
-}
-
-void _initiateStripePayment(BuildContext context, String title, String fee) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(30),
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Column(children: [
-        const Icon(Icons.security, color: Colors.blue, size: 40),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Text("LEGAL DOCUMENTS & RECOURSE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        const ListTile(leading: Icon(Icons.file_copy, color: goldAccent), title: Text("View Signed Master Agreement")),
+        const ListTile(leading: Icon(Icons.privacy_tip, color: goldAccent), title: Text("Privacy & Sovereignty Policy")),
         const Divider(),
-        const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
-        const SizedBox(height: 15),
-        const TextField(decoration: InputDecoration(labelText: "CARD NUMBER", border: OutlineInputBorder(), prefixIcon: Icon(Icons.credit_card))),
-        const Spacer(),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-          onPressed: () {
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("STRIPE: PAYMENT CAPTURED FOR $fee")));
-          },
-          child: const Text("PAY WITH STRIPE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-        ),
-      ]),
-    ),
-  );
+        const Text("FILE CONCERNS / COMPLAINTS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+        const TextField(maxLines: 4, decoration: InputDecoration(hintText: "Enter your concern for SME Review...", border: OutlineInputBorder())),
+        const SizedBox(height: 10),
+        ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: deepBlack), child: const Text("SUBMIT TO CEO", style: TextStyle(color: goldAccent))),
+      ],
+    );
+  }
 }
 
-Widget _buildSectionHeader(String title) {
-  return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
+class _SMEStandardsTab extends StatelessWidget {
+  const _SMEStandardsTab();
+  @override
+  Widget build(BuildContext context) {
+    return const Padding(
+      padding: const EdgeInsets.all(20),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text("PRODUCER EXCELLENCE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        SizedBox(height: 10),
+        Text("Acknowledging the exceptional standards upheld by the Producer. Every animal under the HVF banner meets the following:"),
+        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("Full Lineage DNA Verification")),
+        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("Sustainable Ranching Protocols")),
+        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("SME-Grade Health Certifications")),
+      ]),
+    );
+  }
+}
+
+class _MarketplaceTab extends StatelessWidget {
+  const _MarketplaceTab();
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("ANIMALS AVAILABLE FOR SPONSORSHIP OR PURCHASE", style: TextStyle(fontWeight: FontWeight.bold)));
+  }
+}
+
+class _MyAssetsTab extends StatelessWidget {
+  const _MyAssetsTab();
+  @override
+  Widget build(BuildContext context) {
+    return const Center(child: Text("VIEW MY ANIMALS / VAULT", style: TextStyle(fontWeight: FontWeight.bold)));
+  }
 }
