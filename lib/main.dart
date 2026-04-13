@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V44.0 - THE DUAL-PORTAL COMMAND
-// INTEGRATED: BUYER VAULT, PRODUCER CONSOLE, & SETTLEMENT GATES
-// FOCUS: DUAL-STREAM REVENUE CAPTURE ($200 / $25)
+// HVF NEXUS CORE V45.0 - THE LICENSING AGENT OFFENSIVE
+// FEATURE: AGENT RECRUITMENT TRACKER & CITY SATURATION
+// FOCUS: REAL-TIME TRACKING OF $500K SEED CAPITAL GOAL
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -55,9 +55,9 @@ class RoleSelectionScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
-          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, ProducerDashboard()),
-          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, BuyerDashboard()),
-          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, const PlaceholderScreen("AGENT CONSOLE")),
+          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, AgentDashboard()),
+          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const PlaceholderScreen("PRODUCER")),
+          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const PlaceholderScreen("BUYER")),
         ]),
       ),
     );
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Accessing the Nexus requires acknowledgment of HVF Superior Grading standards and secure DNA-verification protocols.",
+            "Licensing Agents are authorized to execute Producer and Buyer enrollments. All settlements must adhere to the 90/10 Sovereign protocol.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,54 +114,46 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4A: PRODUCER CONSOLE ---
-class ProducerDashboard extends StatelessWidget {
+// --- STAGE 4: LICENSING AGENT CONSOLE ---
+class AgentDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("PRODUCER CONSOLE"), backgroundColor: pureWhite, elevation: 0),
+      appBar: AppBar(title: const Text("AGENT TOUR CONSOLE"), backgroundColor: pureWhite, elevation: 0),
       body: ListView(children: [
-        _buildSectionHeader("INVENTORY COMMAND"),
-        _buildNavTile(context, "UPLOAD NEW ASSET", Icons.add_a_photo, const PlaceholderScreen("UPLOAD")),
-        _buildNavTile(context, "GRADING TRACKER", Icons.analytics, const PlaceholderScreen("TRACKER")),
-        _buildSectionHeader("FINANCIALS"),
-        _buildNavTile(context, "LICENSE ACTIVATION (\$200)", Icons.credit_card, const PlaceholderScreen("PAYMENT")),
+        _buildSectionHeader("40-CITY RECRUITMENT TRACKER"),
+        _buildCityTile("JOHNSTON COUNTY, OK", 145, 300), // Real-time numbers
+        _buildCityTile("MARSHALL COUNTY, OK", 88, 150),
+        _buildCityTile("LOVE COUNTY, OK", 12, 40),
+        const SizedBox(height: 20),
+        _buildSectionHeader("SEED CAPITAL REVENUE"),
+        Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text("CURRENT REVENUE CAPTURE", style: TextStyle(fontWeight: FontWeight.bold)),
+            const Text("\$58,000.00", style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.green)),
+            const Text("TARGET SEED GOAL: \$500,000.00", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 10),
+            LinearProgressIndicator(value: 58000/500000, color: Colors.green, backgroundColor: lightGray, minHeight: 12),
+          ]),
+        ),
       ]),
     );
   }
-}
 
-// --- STAGE 4B: BUYER VAULT ---
-class BuyerDashboard extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER VAULT"), backgroundColor: pureWhite, elevation: 0),
-      body: ListView(children: [
-        _buildSectionHeader("SUPERIOR MARKETPLACE"),
-        _buildNavTile(context, "BROWSE LIVE MARKET", Icons.shopping_cart, const PlaceholderScreen("MARKET")),
-        _buildSectionHeader("PRIVATE COLLECTION"),
-        _buildNavTile(context, "MY SECURED ASSETS", Icons.lock, const PlaceholderScreen("VAULT")),
-        _buildNavTile(context, "DNA CERTIFICATES", Icons.verified, const PlaceholderScreen("DNA")),
-      ]),
+  Widget _buildSectionHeader(String title) {
+    return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
+  }
+
+  Widget _buildCityTile(String city, int producers, int buyers) {
+    return ListTile(
+      title: Text(city, style: const TextStyle(fontWeight: FontWeight.bold)),
+      subtitle: Text("Producers: $producers | Buyers: $buyers"),
+      trailing: const Icon(Icons.location_on, color: goldAccent),
+      onTap: () {}, // Future city-specific drill-down
     );
   }
-}
-
-// --- SHARED UI HELPERS ---
-Widget _buildSectionHeader(String title) {
-  return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
-}
-
-Widget _buildNavTile(BuildContext context, String label, IconData icon, Widget target) {
-  return ListTile(
-    leading: Icon(icon, color: goldAccent),
-    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-    trailing: const Icon(Icons.chevron_right),
-    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
-  );
 }
 
 class PlaceholderScreen extends StatelessWidget {
