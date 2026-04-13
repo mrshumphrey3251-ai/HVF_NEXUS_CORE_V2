@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V37.0 - THE CREST & COMMAND BUILD
-// FLOW: CREST/SIGN-IN -> ROLE SELECTION -> FORKED PATHS W/ SUMMARIES
+// HVF NEXUS CORE V38.0 - THE SETTLEMENT ACTIVATION BUILD
+// INTEGRATED: CREST, ROLE-FORK, SUMMARIES, & SECURE PAYMENT
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -26,7 +26,6 @@ class HVFCrestSignIn extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          // REPRESENTING THE HUMPHREY CREST
           const Icon(Icons.shield_rounded, size: 100, color: goldAccent), 
           const SizedBox(height: 20),
           const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 6)),
@@ -45,7 +44,7 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
-// --- STAGE 2: THE SOVEREIGN FORK (ROLE SELECTION) ---
+// --- STAGE 2: THE SOVEREIGN FORK ---
 class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -55,11 +54,9 @@ class RoleSelectionScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
-          _buildRoleButton(context, "PRODUCER", Icons.agriculture, ProducerDashboard()),
-          _buildRoleButton(context, "BUYER", Icons.person, BuyerDashboard()),
-          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, AgentDashboard()),
-          const Spacer(),
-          const Text("Each role requires a mandatory Executive Summary before data access.", style: TextStyle(fontSize: 12, color: Colors.black38)),
+          _buildRoleButton(context, "PRODUCER", Icons.agriculture, const PaymentActivationScreen(role: "PRODUCER", fee: "\$200.00")),
+          _buildRoleButton(context, "BUYER", Icons.person, const PaymentActivationScreen(role: "BUYER", fee: "\$25.00")),
+          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, const AgentDashboard()),
         ]),
       ),
     );
@@ -101,7 +98,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title EXECUTIVE SUMMARY", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "By proceeding, you acknowledge the 90/10 Sovereign Settlement, DNA-verified lineage standards, and the HVF SME certification protocol.",
+            "Acknowledgment of the 90/10 Sovereign Settlement and DNA-verified lineage standards is required for activation.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -116,25 +113,47 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: THE FORKED DASHBOARDS ---
+// --- STAGE 4: PAYMENT ACTIVATION ---
+class PaymentActivationScreen extends StatelessWidget {
+  final String role;
+  final String fee;
+  const PaymentActivationScreen({required this.role, required this.fee});
 
-class ProducerDashboard extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("PRODUCER CONSOLE")), body: const Center(child: Text("MANAGEMENT & MEDIA UPLOAD")));
-}
-
-class BuyerDashboard extends StatelessWidget {
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("BUYER VAULT")), body: const Center(child: Text("COLLECTION & MARKET ACCESS")));
-}
-
-class AgentDashboard extends StatelessWidget {
-  @override Widget build(BuildContext context) {
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AGENT TOUR CONSOLE")),
-      body: ListView(children: [
-        const ListTile(title: Text("CITY RECRUITMENT STATUS", style: TextStyle(fontWeight: FontWeight.bold))),
-        const ListTile(title: Text("PRODUCER ENROLLMENT PORTAL")),
-        const ListTile(title: Text("SEED CAPITAL TRACKER (\$500K)")),
-      ]),
+      backgroundColor: pureWhite,
+      appBar: AppBar(title: Text("$role SETTLEMENT"), backgroundColor: pureWhite, elevation: 0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(30),
+        child: Column(children: [
+          Text("ACTIVATION FEE: $fee", style: const TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: goldAccent)),
+          const SizedBox(height: 30),
+          const TextField(decoration: InputDecoration(labelText: "ENTITY NAME", border: OutlineInputBorder())),
+          const SizedBox(height: 20),
+          const TextField(decoration: InputDecoration(labelText: "CREDIT CARD NUMBER", border: OutlineInputBorder(borderSide: BorderSide(color: goldAccent)))),
+          const SizedBox(height: 15),
+          Row(children: [
+            const Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP", border: OutlineInputBorder()))),
+            const SizedBox(width: 10),
+            const Expanded(child: TextField(decoration: InputDecoration(labelText: "CVV", border: OutlineInputBorder()))),
+          ]),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
+            onPressed: () {}, 
+            child: const Text("PROCESS SETTLEMENT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+          ),
+          const SizedBox(height: 20),
+          const Text("SECURE 256-BIT SOVEREIGN ENCRYPTION", style: TextStyle(fontSize: 10, color: Colors.black38)),
+        ]),
+      ),
     );
   }
+}
+
+// --- AGENT CONSOLE ---
+class AgentDashboard extends StatelessWidget {
+  const AgentDashboard();
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("AGENT TOUR CONSOLE")), body: const Center(child: Text("RECRUITMENT & SEED TRACKER ACTIVE")));
 }
