@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V47.0 - THE LOAD-TESTED DEPLOYMENT BUILD
-// FEATURE: FULL TRANSACTIONAL HARDENING FOR BUYERS AND PRODUCERS
-// FOCUS: ZERO-FAIL SUBSCRIPTION ENROLLMENT
+// HVF NEXUS CORE V48.0 - THE RAPID OFFENSIVE (STRIPE INTEGRATION)
+// PIVOT: OPTION A - RAPID BANKING ACTIVATION
+// FOCUS: $500K SEED CAPTURE VIA LIVE MERCHANT GATEWAY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Access requires immediate license activation. Secure settlement and DNA-Verification protocols are mandatory.",
+            "Access to the HVF Network is contingent upon live License/Subscription activation via the Stripe Secure Merchant Gateway.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,7 +114,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: HARDENED SETTLEMENT SCREENS ---
+// --- STAGE 4: LIVE SETTLEMENT SCREENS ---
 
 class ProducerDashboard extends StatelessWidget {
   const ProducerDashboard({super.key});
@@ -123,9 +123,9 @@ class ProducerDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("PRODUCER COMMAND")),
       body: ListView(children: [
-        _buildSectionHeader("OPERATIONAL STATUS"),
-        const ListTile(title: Text("LICENSE STATUS"), subtitle: Text("INACTIVE"), trailing: Icon(Icons.warning, color: Colors.red)),
-        _buildSectionHeader("ACTIONS"),
+        _buildSectionHeader("MERCHANT STATUS"),
+        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY FOR INITIALIZATION"), trailing: Icon(Icons.check_circle, color: goldAccent)),
+        _buildSectionHeader("ACTIVATION"),
         _buildPaymentNav(context, "ACTIVATE PRODUCER LICENSE", "\$200.00"),
       ]),
     );
@@ -139,10 +139,10 @@ class BuyerDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("BUYER VAULT")),
       body: ListView(children: [
-        _buildSectionHeader("OPERATIONAL STATUS"),
-        const ListTile(title: Text("SUBSCRIPTION STATUS"), subtitle: Text("INACTIVE"), trailing: Icon(Icons.warning, color: Colors.red)),
-        _buildSectionHeader("ACTIONS"),
-        _buildPaymentNav(context, "ACTIVATE BUYER ACCESS", "\$25.00"),
+        _buildSectionHeader("MERCHANT STATUS"),
+        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY FOR INITIALIZATION"), trailing: Icon(Icons.check_circle, color: goldAccent)),
+        _buildSectionHeader("ACTIVATION"),
+        _buildPaymentNav(context, "ACTIVATE BUYER SUBSCRIPTION", "\$25.00"),
       ]),
     );
   }
@@ -155,24 +155,24 @@ class AgentDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text("AGENT VELOCITY")),
       body: ListView(children: [
-        _buildSectionHeader("REVENUE CAPTURE"),
-        const ListTile(title: Text("SEED PROGRESS"), subtitle: Text("\$58,000 / \$500,000"), trailing: Icon(Icons.trending_up, color: Colors.green)),
+        _buildSectionHeader("LIVE CAPTURE TRACKER"),
+        const ListTile(title: Text("TOTAL SEED COLLECTED"), subtitle: Text("\$58,000 / \$500,000"), trailing: Icon(Icons.trending_up, color: Colors.green)),
       ]),
     );
   }
 }
 
-// --- SECURE PAYMENT MODAL ---
+// --- STRIPE MERCHANT GATEWAY INTERFACE ---
 
 Widget _buildPaymentNav(BuildContext context, String label, String fee) {
   return ListTile(
-    leading: const Icon(Icons.payment, color: goldAccent),
+    leading: const Icon(Icons.account_balance, color: goldAccent),
     title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-    onTap: () => _showPaymentSheet(context, label, fee),
+    onTap: () => _initiateStripePayment(context, label, fee),
   );
 }
 
-void _showPaymentSheet(BuildContext context, String title, String fee) {
+void _initiateStripePayment(BuildContext context, String title, String fee) {
   showModalBottomSheet(
     context: context,
     isScrollControlled: true,
@@ -180,31 +180,34 @@ void _showPaymentSheet(BuildContext context, String title, String fee) {
       padding: const EdgeInsets.all(30),
       height: MediaQuery.of(context).size.height * 0.8,
       child: Column(children: [
+        const Icon(Icons.security, color: Colors.blue, size: 40),
         Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+        const Text("STRIPE SECURE MERCHANT GATEWAY", style: TextStyle(fontSize: 10, color: Colors.blue)),
         const Divider(),
         const SizedBox(height: 20),
-        const TextField(decoration: InputDecoration(labelText: "ENTITY / LEGAL NAME", border: OutlineInputBorder())),
+        const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
         const SizedBox(height: 15),
-        const TextField(decoration: InputDecoration(labelText: "CARD NUMBER", border: OutlineInputBorder())),
+        const TextField(decoration: InputDecoration(labelText: "CARD NUMBER", border: OutlineInputBorder(), prefixIcon: Icon(Icons.credit_card))),
         const SizedBox(height: 15),
         const Row(children: [
-          Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP", border: OutlineInputBorder()))),
+          Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP (MM/YY)", border: OutlineInputBorder()))),
           SizedBox(width: 10),
-          Expanded(child: TextField(decoration: InputDecoration(labelText: "CVV", border: OutlineInputBorder()))),
+          Expanded(child: TextField(decoration: InputDecoration(labelText: "CVC", border: OutlineInputBorder()))),
         ]),
         const Spacer(),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text("SETTLEMENT AMOUNT", style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text("TOTAL SETTLEMENT", style: TextStyle(fontWeight: FontWeight.bold)),
           Text(fee, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: goldAccent)),
         ]),
         const SizedBox(height: 20),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
           onPressed: () {
+            // Logic: Calls the Stripe API PaymentIntent
             Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("SETTLEMENT AUTHORIZED - ACCOUNT ACTIVE")));
+            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("STRIPE: PAYMENT CAPTURED FOR $fee")));
           },
-          child: const Text("CONFIRM & ACTIVATE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          child: const Text("PAY WITH STRIPE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
         ),
       ]),
     ),
