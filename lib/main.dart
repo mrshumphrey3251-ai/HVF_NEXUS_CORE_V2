@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V36.0 - THE CONVERSION FUNNEL BUILD
-// FLOW: V88 DASHBOARD -> DISCLOSURE -> SIGN-IN -> PAYMENT
+// HVF NEXUS CORE V37.0 - THE CREST & COMMAND BUILD
+// FLOW: CREST/SIGN-IN -> ROLE SELECTION -> FORKED PATHS W/ SUMMARIES
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
   runApp(MaterialApp(
     debugShowCheckedModeBanner: false,
     theme: ThemeData(brightness: Brightness.light),
-    home: HVFCommandDashboard(), // Starts at the Dashboard to "Hook" the user
+    home: HVFCrestSignIn(),
   ));
 }
 
@@ -17,64 +17,98 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- STAGE 1: THE V88 "HOOK" DASHBOARD ---
-class HVFCommandDashboard extends StatelessWidget {
+// --- STAGE 1: THE HUMPHREY CREST & OFFICIAL SIGN-IN ---
+class HVFCrestSignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(
-        title: const Text("HVF NEXUS", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900, fontSize: 30, letterSpacing: 4)),
-        backgroundColor: pureWhite, elevation: 0, centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Column(children: [
-          _buildLargeHeader("SOVEREIGN COMMAND CENTER"),
-          _buildStrategicButton(context, "MARKETPLACE: BUY/SELL", Icons.swap_horizontal_circle),
-          _buildStrategicButton(context, "PRODUCER: UPLOAD ASSETS", Icons.add_a_photo),
-          _buildStrategicButton(context, "FINANCIAL COMMAND", Icons.account_balance),
+      body: Padding(
+        padding: const EdgeInsets.all(40),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          // REPRESENTING THE HUMPHREY CREST
+          const Icon(Icons.shield_rounded, size: 100, color: goldAccent), 
+          const SizedBox(height: 20),
+          const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 6)),
+          const Text("OFFICIAL COMMAND ACCESS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 60),
+          const TextField(decoration: InputDecoration(labelText: "CEO ACCESS KEY", border: OutlineInputBorder())),
           const SizedBox(height: 40),
-          const Text("GOAL: \$500,000 SEED CAPITAL", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => RoleSelectionScreen())),
+            child: const Text("INITIALIZE SYSTEM", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// --- STAGE 2: THE SOVEREIGN FORK (ROLE SELECTION) ---
+class RoleSelectionScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: pureWhite,
+      appBar: AppBar(title: const Text("SELECT COMMAND ROLE"), backgroundColor: pureWhite, elevation: 0, automaticallyImplyLeading: false),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(children: [
+          _buildRoleButton(context, "PRODUCER", Icons.agriculture, ProducerDashboard()),
+          _buildRoleButton(context, "BUYER", Icons.person, BuyerDashboard()),
+          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, AgentDashboard()),
+          const Spacer(),
+          const Text("Each role requires a mandatory Executive Summary before data access.", style: TextStyle(fontSize: 12, color: Colors.black38)),
         ]),
       ),
     );
   }
 
-  Widget _buildLargeHeader(String title) {
-    return Container(width: double.infinity, padding: const EdgeInsets.symmetric(vertical: 20), color: lightGray, child: Center(child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: goldAccent))));
-  }
-
-  Widget _buildStrategicButton(BuildContext context, String label, IconData icon) {
-    return Padding(padding: const EdgeInsets.all(12), child: InkWell(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExecutiveDisclosureGate(goal: label))),
-      child: Container(height: 85, decoration: BoxDecoration(color: pureWhite, border: Border.all(color: goldAccent, width: 3), boxShadow: [const BoxShadow(color: Colors.black12, blurRadius: 8)]),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(icon, color: goldAccent, size: 30), const SizedBox(width: 20), Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18))]),
+  Widget _buildRoleButton(BuildContext context, String title, IconData icon, Widget target) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExecutiveSummaryGate(title: title, target: target))),
+        child: Container(
+          height: 100,
+          decoration: BoxDecoration(color: lightGray, border: Border.all(color: goldAccent, width: 2)),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(icon, color: goldAccent, size: 30),
+            const SizedBox(width: 20),
+            Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+          ]),
+        ),
       ),
-    ));
+    );
   }
 }
 
-// --- STAGE 2: THE EXECUTIVE DISCLOSURE ---
-class ExecutiveDisclosureGate extends StatelessWidget {
-  final String goal;
-  ExecutiveDisclosureGate({required this.goal});
+// --- STAGE 3: THE MANDATORY SUMMARY GATE ---
+class ExecutiveSummaryGate extends StatelessWidget {
+  final String title;
+  final Widget target;
+  ExecutiveSummaryGate({required this.title, required this.target});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: lightGray,
+      backgroundColor: pureWhite,
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.shield, color: goldAccent, size: 60),
-          const Text("EXECUTIVE DISCLOSURE", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
+          const Icon(Icons.description, color: goldAccent, size: 50),
+          Text("$title EXECUTIVE SUMMARY", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
-          Text("Accessing $goal requires SME authorization. By proceeding, you acknowledge the 90/10 Sovereign Settlement and HVF Superior Grading standards.", textAlign: TextAlign.center, style: const TextStyle(fontSize: 16)),
+          const Text(
+            "By proceeding, you acknowledge the 90/10 Sovereign Settlement, DNA-verified lineage standards, and the HVF SME certification protocol.",
+            textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
+          ),
           const Spacer(),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => SignInGate())),
-            child: const Text("I AUTHORIZE & PROCEED", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => target)),
+            child: const Text("AUTHORIZE & PROCEED", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -82,65 +116,25 @@ class ExecutiveDisclosureGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 3: THE SIGN-IN ---
-class SignInGate extends StatelessWidget {
-  final TextEditingController _controller = TextEditingController();
+// --- STAGE 4: THE FORKED DASHBOARDS ---
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("IDENTITY VERIFICATION"), backgroundColor: pureWhite, elevation: 0),
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(children: [
-          const Text("SELECT YOUR ROLE", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent)),
-          const SizedBox(height: 30),
-          TextField(controller: _controller, decoration: const InputDecoration(labelText: "ACCESS ID (PRODUCER / BUYER)", border: OutlineInputBorder())),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 70)),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => PaymentScreen(role: _controller.text.toUpperCase()))),
-            child: const Text("CONFIRM ROLE", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
-          ),
-        ]),
-      ),
-    );
-  }
+class ProducerDashboard extends StatelessWidget {
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("PRODUCER CONSOLE")), body: const Center(child: Text("MANAGEMENT & MEDIA UPLOAD")));
 }
 
-// --- STAGE 4: THE BUY-IN (PAYMENT) ---
-class PaymentScreen extends StatelessWidget {
-  final String role;
-  PaymentScreen({required this.role});
+class BuyerDashboard extends StatelessWidget {
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: const Text("BUYER VAULT")), body: const Center(child: Text("COLLECTION & MARKET ACCESS")));
+}
 
-  @override
-  Widget build(BuildContext context) {
-    String fee = role.contains("PRODUCER") ? "\$200.00" : "\$25.00";
-
+class AgentDashboard extends StatelessWidget {
+  @override Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: Text("$role ACTIVATION"), backgroundColor: pureWhite),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(children: [
-          Text("LICENSE ACTIVATION FEE: $fee", style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: goldAccent)),
-          const SizedBox(height: 40),
-          const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
-          const SizedBox(height: 15),
-          const TextField(decoration: InputDecoration(labelText: "CREDIT CARD NUMBER", border: OutlineInputBorder())),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
-            onPressed: () {
-              // Final confirmation logic here
-            },
-            child: const Text("AUTHORIZE PAYMENT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 20)),
-          ),
-          const SizedBox(height: 10),
-          const Text("SECURE SOVEREIGN SETTLEMENT", style: TextStyle(fontSize: 10, color: Colors.black38)),
-        ]),
-      ),
+      appBar: AppBar(title: const Text("AGENT TOUR CONSOLE")),
+      body: ListView(children: [
+        const ListTile(title: Text("CITY RECRUITMENT STATUS", style: TextStyle(fontWeight: FontWeight.bold))),
+        const ListTile(title: Text("PRODUCER ENROLLMENT PORTAL")),
+        const ListTile(title: Text("SEED CAPITAL TRACKER (\$500K)")),
+      ]),
     );
   }
 }
