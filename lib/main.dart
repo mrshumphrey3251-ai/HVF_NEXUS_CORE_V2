@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V34.0 - THE ROLE-BASED COMMAND BUILD
-// FEATURE: ROLE-BASED ROUTING (PRODUCER VS BUYER PORTALS)
-// FOCUS: INDIVIDUALIZED USER EXPERIENCE & PRIVATE ASSET LOCKERS
+// HVF NEXUS CORE V35.0 - THE SOVEREIGN INTEGRATION BUILD
+// INTEGRATED: AUTH GATE, ROLE-BASED FORKING, & EXECUTIVE SUMMARIES
+// FOCUS: SECURITY, DISCLOSURE, AND INDIVIDUALIZED PORTALS
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -18,7 +18,7 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- THE SOVEREIGN GATE (WITH ROLE DETECTION) ---
+// --- THE SOVEREIGN GATE (ROLE DETECTION) ---
 class HVFAuthGate extends StatefulWidget {
   @override
   _HVFAuthGateState createState() => _HVFAuthGateState();
@@ -34,7 +34,7 @@ class _HVFAuthGateState extends State<HVFAuthGate> {
     } else if (id.contains("BUYER")) {
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => BuyerPortal()));
     } else {
-      // Default to CEO Dashboard for generic admin access
+      // Default Admin/CEO View
       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => ProducerPortal()));
     }
   }
@@ -47,75 +47,105 @@ class _HVFAuthGateState extends State<HVFAuthGate> {
         padding: const EdgeInsets.all(40),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 40, letterSpacing: 8)),
-          const Text("SECURE ACCESS GATEWAY", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          const Text("COMMAND ACCESS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           const SizedBox(height: 50),
-          TextField(controller: _idController, decoration: const InputDecoration(labelText: "ACCESS ID (Enter 'PRODUCER' or 'BUYER')", border: OutlineInputBorder())),
+          TextField(controller: _idController, decoration: const InputDecoration(labelText: "ACCESS ID (PRODUCER / BUYER)", border: OutlineInputBorder())),
           const SizedBox(height: 40),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
             onPressed: _handleLogin,
             child: const Text("INITIALIZE COMMAND", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           ),
-          const SizedBox(height: 20),
-          const Text("Use Access ID to route to your specific portal.", style: TextStyle(fontSize: 12, color: Colors.black38)),
         ]),
       ),
     );
   }
 }
 
-// --- PORTAL A: THE PRODUCER MANAGEMENT SUITE ---
+// --- PORTAL A: PRODUCER COMMAND ---
 class ProducerPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("PRODUCER CONSOLE"), backgroundColor: pureWhite, elevation: 0, centerTitle: true),
+      appBar: AppBar(title: const Text("PRODUCER CONSOLE", style: TextStyle(color: deepBlack, fontWeight: FontWeight.bold)), backgroundColor: pureWhite, elevation: 0),
       body: ListView(children: [
-        _buildSectionHeader("MY OPERATIONS"),
-        _buildNavTile(context, "UPLOAD NEW ASSET", Icons.add_a_photo, const PlaceholderScreen("MEDIA UPLOAD")),
-        _buildNavTile(context, "MY INVENTORY", Icons.list_alt, const PlaceholderScreen("INVENTORY")),
-        _buildNavTile(context, "SALES & SETTLEMENTS", Icons.monetization_on, const PlaceholderScreen("SALES")),
-        _buildSectionHeader("MARKET STATUS"),
-        const Padding(
-          padding: EdgeInsets.all(20),
-          child: Text("ACTIVE LISTINGS: 12 | PENDING GRADING: 2", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent)),
-        )
+        _buildSectionHeader("MANAGEMENT & MEDIA"),
+        _buildSummaryNav(context, "UPLOAD ASSET (MEDIA)", Icons.add_a_photo, 
+            "BIO-DATA DISCLOSURE: Media uploaded here is subject to direct SME audit. DNA-verified lineage required.", 
+            const PlaceholderScreen("MEDIA UPLOAD")),
+        _buildSummaryNav(context, "LICENSE SETTLEMENT", Icons.monetization_on, 
+            "ENROLLMENT: \$200.00 Monthly License Activation. Access 90/10 Sovereign Settlement path.", 
+            const PlaceholderScreen("LICENSE")),
       ]),
     );
   }
 }
 
-// --- PORTAL B: THE BUYER COLLECTION VAULT ---
+// --- PORTAL B: BUYER VAULT ---
 class BuyerPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER VAULT"), backgroundColor: pureWhite, elevation: 0, centerTitle: true),
+      appBar: AppBar(title: const Text("BUYER VAULT", style: TextStyle(color: deepBlack, fontWeight: FontWeight.bold)), backgroundColor: pureWhite, elevation: 0),
       body: ListView(children: [
-        _buildSectionHeader("MY COLLECTION"),
-        _buildNavTile(context, "VIEW MY ANIMALS", Icons.pets, const PlaceholderScreen("MY ANIMALS")),
-        _buildNavTile(context, "DNA CERTIFICATES", Icons.verified_user, const PlaceholderScreen("CERTIFICATES")),
-        _buildSectionHeader("THE MARKETPLACE"),
-        _buildNavTile(context, "BROWSE LIVE MARKET", Icons.shopping_cart, const PlaceholderScreen("MARKET")),
-        _buildNavTile(context, "SUBSCRIPTION STATUS", Icons.star, const PlaceholderScreen("SUBSCRIPTION")),
+        _buildSectionHeader("MY PRIVATE COLLECTION"),
+        _buildSummaryNav(context, "VIEW MY ANIMALS", Icons.pets, 
+            "COLLECTION DISCLOSURE: View your secured, DNA-verified assets. Certificates of ownership stored here.", 
+            const PlaceholderScreen("MY ASSETS")),
+        _buildSectionHeader("MARKETPLACE"),
+        _buildSummaryNav(context, "LIVE MARKET ACCESS", Icons.shopping_cart, 
+            "MARKET DISCLOSURE: Browse SME 'Superior' Grade local assets. Direct-to-farm settlement active.", 
+            const PlaceholderScreen("MARKET")),
       ]),
     );
   }
 }
 
-// --- SHARED UI COMPONENTS ---
+// --- EXECUTIVE SUMMARY INTERSTITIAL GATE ---
+class ExecutiveSummaryGate extends StatelessWidget {
+  final String title;
+  final String summary;
+  final Widget target;
+  ExecutiveSummaryGate({required this.title, required this.summary, required this.target});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: lightGray,
+      appBar: AppBar(title: Text(title), backgroundColor: lightGray, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          const Icon(Icons.description, color: goldAccent, size: 60),
+          const SizedBox(height: 20),
+          const Text("EXECUTIVE SUMMARY", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
+          const Divider(color: goldAccent, thickness: 2, height: 40),
+          Text(summary, textAlign: TextAlign.center, style: const TextStyle(fontSize: 18, height: 1.5)),
+          const Spacer(),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
+            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => target)),
+            child: const Text("PROCEED TO COMMAND", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// --- SHARED UI TOOLS ---
 Widget _buildSectionHeader(String title) {
   return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
 }
 
-Widget _buildNavTile(BuildContext context, String label, IconData icon, Widget target) {
+Widget _buildSummaryNav(BuildContext context, String label, IconData icon, String summary, Widget target) {
   return ListTile(
     leading: Icon(icon, color: goldAccent),
     title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
     trailing: const Icon(Icons.chevron_right),
-    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
+    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ExecutiveSummaryGate(title: label, summary: summary, target: target))),
   );
 }
 
