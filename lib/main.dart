@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V42.0 - THE REVENUE CAPTURE BUILD
-// INTEGRATED: SECURE PAYMENT GATEWAY IN BUYER FLOW
-// FOCUS: REAL-TIME CAPITAL CAPTURE & ASSET ACQUISITION
+// HVF NEXUS CORE V43.0 - THE PRODUCER COMMAND BUILD
+// FEATURE: ASSET UPLOAD, SME GRADING TRACKER, & LICENSE ACTIVATION
+// FOCUS: INVENTORY ACQUISITION & PRODUCER ONBOARDING
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -55,8 +55,8 @@ class RoleSelectionScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
-          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, BuyerDashboard()),
-          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const PlaceholderScreen("PRODUCER CONSOLE")),
+          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, ProducerDashboard()),
+          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const PlaceholderScreen("BUYER VAULT")),
           _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, const PlaceholderScreen("AGENT CONSOLE")),
         ]),
       ),
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Accessing the Sovereign Marketplace requires acknowledgment of HVF Superior Grading standards and secure settlement protocols.",
+            "Accessing the Producer Command Console requires a valid \$200/mo License and adherence to SME Superior Grading standards.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,17 +114,20 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: THE BUYER EXPERIENCE & REVENUE CAPTURE ---
-class BuyerDashboard extends StatelessWidget {
+// --- STAGE 4: THE PRODUCER COMMAND CONSOLE ---
+class ProducerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER VAULT"), backgroundColor: pureWhite, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
+      appBar: AppBar(title: const Text("PRODUCER CONSOLE"), backgroundColor: pureWhite, elevation: 0, iconTheme: const IconThemeData(color: deepBlack)),
       body: ListView(children: [
-        _buildSectionHeader("SUPERIOR MARKETPLACE"),
-        _buildMarketItem(context, "ANGUS UNIT #044", "\$2,695.00", "DNA VERIFIED | SUPERIOR"),
-        _buildMarketItem(context, "HEREFORD UNIT #102", "\$2,310.00", "SME GRADE: SUPERIOR"),
+        _buildSectionHeader("ASSET MANAGEMENT"),
+        _buildActionTile(context, "UPLOAD NEW ASSET", Icons.add_a_photo, AssetUploadScreen()),
+        _buildActionTile(context, "MY INVENTORY (GRADING STATUS)", Icons.analytics, InventoryScreen()),
+        _buildSectionHeader("FINANCIALS"),
+        _buildActionTile(context, "LICENSE ACTIVATION (\$200)", Icons.credit_card, LicensePaymentScreen()),
+        _buildActionTile(context, "SALES LEDGER", Icons.account_balance_wallet, const PlaceholderScreen("SALES")),
       ]),
     );
   }
@@ -133,43 +136,82 @@ class BuyerDashboard extends StatelessWidget {
     return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
   }
 
-  Widget _buildMarketItem(BuildContext context, String name, String price, String status) {
-    return Container(
-      margin: const EdgeInsets.all(12),
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(border: Border.all(color: goldAccent, width: 2)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(name, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-        Text(status, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 12)),
-        const Divider(height: 30),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(price, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
+  Widget _buildActionTile(BuildContext context, String label, IconData icon, Widget target) {
+    return ListTile(
+      leading: Icon(icon, color: goldAccent),
+      title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
+    );
+  }
+}
+
+// --- PRODUCER SUB-SCREENS ---
+
+class AssetUploadScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("NEW ASSET UPLOAD")),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(children: [
+          Container(
+            height: 200, width: double.infinity, color: lightGray,
+            child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.camera_alt, size: 50, color: goldAccent), Text("TAP TO UPLOAD PICS/VIDEO")]),
+          ),
+          const SizedBox(height: 20),
+          const TextField(decoration: InputDecoration(labelText: "ANIMAL ID / BREED", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(decoration: InputDecoration(labelText: "AGE / WEIGHT ESTIMATE", border: OutlineInputBorder())),
+          const Spacer(),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack),
-            onPressed: () => _showPaymentSheet(context, name, price),
-            child: const Text("ACQUIRE ASSET", style: TextStyle(color: goldAccent)),
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () => Navigator.pop(context), 
+            child: const Text("SUBMIT FOR SME GRADING", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           )
         ]),
+      ),
+    );
+  }
+}
+
+class InventoryScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("MY INVENTORY")),
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        _buildInventoryItem("ANGUS #044", "STATUS: SUPERIOR", Colors.green),
+        _buildInventoryItem("HEREFORD #102", "STATUS: PENDING GRADING", goldAccent),
+        _buildInventoryItem("ANGUS #091", "STATUS: MEDIA REQUIRED", Colors.red),
       ]),
     );
   }
 
-  void _showPaymentSheet(BuildContext context, String name, String price) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (context) => Container(
+  Widget _buildInventoryItem(String id, String status, Color color) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 15),
+      child: ListTile(
+        title: Text(id, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(status, style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+        trailing: const Icon(Icons.info_outline),
+      ),
+    );
+  }
+}
+
+class LicensePaymentScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("ACTIVATE LICENSE")),
+      body: Padding(
         padding: const EdgeInsets.all(30),
-        height: MediaQuery.of(context).size.height * 0.75,
         child: Column(children: [
-          const Text("SECURE SETTLEMENT", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-          const SizedBox(height: 10),
-          Text("PURCHASE: $name", style: const TextStyle(color: Colors.black54)),
-          const Divider(),
-          const SizedBox(height: 20),
-          const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
-          const SizedBox(height: 15),
-          const TextField(decoration: InputDecoration(labelText: "CREDIT CARD NUMBER", border: OutlineInputBorder())),
+          const Text("PRODUCER LICENSE: \$200.00/MO", style: TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: goldAccent)),
+          const SizedBox(height: 40),
+          const TextField(decoration: InputDecoration(labelText: "CARD NUMBER", border: OutlineInputBorder())),
           const SizedBox(height: 15),
           const Row(children: [
             Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP", border: OutlineInputBorder()))),
@@ -177,18 +219,11 @@ class BuyerDashboard extends StatelessWidget {
             Expanded(child: TextField(decoration: InputDecoration(labelText: "CVV", border: OutlineInputBorder()))),
           ]),
           const Spacer(),
-          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            const Text("TOTAL SETTLEMENT", style: TextStyle(fontWeight: FontWeight.bold)),
-            Text(price, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: goldAccent)),
-          ]),
-          const SizedBox(height: 20),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 60)),
-            onPressed: () => Navigator.pop(context),
-            child: const Text("AUTHORIZE PAYMENT", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
-          ),
-          const SizedBox(height: 10),
-          const Text("Secure Encrypted Sovereign Transaction", style: TextStyle(fontSize: 10, color: Colors.black38)),
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 80)),
+            onPressed: () => Navigator.pop(context), 
+            child: const Text("AUTHORIZE \$200 ACTIVATION", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          )
         ]),
       ),
     );
