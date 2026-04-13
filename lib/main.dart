@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V51.0 - THE BUYER EXPERIENCE & SOVEREIGN RELATIONSHIP
-// FEATURE: FULL LEGAL SCROLL, WATERMARKED "WARM" UI, MULTI-TAB RELATIONSHIP MGMT
-// FOCUS: TRANSITION FROM CRISP COMMAND TO INCLUSIVE LEGACY
+// HVF NEXUS CORE V52.0 - BUYER ACCESS, WINDOW SHOPPING, & RETENTION
+// FEATURE: SKIP SIGN-IN (VIEW ONLY), ACCOUNT CREATION, PAYMENT EXTENSION REQUESTS
+// FOCUS: BUILDING DESIRE BEFORE PAYWALL & SOVEREIGN FLEXIBILITY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -16,29 +16,39 @@ void main() {
 const Color goldAccent = Color(0xFFC5A059); 
 const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
-const Color warmBeige = Color(0xFFF9F6F0); // For the "Warm" inclusive transition
+const Color warmBeige = Color(0xFFF9F6F0);
 
-// --- STAGE 1: PLAIN CRISP SIGN-IN ---
+// --- STAGE 1: ENHANCED BUYER SIGN-IN GATE ---
 class HVFCrestSignIn extends StatelessWidget {
   const HVFCrestSignIn({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pureWhite,
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(40),
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.shield_rounded, size: 100, color: goldAccent), 
-          const SizedBox(height: 20),
-          const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 6)),
-          const Text("COMMAND ACCESS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           const SizedBox(height: 60),
-          const TextField(decoration: InputDecoration(labelText: "BUYER ID", border: OutlineInputBorder())),
-          const SizedBox(height: 40),
+          const Icon(Icons.shield_rounded, size: 80, color: goldAccent), 
+          const Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, letterSpacing: 6)),
+          const Text("BUYER ENTRANCE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 50),
+          const TextField(decoration: InputDecoration(labelText: "EMAIL / BUYER ID", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(obscureText: true, decoration: InputDecoration(labelText: "PASSWORD", border: OutlineInputBorder())),
+          const SizedBox(height: 30),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BuyerLegalGate())),
-            child: const Text("INITIALIZE SESSION", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 60)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BuyerMainDashboard(isGuest: false))),
+            child: const Text("SIGN IN", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          ),
+          TextButton(onPressed: () {}, child: const Text("CREATE SOVEREIGN ACCOUNT", style: TextStyle(color: Colors.black))),
+          const Divider(height: 50),
+          // THE "WINDOW SHOPPING" OPTION
+          OutlinedButton(
+            style: OutlinedButton.styleFrom(minimumSize: const Size(double.infinity, 60), side: const BorderSide(color: goldAccent)),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BuyerMainDashboard(isGuest: true))),
+            child: const Text("SKIP SIGN-IN (VIEW ONLY)", style: TextStyle(color: deepBlack, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -46,51 +56,11 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
-// --- STAGE 2: FULL LEGAL DOCUMENT GATE ---
-class BuyerLegalGate extends StatelessWidget {
-  const BuyerLegalGate({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("BUYER MASTER AGREEMENT"), backgroundColor: pureWhite, elevation: 0),
-      body: Column(children: [
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(30),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const Text("HVF SOVEREIGN BUYER TERMS & CONDITIONS", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-              const SizedBox(height: 20),
-              const Text(
-                "Article I: SME Standards Acknowledgment\nThe Buyer acknowledges that all livestock available through the Humphrey Virtual Farms Nexus is graded under strict SME (Subject Matter Expert) protocols. The 'Superior' grade represents the pinnacle of genetic and physical health standards...\n\n"
-                "Article II: The 90/10 Protocol\nBuyer understands that their purchase facilitates a direct 90% payout to the Producer, maintaining the economic sovereignty of the farming community...\n\n"
-                "Article III: Subscription Liability\nThe \$25/mo fee covers the digital vault, lineage tracking, and real-time sponsorship access. Non-payment results in vault suspension...",
-                style: TextStyle(fontSize: 14, height: 1.6),
-              ),
-              const SizedBox(height: 40),
-              const Divider(thickness: 2),
-              const Text("DIGITAL SIGNATURE", style: TextStyle(fontWeight: FontWeight.bold)),
-              const TextField(decoration: InputDecoration(hintText: "Enter Full Legal Name", border: UnderlineInputBorder())),
-              const SizedBox(height: 20),
-            ]),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(30),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-            onPressed: () => Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const BuyerMainDashboard())),
-            child: const Text("EXECUTE & ENTER VAULT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-          ),
-        )
-      ]),
-    );
-  }
-}
-
-// --- STAGE 3: WARM INCLUSIVE DASHBOARD (WATERMARKED) ---
+// --- STAGE 2: THE DASHBOARD (NOW WITH GUEST LOGIC & RETENTION) ---
 class BuyerMainDashboard extends StatelessWidget {
-  const BuyerMainDashboard({super.key});
+  final bool isGuest;
+  const BuyerMainDashboard({super.key, required this.isGuest});
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -100,36 +70,28 @@ class BuyerMainDashboard extends StatelessWidget {
         appBar: AppBar(
           backgroundColor: warmBeige,
           elevation: 0,
-          title: const Text("BUYER COMMAND", style: TextStyle(color: deepBlack, fontWeight: FontWeight.w900)),
+          title: Text(isGuest ? "HVF PREVIEW MODE" : "BUYER COMMAND", style: const TextStyle(color: deepBlack, fontWeight: FontWeight.w900)),
           bottom: const TabBar(
             isScrollable: true,
             labelColor: goldAccent,
-            unselectedLabelColor: Colors.black54,
             indicatorColor: goldAccent,
             tabs: [
-              Tab(text: "LEGAL & CONCERNS", icon: Icon(Icons.gavel)),
-              Tab(text: "SME STANDARDS", icon: Icon(Icons.verified)),
               Tab(text: "MARKETPLACE", icon: Icon(Icons.shopping_cart)),
-              Tab(text: "MY ASSETS", icon: Icon(Icons.inventory)),
+              Tab(text: "MY VAULT", icon: Icon(Icons.lock)),
+              Tab(text: "SOVEREIGN SUPPORT", icon: Icon(Icons.handshake)),
+              Tab(text: "LEGAL", icon: Icon(Icons.gavel)),
             ],
           ),
         ),
         body: Stack(
           children: [
-            // THE CRISP HUMPHREY CREST WATERMARK
-            Center(
-              child: Opacity(
-                opacity: 0.05,
-                child: Icon(Icons.shield_rounded, size: MediaQuery.of(context).size.width * 0.8, color: goldAccent),
-              ),
-            ),
-            // THE TAB CONTENT
-            const TabBarView(
+            Center(child: Opacity(opacity: 0.05, child: Icon(Icons.shield_rounded, size: 300, color: goldAccent))),
+            TabBarView(
               children: [
-                _LegalAndConcernsTab(),
-                _SMEStandardsTab(),
-                _MarketplaceTab(),
-                _MyAssetsTab(),
+                _MarketplaceTab(isGuest: isGuest),
+                _MyVaultTab(isGuest: isGuest),
+                _SupportTab(isGuest: isGuest),
+                const _LegalTab(),
               ],
             ),
           ],
@@ -139,58 +101,93 @@ class BuyerMainDashboard extends StatelessWidget {
   }
 }
 
-// --- TAB SUB-VIEWS ---
-
-class _LegalAndConcernsTab extends StatelessWidget {
-  const _LegalAndConcernsTab();
+// --- TAB 1: MARKETPLACE (WINDOW SHOPPING MODE) ---
+class _MarketplaceTab extends StatelessWidget {
+  final bool isGuest;
+  const _MarketplaceTab({required this.isGuest});
   @override
   Widget build(BuildContext context) {
     return ListView(
       padding: const EdgeInsets.all(20),
       children: [
-        const Text("LEGAL DOCUMENTS & RECOURSE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const ListTile(leading: Icon(Icons.file_copy, color: goldAccent), title: Text("View Signed Master Agreement")),
-        const ListTile(leading: Icon(Icons.privacy_tip, color: goldAccent), title: Text("Privacy & Sovereignty Policy")),
-        const Divider(),
-        const Text("FILE CONCERNS / COMPLAINTS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-        const TextField(maxLines: 4, decoration: InputDecoration(hintText: "Enter your concern for SME Review...", border: OutlineInputBorder())),
+        const Text("AVAILABLE SME-GRADE ASSETS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 15),
+        _buildAssetCard(context, "ANGUS #044", "SUPERIOR", isGuest),
+        _buildAssetCard(context, "HEREFORD #102", "SUPERIOR", isGuest),
+      ],
+    );
+  }
+
+  Widget _buildAssetCard(BuildContext context, String title, String grade, bool guest) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 15),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text("GRADE: $grade", style: const TextStyle(color: goldAccent)),
+        trailing: ElevatedButton(
+          onPressed: guest ? null : () {}, // DISABLED FOR GUESTS
+          style: ElevatedButton.styleFrom(backgroundColor: deepBlack),
+          child: Text(guest ? "SIGN IN TO BUY" : "ACQUIRE", style: const TextStyle(color: goldAccent)),
+        ),
+      ),
+    );
+  }
+}
+
+// --- TAB 2: MY VAULT ---
+class _MyVaultTab extends StatelessWidget {
+  final bool isGuest;
+  const _MyVaultTab({required this.isGuest});
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: isGuest 
+        ? const Text("Sign In to view your secured assets.", style: TextStyle(fontStyle: FontStyle.italic))
+        : const Text("YOUR SECURED ASSETS ARE READY", style: TextStyle(fontWeight: FontWeight.bold)),
+    );
+  }
+}
+
+// --- TAB 3: SOVEREIGN SUPPORT (NEGOTIATION & EXTENSIONS) ---
+class _SupportTab extends StatelessWidget {
+  final bool isGuest;
+  const _SupportTab({required this.isGuest});
+  @override
+  Widget build(BuildContext context) {
+    if (isGuest) return const Center(child: Text("Guest mode: Support unavailable."));
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Text("PAYMENT & RETENTION SOVEREIGNTY", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 20),
+        const Card(
+          child: ListTile(
+            leading: Icon(Icons.calendar_month, color: goldAccent),
+            title: Text("Negotiate Payment Date"),
+            subtitle: Text("Request a permanent shift in your billing cycle."),
+          ),
+        ),
+        const Card(
+          child: ListTile(
+            leading: Icon(Icons.timer, color: goldAccent),
+            title: Text("Request 14-Day Extension"),
+            subtitle: Text("Apply for a temporary grace period."),
+          ),
+        ),
+        const SizedBox(height: 30),
+        const Text("FILE CONCERNS TO CEO", style: TextStyle(fontWeight: FontWeight.bold)),
+        const TextField(maxLines: 3, decoration: InputDecoration(hintText: "Direct line to SME Review...", border: OutlineInputBorder())),
         const SizedBox(height: 10),
-        ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: deepBlack), child: const Text("SUBMIT TO CEO", style: TextStyle(color: goldAccent))),
+        ElevatedButton(onPressed: () {}, style: ElevatedButton.styleFrom(backgroundColor: deepBlack), child: const Text("SUBMIT", style: TextStyle(color: goldAccent))),
       ],
     );
   }
 }
 
-class _SMEStandardsTab extends StatelessWidget {
-  const _SMEStandardsTab();
+class _LegalTab extends StatelessWidget {
+  const _LegalTab();
   @override
   Widget build(BuildContext context) {
-    return const Padding(
-      padding: const EdgeInsets.all(20),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text("PRODUCER EXCELLENCE", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        SizedBox(height: 10),
-        Text("Acknowledging the exceptional standards upheld by the Producer. Every animal under the HVF banner meets the following:"),
-        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("Full Lineage DNA Verification")),
-        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("Sustainable Ranching Protocols")),
-        ListTile(leading: Icon(Icons.check, color: Colors.green), title: Text("SME-Grade Health Certifications")),
-      ]),
-    );
-  }
-}
-
-class _MarketplaceTab extends StatelessWidget {
-  const _MarketplaceTab();
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("ANIMALS AVAILABLE FOR SPONSORSHIP OR PURCHASE", style: TextStyle(fontWeight: FontWeight.bold)));
-  }
-}
-
-class _MyAssetsTab extends StatelessWidget {
-  const _MyAssetsTab();
-  @override
-  Widget build(BuildContext context) {
-    return const Center(child: Text("VIEW MY ANIMALS / VAULT", style: TextStyle(fontWeight: FontWeight.bold)));
+    return const Center(child: Text("FULL LEGAL ARCHIVE"));
   }
 }
