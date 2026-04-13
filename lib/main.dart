@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V41.1 - THE PURE COMMAND BUILD
-// UPDATED: PERMANENT DISABLE OF IMAGE GENERATION
-// FEATURE: PROPRIETARY SETTLEMENT & SOVEREIGN FUNNEL
+// HVF NEXUS CORE V42.0 - THE REVENUE CAPTURE BUILD
+// INTEGRATED: SECURE PAYMENT GATEWAY IN BUYER FLOW
+// FOCUS: REAL-TIME CAPITAL CAPTURE & ASSET ACQUISITION
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -18,6 +18,7 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
+// --- STAGE 1: THE HUMPHREY CREST ---
 class HVFCrestSignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -44,6 +45,7 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
+// --- STAGE 2: ROLE SELECTION ---
 class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -80,6 +82,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
+// --- STAGE 3: EXECUTIVE BRIEFING ---
 class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final Widget target;
@@ -96,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Accessing the Sovereign Marketplace requires acknowledgment of HVF Superior Grading standards and secure DNA-verification protocols.",
+            "Accessing the Sovereign Marketplace requires acknowledgment of HVF Superior Grading standards and secure settlement protocols.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -111,6 +114,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
+// --- STAGE 4: THE BUYER EXPERIENCE & REVENUE CAPTURE ---
 class BuyerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -142,7 +146,7 @@ class BuyerDashboard extends StatelessWidget {
           Text(price, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900)),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: deepBlack),
-            onPressed: () => _showCheckoutSheet(context, name, price),
+            onPressed: () => _showPaymentSheet(context, name, price),
             child: const Text("ACQUIRE ASSET", style: TextStyle(color: goldAccent)),
           )
         ]),
@@ -150,29 +154,44 @@ class BuyerDashboard extends StatelessWidget {
     );
   }
 
-  void _showCheckoutSheet(BuildContext context, String name, String price) {
-    showModalBottomSheet(context: context, builder: (context) => Container(
-      padding: const EdgeInsets.all(30),
-      height: 350,
-      child: Column(children: [
-        const Text("SECURE ACQUISITION", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-        const SizedBox(height: 10),
-        Text("ASSET: $name", style: const TextStyle(color: Colors.black54)),
-        const Divider(),
-        const SizedBox(height: 20),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [const Text("Total Purchase Price"), Text(price, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18))]),
-        const SizedBox(height: 10),
-        const Text("Price includes DNA-Verification and Sovereign Guarantee.", style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic)),
-        const Spacer(),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 60)),
-          onPressed: () => Navigator.pop(context),
-          child: const Text("CONFIRM SETTLEMENT", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
-        ),
-        const SizedBox(height: 10),
-        const Icon(Icons.lock_outline, size: 14, color: Colors.black26),
-      ]),
-    ));
+  void _showPaymentSheet(BuildContext context, String name, String price) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(30),
+        height: MediaQuery.of(context).size.height * 0.75,
+        child: Column(children: [
+          const Text("SECURE SETTLEMENT", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
+          const SizedBox(height: 10),
+          Text("PURCHASE: $name", style: const TextStyle(color: Colors.black54)),
+          const Divider(),
+          const SizedBox(height: 20),
+          const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const TextField(decoration: InputDecoration(labelText: "CREDIT CARD NUMBER", border: OutlineInputBorder())),
+          const SizedBox(height: 15),
+          const Row(children: [
+            Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP", border: OutlineInputBorder()))),
+            SizedBox(width: 10),
+            Expanded(child: TextField(decoration: InputDecoration(labelText: "CVV", border: OutlineInputBorder()))),
+          ]),
+          const Spacer(),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text("TOTAL SETTLEMENT", style: TextStyle(fontWeight: FontWeight.bold)),
+            Text(price, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: goldAccent)),
+          ]),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: goldAccent, minimumSize: const Size(double.infinity, 60)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("AUTHORIZE PAYMENT", style: TextStyle(color: pureWhite, fontWeight: FontWeight.bold)),
+          ),
+          const SizedBox(height: 10),
+          const Text("Secure Encrypted Sovereign Transaction", style: TextStyle(fontSize: 10, color: Colors.black38)),
+        ]),
+      ),
+    );
   }
 }
 
