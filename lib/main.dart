@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V56.2 - THE SEAMLESS DEMO INTEGRATION
-// FEATURE: UNIFIED BUYER MARKETPLACE & PRODUCER MANAGEMENT
+// HVF NEXUS CORE V57.0 - FULL SPECTRUM RESTORATION
+// FEATURE: FULL PRODUCER CONSOLE & FULL BUYER VAULT INTEGRATION
+// FOCUS: ZERO-LOSS FUNCTIONALITY ACROSS ALL ROLES
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -57,7 +58,7 @@ class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("SELECT PORTAL"), centerTitle: true),
+      appBar: AppBar(title: const Text("SELECT COMMAND ROLE"), centerTitle: true),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, 
@@ -87,83 +88,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- 3. THE BUYER VAULT (INTEGRATED) ---
-class BuyerDashboard extends StatelessWidget {
-  const BuyerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: warmBeige,
-        appBar: AppBar(
-          backgroundColor: warmBeige,
-          title: const Text("BUYER COMMAND", style: TextStyle(fontWeight: FontWeight.bold)),
-          bottom: const TabBar(
-            labelColor: goldAccent,
-            indicatorColor: goldAccent,
-            tabs: [
-              Tab(text: "MARKETPLACE", icon: Icon(Icons.shopping_cart)),
-              Tab(text: "MY VAULT", icon: Icon(Icons.lock)),
-            ],
-          ),
-        ),
-        body: const TabBarView(
-          children: [
-            _BuyerMarketplace(),
-            _BuyerVault(),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _BuyerMarketplace extends StatelessWidget {
-  const _BuyerMarketplace();
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        const Text("AVAILABLE SME-GRADE ASSETS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-        const SizedBox(height: 15),
-        _assetCard(context, "ANGUS #044", "\$2,695.00"),
-        _assetCard(context, "HEREFORD #102", "\$2,310.00"),
-      ],
-    );
-  }
-
-  Widget _assetCard(BuildContext context, String name, String price) {
-    return Card(
-      child: ListTile(
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: const Text("SME GRADE: SUPERIOR", style: TextStyle(color: goldAccent)),
-        trailing: Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-      ),
-    );
-  }
-}
-
-class _BuyerVault extends StatelessWidget {
-  const _BuyerVault();
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(20),
-      children: [
-        const Text("MY SECURED ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
-        ListTile(
-          title: const Text("ANGUS UNIT #044"),
-          trailing: const Icon(Icons.verified_user, color: goldAccent),
-          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CertificateView())),
-        ),
-      ],
-    );
-  }
-}
-
-// --- 4. THE PRODUCER CONSOLE (PRESERVED) ---
+// --- 3. THE FULL PRODUCER CONSOLE (RESTORED) ---
 class ProducerDashboard extends StatelessWidget {
   const ProducerDashboard({super.key});
   @override
@@ -174,29 +99,140 @@ class ProducerDashboard extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("ASSET MANAGEMENT", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-          const SizedBox(height: 20),
-          _actionTile("UPLOAD NEW ASSET", Icons.add_a_photo),
-          _actionTile("SME GRADING STATUS", Icons.analytics),
+          _buildSectionHeader("ASSET MANAGEMENT"),
+          _actionTile(context, "UPLOAD NEW ASSET", Icons.add_a_photo, "Ready for DNA tagging"),
+          _actionTile(context, "SME GRADING STATUS", Icons.analytics, "Review Superior standards"),
+          _actionTile(context, "REVENUE SETTLEMENTS", Icons.account_balance_wallet, "90/10 Protocol Tracking"),
           const Divider(height: 40),
-          const Text("LICENSE: ACTIVE", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          _buildSectionHeader("OPERATIONAL STATUS"),
+          ListTile(
+            tileColor: Colors.white,
+            title: const Text("Producer License (\$200/mo)"),
+            subtitle: const Text("Status: ACTIVE"),
+            trailing: const Icon(Icons.check_circle, color: Colors.green),
+            onTap: () => _showPaymentModal(context, "PRODUCER LICENSE", "\$200.00"),
+          ),
         ],
       ),
     );
   }
 
-  Widget _actionTile(String label, IconData icon) {
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10),
+      child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent, letterSpacing: 1.5)),
+    );
+  }
+
+  Widget _actionTile(BuildContext context, String label, IconData icon, String sub) {
     return Card(
       child: ListTile(
         leading: Icon(icon, color: goldAccent),
         title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(sub, style: const TextStyle(fontSize: 10)),
         onTap: () {},
       ),
     );
   }
 }
 
-// --- THE CERTIFICATE (SME SEAL) ---
+// --- 4. THE FULL BUYER VAULT (RESTORED) ---
+class BuyerDashboard extends StatelessWidget {
+  const BuyerDashboard({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: warmBeige,
+        appBar: AppBar(
+          backgroundColor: warmBeige,
+          title: const Text("BUYER VAULT"),
+          bottom: const TabBar(labelColor: goldAccent, indicatorColor: goldAccent, tabs: [
+            Tab(text: "MARKETPLACE", icon: Icon(Icons.shopping_cart)),
+            Tab(text: "MY ASSETS", icon: Icon(Icons.lock)),
+          ]),
+        ),
+        body: Stack(children: [
+          const Center(child: Opacity(opacity: 0.05, child: Icon(Icons.shield_rounded, size: 300, color: goldAccent))),
+          const TabBarView(children: [
+            _MarketplaceView(),
+            _AssetsView(),
+          ]),
+        ]),
+      ),
+    );
+  }
+}
+
+class _MarketplaceView extends StatelessWidget {
+  const _MarketplaceView();
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        const Text("AVAILABLE SME-GRADE ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 15),
+        _buyTile(context, "ANGUS #044", "\$2,695.00"),
+        _buyTile(context, "HEREFORD #102", "\$2,310.00"),
+      ],
+    );
+  }
+
+  Widget _buyTile(BuildContext context, String name, String price) {
+    return Card(
+      child: ListTile(
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: const Text("SME GRADE: SUPERIOR", style: TextStyle(color: goldAccent)),
+        trailing: ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: deepBlack),
+          onPressed: () => _showPaymentModal(context, name, price),
+          child: Text(price, style: const TextStyle(color: goldAccent)),
+        ),
+      ),
+    );
+  }
+}
+
+class _AssetsView extends StatelessWidget {
+  const _AssetsView();
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      padding: const EdgeInsets.all(20),
+      children: [
+        ListTile(
+          tileColor: Colors.white,
+          title: const Text("ANGUS UNIT #044"),
+          subtitle: const Text("VIEW DNA LINEAGE"),
+          trailing: const Icon(Icons.verified_user, color: goldAccent),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CertificateView())),
+        ),
+      ],
+    );
+  }
+}
+
+// --- 5. SHARED MERCHANT & LEGAL COMPONENTS ---
+
+void _showPaymentModal(BuildContext context, String title, String amount) {
+  showModalBottomSheet(context: context, builder: (context) => Container(
+    padding: const EdgeInsets.all(30),
+    child: Column(mainAxisSize: MainAxisSize.min, children: [
+      const Icon(Icons.security, color: Colors.blue, size: 40),
+      Text("STRIPE SECURE SETTLEMENT: $amount", style: const TextStyle(fontWeight: FontWeight.bold)),
+      const TextField(decoration: InputDecoration(labelText: "CARD NUMBER")),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 50)),
+        onPressed: () => Navigator.pop(context),
+        child: const Text("CONFIRM", style: TextStyle(color: goldAccent)),
+      )
+    ]),
+  ));
+}
+
 class CertificateView extends StatelessWidget {
   const CertificateView({super.key});
   @override
@@ -209,26 +245,19 @@ class CertificateView extends StatelessWidget {
           width: 450,
           padding: const EdgeInsets.all(30),
           decoration: BoxDecoration(color: const Color(0xFFFFFDF7), border: Border.all(color: certificateGold, width: 8)),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("HVF - EST. 1880", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent, fontSize: 20)),
-              const Divider(color: goldAccent),
-              const Text("CERTIFICATE OF LINEAGE", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
-              const Text("ASSET: ANGUS #044", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
-              const Text("SME GRADE: SUPERIOR", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 40),
-              const Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text("PRODUCER", style: TextStyle(fontSize: 10)),
-                  Icon(Icons.shield, color: certificateGold, size: 40),
-                  Text("CEO J. HUMPHREY", style: TextStyle(fontSize: 10)),
-                ],
-              ),
-            ],
-          ),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text("HVF - EST. 1880", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent, fontSize: 20)),
+            const Divider(color: goldAccent),
+            const Text("CERTIFICATE OF LINEAGE", style: TextStyle(letterSpacing: 2, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 20),
+            const Text("SME GRADE: SUPERIOR", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 40),
+            const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text("PRODUCER", style: TextStyle(fontSize: 10)),
+              Icon(Icons.shield, color: goldAccent, size: 40),
+              Text("CEO J. HUMPHREY", style: TextStyle(fontSize: 10)),
+            ]),
+          ]),
         ),
       ),
     );
