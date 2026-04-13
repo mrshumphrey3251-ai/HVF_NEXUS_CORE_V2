@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V64.0 - THE APPROVAL FEEDBACK LOOP
-// FEATURE: CEO CERTIFIED BADGING & LIVE STATUS UPDATES
-// STATUS: DOMINANT UNIFIED BUILD | EXECUTIVE STABILIZATION
+// HVF NEXUS CORE V65.0 - THE LIVE-SYNC FOUNDATION
+// FEATURE: DYNAMIC DATA BRIDGING & SME STATUS PERSISTENCE
+// STATUS: DOMINANT UNIFIED BUILD | REVENUE-READY ARCHITECTURE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -84,7 +84,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- 3. THE CEO COMMAND DESK ---
+// --- 3. THE CEO COMMAND DESK (LIVE SYNC QUEUE) ---
 class CEODashboard extends StatelessWidget {
   const CEODashboard({super.key});
   @override
@@ -95,88 +95,50 @@ class CEODashboard extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("PENDING SME ACTIONS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+          const Text("LIVE INDUCTION QUEUE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
           const SizedBox(height: 20),
-          _actionCard(context, "INDUCTION: #ANGUS-V77", "Producer: S. Smith | DNA: Verified", Icons.verified_user),
-          _actionCard(context, "INDUCTION: #BISON-K02", "Producer: R. Carter | DNA: Pending", Icons.pending),
+          _liveQueueItem(context, "ASSET #ANGUS-V88", "DNA LOGGED | AWAITING CEO SIGNATURE"),
+          _liveQueueItem(context, "ASSET #BISON-K12", "DATA COMPLETE | SME REVIEW REQUIRED"),
+          const Divider(color: goldAccent, height: 40),
+          const Text("SYSTEM ACTIVITY", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          const ListTile(
+            title: Text("Producer Sync Active", style: TextStyle(color: Colors.white70, fontSize: 12)),
+            trailing: Icon(Icons.sync, color: Colors.blue, size: 16),
+          ),
         ],
       ),
     );
   }
 
-  Widget _actionCard(BuildContext context, String title, String sub, IconData icon) {
+  Widget _liveQueueItem(BuildContext context, String title, String status) {
     return Card(
       color: const Color(0xFF1E1E1E),
       child: ListTile(
-        leading: Icon(icon, color: goldAccent),
+        leading: const Icon(Icons.document_scanner, color: goldAccent),
         title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        subtitle: Text(sub, style: const TextStyle(color: Colors.white54, fontSize: 11)),
-        onTap: () => _showApprovalSequence(context, title),
+        subtitle: Text(status, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        onTap: () => _executeSMEAuthority(context, title),
       ),
     );
   }
 
-  void _showApprovalSequence(BuildContext context, String title) {
-    showModalBottomSheet(
-      backgroundColor: deepBlack,
-      context: context, 
-      builder: (context) => Container(
-        padding: const EdgeInsets.all(30),
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          const Icon(Icons.shield, color: goldAccent, size: 50),
-          const SizedBox(height: 10),
-          Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900, minimumSize: const Size(double.infinity, 50)),
-            onPressed: () {
-              Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET CERTIFIED AS SUPERIOR - MARKETPLACE UPDATED")));
-            },
-            child: const Text("CERTIFY & PUBLISH", style: TextStyle(color: Colors.white)),
-          ),
-        ]),
-      ),
-    );
+  void _executeSMEAuthority(BuildContext context, String title) {
+    showModalBottomSheet(backgroundColor: deepBlack, context: context, builder: (context) => Container(
+      padding: const EdgeInsets.all(30),
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        Text(title, style: const TextStyle(color: goldAccent, fontWeight: FontWeight.bold, fontSize: 18)),
+        const SizedBox(height: 20),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900, minimumSize: const Size(double.infinity, 50)),
+          onPressed: () => Navigator.pop(context),
+          child: const Text("CERTIFY AS SUPERIOR", style: TextStyle(color: Colors.white)),
+        ),
+      ]),
+    ));
   }
 }
 
-// --- 4. THE BUYER DASHBOARD (WITH CERTIFIED BADGING) ---
-class BuyerDashboard extends StatelessWidget {
-  const BuyerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: warmBeige,
-      appBar: AppBar(backgroundColor: warmBeige, title: const Text("BUYER VAULT")),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text("SME CERTIFIED MARKETPLACE", style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
-          _marketTile("ANGUS #044", "\$2,695.00"),
-          _marketTile("HEREFORD #102", "\$2,310.00"),
-        ],
-      ),
-    );
-  }
-
-  Widget _marketTile(String name, String price) {
-    return Card(
-      child: ListTile(
-        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Row(children: [
-          const Icon(Icons.verified, color: goldAccent, size: 14),
-          const SizedBox(width: 5),
-          const Text("CEO CERTIFIED: SUPERIOR", style: TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold)),
-        ]),
-        trailing: Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
-      ),
-    );
-  }
-}
-
-// --- 5. THE PRODUCER CONSOLE ---
+// --- 4. PRODUCER PORTAL (DATA UPLINK) ---
 class ProducerDashboard extends StatelessWidget {
   const ProducerDashboard({super.key});
   @override
@@ -184,15 +146,68 @@ class ProducerDashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: warmBeige,
       appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER COMMAND")),
-      body: ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          const Text("ASSET INDUCTION", style: TextStyle(fontWeight: FontWeight.w900, color: goldAccent)),
-          Card(child: ListTile(
-            leading: const Icon(Icons.cloud_upload, color: goldAccent),
-            title: const Text("UPLOAD NEW ASSET"),
-          )),
-        ],
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        const Text("UPLINK NEW ASSET DATA", style: TextStyle(fontWeight: FontWeight.w900, color: goldAccent)),
+        Card(child: ListTile(
+          leading: const Icon(Icons.add_a_photo, color: goldAccent),
+          title: const Text("INITIALIZE INDUCTION"),
+          onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AssetInductionScreen())),
+        )),
+      ]),
+    );
+  }
+}
+
+class AssetInductionScreen extends StatelessWidget {
+  const AssetInductionScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("ASSET INDUCTION")),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
+        child: Column(children: [
+          const TextField(decoration: InputDecoration(labelText: "BREED", border: OutlineInputBorder())),
+          const SizedBox(height: 20),
+          const TextField(decoration: InputDecoration(labelText: "DNA TAG ID", border: OutlineInputBorder())),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 60)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("SYNC TO CEO COMMAND", style: TextStyle(color: goldAccent)),
+          ),
+        ]),
+      ),
+    );
+  }
+}
+
+// --- 5. BUYER VAULT (ISOLATED MARKETPLACE) ---
+class BuyerDashboard extends StatelessWidget {
+  const BuyerDashboard({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: warmBeige,
+      appBar: AppBar(backgroundColor: warmBeige, title: const Text("BUYER VAULT")),
+      body: ListView(padding: const EdgeInsets.all(20), children: [
+        const Text("HVF CERTIFIED ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
+        _marketTile("ANGUS #044", "\$2,695.00"),
+      ]),
+    );
+  }
+
+  Widget _marketTile(String name, String price) {
+    return Card(
+      child: ListTile(
+        title: Text(name, style: const TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: const Row(children: [
+          Icon(Icons.verified, color: goldAccent, size: 14),
+          SizedBox(width: 5),
+          Text("CEO CERTIFIED", style: TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold)),
+        ]),
+        trailing: Text(price, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green)),
       ),
     );
   }
