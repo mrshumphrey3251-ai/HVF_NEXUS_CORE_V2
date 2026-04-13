@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V48.0 - THE RAPID OFFENSIVE (STRIPE INTEGRATION)
-// PIVOT: OPTION A - RAPID BANKING ACTIVATION
-// FOCUS: $500K SEED CAPTURE VIA LIVE MERCHANT GATEWAY
+// HVF NEXUS CORE V49.0 - THE AGENT COMMISSION BUILD
+// FEATURE: EXECUTIVE AGENT AGREEMENT & COMMISSION TRACKER
+// FOCUS: 40-CITY RECRUITMENT INCENTIVES
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -55,9 +55,9 @@ class RoleSelectionScreen extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(children: [
-          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const ProducerDashboard()),
-          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const BuyerDashboard()),
-          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, const AgentDashboard()),
+          _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, AgentDashboard()),
+          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const PlaceholderScreen("PRODUCER")),
+          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const PlaceholderScreen("BUYER")),
         ]),
       ),
     );
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Access to the HVF Network is contingent upon live License/Subscription activation via the Stripe Secure Merchant Gateway.",
+            "Access to the Agent Console requires a signed Commission Agreement. All recruitment activity is tracked for $500K Seed Goal verification.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,106 +114,72 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: LIVE SETTLEMENT SCREENS ---
-
-class ProducerDashboard extends StatelessWidget {
-  const ProducerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("PRODUCER COMMAND")),
-      body: ListView(children: [
-        _buildSectionHeader("MERCHANT STATUS"),
-        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY FOR INITIALIZATION"), trailing: Icon(Icons.check_circle, color: goldAccent)),
-        _buildSectionHeader("ACTIVATION"),
-        _buildPaymentNav(context, "ACTIVATE PRODUCER LICENSE", "\$200.00"),
-      ]),
-    );
-  }
-}
-
-class BuyerDashboard extends StatelessWidget {
-  const BuyerDashboard({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("BUYER VAULT")),
-      body: ListView(children: [
-        _buildSectionHeader("MERCHANT STATUS"),
-        const ListTile(title: Text("STRIPE CONNECTION"), subtitle: Text("READY FOR INITIALIZATION"), trailing: Icon(Icons.check_circle, color: goldAccent)),
-        _buildSectionHeader("ACTIVATION"),
-        _buildPaymentNav(context, "ACTIVATE BUYER SUBSCRIPTION", "\$25.00"),
-      ]),
-    );
-  }
-}
-
+// --- STAGE 4: AGENT DASHBOARD W/ AGREEMENT ---
 class AgentDashboard extends StatelessWidget {
-  const AgentDashboard({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("AGENT VELOCITY")),
+      appBar: AppBar(title: const Text("AGENT TOUR CONSOLE"), backgroundColor: pureWhite, iconTheme: const IconThemeData(color: deepBlack)),
       body: ListView(children: [
-        _buildSectionHeader("LIVE CAPTURE TRACKER"),
-        const ListTile(title: Text("TOTAL SEED COLLECTED"), subtitle: Text("\$58,000 / \$500,000"), trailing: Icon(Icons.trending_up, color: Colors.green)),
+        _buildSectionHeader("AGENT LEGAL & COMMISSION"),
+        _buildNavTile(context, "VIEW EXECUTIVE COMMISSION AGREEMENT", Icons.gavel, AgentAgreementScreen()),
+        _buildSectionHeader("40-CITY OFFENSIVE TRACKER"),
+        const ListTile(title: Text("MY TOTAL EARNED COMMISSIONS"), subtitle: Text("\$8,250.00", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, fontSize: 20))),
+        const ListTile(title: Text("RECRUITMENT PROGRESS"), subtitle: Text("Johnston County: 145/500 Producers")),
       ]),
     );
   }
 }
 
-// --- STRIPE MERCHANT GATEWAY INTERFACE ---
-
-Widget _buildPaymentNav(BuildContext context, String label, String fee) {
-  return ListTile(
-    leading: const Icon(Icons.account_balance, color: goldAccent),
-    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
-    onTap: () => _initiateStripePayment(context, label, fee),
-  );
+class AgentAgreementScreen extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("EXECUTIVE AGREEMENT")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(25),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("HVF LICENSING AGENT COMMISSION PROTOCOL", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: goldAccent)),
+          const Divider(height: 40, thickness: 2),
+          const Text("1. PRODUCER ENROLLMENT", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const Text("Agent shall receive a one-time \$50.00 'Field Activation' fee for every Producer license activated (\$200.00).", style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 20),
+          const Text("2. BUYER SUBSCRIPTION", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const Text("Agent shall receive \$5.00 for every Buyer subscription activated (\$25.00).", style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 20),
+          const Text("3. PERFORMANCE BONUS", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+          const Text("Upon city saturation (500 Producers), Agent receives an additional \$10,000.00 Sovereign Milestone Bonus.", style: TextStyle(fontSize: 16)),
+          const SizedBox(height: 40),
+          const Text("AUTHORIZATION", style: TextStyle(fontWeight: FontWeight.bold)),
+          const TextField(decoration: InputDecoration(labelText: "DIGITAL SIGNATURE")),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("ACCEPT AGREEMENT", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          ),
+        ]),
+      ),
+    );
+  }
 }
 
-void _initiateStripePayment(BuildContext context, String title, String fee) {
-  showModalBottomSheet(
-    context: context,
-    isScrollControlled: true,
-    builder: (context) => Container(
-      padding: const EdgeInsets.all(30),
-      height: MediaQuery.of(context).size.height * 0.8,
-      child: Column(children: [
-        const Icon(Icons.security, color: Colors.blue, size: 40),
-        Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20)),
-        const Text("STRIPE SECURE MERCHANT GATEWAY", style: TextStyle(fontSize: 10, color: Colors.blue)),
-        const Divider(),
-        const SizedBox(height: 20),
-        const TextField(decoration: InputDecoration(labelText: "CARDHOLDER NAME", border: OutlineInputBorder())),
-        const SizedBox(height: 15),
-        const TextField(decoration: InputDecoration(labelText: "CARD NUMBER", border: OutlineInputBorder(), prefixIcon: Icon(Icons.credit_card))),
-        const SizedBox(height: 15),
-        const Row(children: [
-          Expanded(child: TextField(decoration: InputDecoration(labelText: "EXP (MM/YY)", border: OutlineInputBorder()))),
-          SizedBox(width: 10),
-          Expanded(child: TextField(decoration: InputDecoration(labelText: "CVC", border: OutlineInputBorder()))),
-        ]),
-        const Spacer(),
-        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          const Text("TOTAL SETTLEMENT", style: TextStyle(fontWeight: FontWeight.bold)),
-          Text(fee, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: goldAccent)),
-        ]),
-        const SizedBox(height: 20),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
-          onPressed: () {
-            // Logic: Calls the Stripe API PaymentIntent
-            Navigator.pop(context);
-            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("STRIPE: PAYMENT CAPTURED FOR $fee")));
-          },
-          child: const Text("PAY WITH STRIPE", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-        ),
-      ]),
-    ),
-  );
-}
-
+// --- SHARED UI HELPERS ---
 Widget _buildSectionHeader(String title) {
   return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
+}
+
+Widget _buildNavTile(BuildContext context, String label, IconData icon, Widget target) {
+  return ListTile(
+    leading: Icon(icon, color: goldAccent),
+    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
+  );
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  final String t;
+  const PlaceholderScreen(this.t, {super.key});
+  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(t)), body: Center(child: Text("$t SECURE")));
 }
