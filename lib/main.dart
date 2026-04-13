@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V41.0 - THE PROPRIETARY SETTLEMENT BUILD
-// UPDATED: INTERNALIZED 90/10 LOGIC (HIDDEN FROM BUYER)
-// FEATURE: SOVEREIGN GUARANTEE & SIMPLIFIED CHECKOUT
+// HVF NEXUS CORE V41.1 - THE PURE COMMAND BUILD
+// UPDATED: PERMANENT DISABLE OF IMAGE GENERATION
+// FEATURE: PROPRIETARY SETTLEMENT & SOVEREIGN FUNNEL
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -18,7 +18,6 @@ const Color pureWhite = Color(0xFFFFFFFF);
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color lightGray = Color(0xFFF5F5F5);
 
-// --- STAGE 1: THE HUMPHREY CREST ---
 class HVFCrestSignIn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -45,7 +44,6 @@ class HVFCrestSignIn extends StatelessWidget {
   }
 }
 
-// --- STAGE 2: ROLE SELECTION ---
 class RoleSelectionScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -82,7 +80,6 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- STAGE 3: EXECUTIVE BRIEFING ---
 class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final Widget target;
@@ -114,7 +111,6 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: THE BUYER EXPERIENCE ---
 class BuyerDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
