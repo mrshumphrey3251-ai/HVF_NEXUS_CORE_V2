@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V45.0 - THE LICENSING AGENT OFFENSIVE
-// FEATURE: AGENT RECRUITMENT TRACKER & CITY SATURATION
-// FOCUS: REAL-TIME TRACKING OF $500K SEED CAPITAL GOAL
+// HVF NEXUS CORE V46.0 - THE FULL SPECTRUM COMMAND
+// INTEGRATED: AGENT TRACKER, PRODUCER CONSOLE, & BUYER VAULT
+// FOCUS: SIMULTANEOUS RECRUITMENT & OPERATIONS
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -56,8 +56,8 @@ class RoleSelectionScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(children: [
           _buildRoleButton(context, "LICENSING AGENT", Icons.verified_user, AgentDashboard()),
-          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, const PlaceholderScreen("PRODUCER")),
-          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, const PlaceholderScreen("BUYER")),
+          _buildRoleButton(context, "PRODUCER PORTAL", Icons.agriculture, ProducerDashboard()),
+          _buildRoleButton(context, "BUYER PORTAL", Icons.shopping_bag, BuyerDashboard()),
         ]),
       ),
     );
@@ -82,7 +82,7 @@ class RoleSelectionScreen extends StatelessWidget {
   }
 }
 
-// --- STAGE 3: EXECUTIVE BRIEFING ---
+// --- STAGE 3: EXECUTIVE BRIEFING GATE ---
 class ExecutiveSummaryGate extends StatelessWidget {
   final String title;
   final Widget target;
@@ -99,7 +99,7 @@ class ExecutiveSummaryGate extends StatelessWidget {
           Text("$title BRIEFING", style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22)),
           const Divider(color: goldAccent, thickness: 2, height: 40),
           const Text(
-            "Licensing Agents are authorized to execute Producer and Buyer enrollments. All settlements must adhere to the 90/10 Sovereign protocol.",
+            "Access requires acknowledgment of the 90/10 Sovereign Settlement and HVF DNA-Verification protocols.",
             textAlign: TextAlign.center, style: TextStyle(fontSize: 16, height: 1.5),
           ),
           const Spacer(),
@@ -114,50 +114,67 @@ class ExecutiveSummaryGate extends StatelessWidget {
   }
 }
 
-// --- STAGE 4: LICENSING AGENT CONSOLE ---
+// --- STAGE 4A: AGENT CONSOLE (RECRUITMENT) ---
 class AgentDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: pureWhite,
-      appBar: AppBar(title: const Text("AGENT TOUR CONSOLE"), backgroundColor: pureWhite, elevation: 0),
+      appBar: AppBar(title: const Text("AGENT VELOCITY"), backgroundColor: pureWhite),
       body: ListView(children: [
-        _buildSectionHeader("40-CITY RECRUITMENT TRACKER"),
-        _buildCityTile("JOHNSTON COUNTY, OK", 145, 300), // Real-time numbers
-        _buildCityTile("MARSHALL COUNTY, OK", 88, 150),
-        _buildCityTile("LOVE COUNTY, OK", 12, 40),
-        const SizedBox(height: 20),
         _buildSectionHeader("SEED CAPITAL REVENUE"),
-        Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Text("CURRENT REVENUE CAPTURE", style: TextStyle(fontWeight: FontWeight.bold)),
-            const Text("\$58,000.00", style: TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.green)),
-            const Text("TARGET SEED GOAL: \$500,000.00", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
-            const SizedBox(height: 10),
-            LinearProgressIndicator(value: 58000/500000, color: Colors.green, backgroundColor: lightGray, minHeight: 12),
-          ]),
-        ),
+        const ListTile(title: Text("CURRENT CAPTURE", style: TextStyle(fontWeight: FontWeight.bold)), subtitle: Text("\$58,000.00 / \$500,000.00", style: TextStyle(color: Colors.green, fontWeight: FontWeight.w900, fontSize: 20))),
+        _buildSectionHeader("CITY RECRUITMENT"),
+        const ListTile(title: Text("JOHNSTON COUNTY"), subtitle: Text("145 Producers | 300 Buyers"), trailing: Icon(Icons.trending_up, color: Colors.green)),
+        const ListTile(title: Text("MARSHALL COUNTY"), subtitle: Text("88 Producers | 150 Buyers"), trailing: Icon(Icons.trending_up, color: Colors.green)),
       ]),
-    );
-  }
-
-  Widget _buildSectionHeader(String title) {
-    return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
-  }
-
-  Widget _buildCityTile(String city, int producers, int buyers) {
-    return ListTile(
-      title: Text(city, style: const TextStyle(fontWeight: FontWeight.bold)),
-      subtitle: Text("Producers: $producers | Buyers: $buyers"),
-      trailing: const Icon(Icons.location_on, color: goldAccent),
-      onTap: () {}, // Future city-specific drill-down
     );
   }
 }
 
-class PlaceholderScreen extends StatelessWidget {
-  final String t;
-  const PlaceholderScreen(this.t, {super.key});
-  @override Widget build(BuildContext context) => Scaffold(appBar: AppBar(title: Text(t)), body: Center(child: Text("$t SECURE")));
+// --- STAGE 4B: PRODUCER CONSOLE (INVENTORY) ---
+class ProducerDashboard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("PRODUCER COMMAND"), backgroundColor: pureWhite),
+      body: ListView(children: [
+        _buildSectionHeader("ASSET MANAGEMENT"),
+        _buildNavTile(context, "UPLOAD NEW ASSET", Icons.add_a_photo),
+        _buildNavTile(context, "SME GRADING STATUS", Icons.analytics),
+        _buildSectionHeader("LICENSE"),
+        _buildNavTile(context, "ACTIVATE LICENSE (\$200)", Icons.credit_card),
+      ]),
+    );
+  }
+}
+
+// --- STAGE 4C: BUYER VAULT (ACQUISITION) ---
+class BuyerDashboard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("BUYER VAULT"), backgroundColor: pureWhite),
+      body: ListView(children: [
+        _buildSectionHeader("SUPERIOR MARKET"),
+        _buildNavTile(context, "BROWSE LIVE MARKET", Icons.shopping_cart),
+        _buildSectionHeader("SECURE COLLECTION"),
+        _buildNavTile(context, "MY ASSETS", Icons.lock),
+        _buildNavTile(context, "DNA CERTIFICATES", Icons.verified),
+      ]),
+    );
+  }
+}
+
+// --- SHARED UI HELPERS ---
+Widget _buildSectionHeader(String title) {
+  return Container(width: double.infinity, padding: const EdgeInsets.all(15), color: lightGray, child: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, color: goldAccent)));
+}
+
+Widget _buildNavTile(BuildContext context, String label, IconData icon) {
+  return ListTile(
+    leading: Icon(icon, color: goldAccent),
+    title: Text(label, style: const TextStyle(fontWeight: FontWeight.bold)),
+    trailing: const Icon(Icons.chevron_right),
+    onTap: () {}, // Placeholder for sub-navigation
+  );
 }
