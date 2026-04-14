@@ -2,24 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V107.0 - THE LIVE HANDSHAKE
-// STATUS: PHASE 7 - FIRESTORE SYNC ACTIVE
-// AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
+// HVF NEXUS CORE V108.0 - THE FINAL CHANNEL LOCK
+// STATUS: DEPLOYMENT STAGE 8
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // DIRECT CLOUD INITIALIZATION
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
-      authDomain: "hvf-nexus.firebaseapp.com",
-      projectId: "hvf-nexus",
-      storageBucket: "hvf-nexus.firebasestorage.app",
-      messagingSenderId: "892263251736",
-      appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
-    ),
-  );
+  try {
+    await Firebase.initializeApp(
+      options: const FirebaseOptions(
+        apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
+        authDomain: "hvf-nexus.firebaseapp.com",
+        projectId: "hvf-nexus",
+        storageBucket: "hvf-nexus.firebasestorage.app",
+        messagingSenderId: "892263251736",
+        appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
+      ),
+    );
+    print("HVF_NEXUS: Firebase Connected Successfully");
+  } catch (e) {
+    print("HVF_NEXUS: Connection Failed: $e");
+  }
   runApp(const HVFApp());
 }
 
@@ -61,7 +64,6 @@ class _HVFShellState extends State<HVFShell> {
     );
   }
 
-  // LOGIN GATE
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -86,27 +88,27 @@ class _HVFShellState extends State<HVFShell> {
   void _verify(String k, String r) {
     String val = "";
     showDialog(context: context, builder: (c) => AlertDialog(
-      backgroundColor: Color(0xFF1E1E1E),
+      backgroundColor: const Color(0xFF1E1E1E),
       title: const Text("VERIFY_ID", style: TextStyle(color: hvfGold)),
       content: TextField(obscureText: true, style: const TextStyle(color: Colors.white), onChanged: (v) => val = v),
       actions: [TextButton(onPressed: () { if(val == k) { Navigator.pop(c); setState(() => role = r); } }, child: const Text("ACCESS"))],
     ));
   }
 
-  // CEO VIEW: STREAMING LIVE FROM FIRESTORE
   Widget _buildOverwatch() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('ledger').orderBy('timestamp', descending: true).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: hvfGold));
         final docs = snapshot.data!.docs;
+        if (docs.isEmpty) return const Center(child: Text("WAITING FOR FIELD ASSETS...", style: TextStyle(color: Colors.grey)));
         return ListView.builder(
           itemCount: docs.length,
           itemBuilder: (context, i) {
             final data = docs[i].data() as Map<String, dynamic>;
             return ListTile(
               title: Text(data['breed'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text(data['id'] ?? 'No ID', style: const TextStyle(color: hvfGold)),
+              subtitle: Text("ID: ${data['id'] ?? '---'}", style: const TextStyle(color: hvfGold)),
               trailing: const Icon(Icons.cloud_done, color: Colors.green, size: 15),
             );
           },
@@ -115,23 +117,27 @@ class _HVFShellState extends State<HVFShell> {
     );
   }
 
-  // AGENT VIEW: PUSHING TO FIRESTORE
   Widget _buildInduction() {
     final b = TextEditingController(); final t = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      TextField(controller: b, decoration: const InputDecoration(labelText: "ASSET_BREED")),
-      TextField(controller: t, decoration: const InputDecoration(labelText: "ASSET_ID")),
+      TextField(controller: b, decoration: const InputDecoration(labelText: "ASSET_BREED", labelStyle: TextStyle(color: Colors.grey))),
+      TextField(controller: t, decoration: const InputDecoration(labelText: "ASSET_ID", labelStyle: TextStyle(color: Colors.grey))),
       const SizedBox(height: 30),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: hvfGold, minimumSize: const Size(double.infinity, 50)),
         onPressed: () async {
           if (b.text.isNotEmpty) {
-            await FirebaseFirestore.instance.collection('ledger').add({
-              'breed': b.text,
-              'id': t.text,
-              'timestamp': FieldValue.serverTimestamp(),
-            });
-            b.clear(); t.clear();
+            try {
+              await FirebaseFirestore.instance.collection('ledger').add({
+                'breed': b.text,
+                'id': t.text,
+                'timestamp': FieldValue.serverTimestamp(),
+              });
+              b.clear(); t.clear();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
+            } catch (e) {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("UPLINK FAILED: $e")));
+            }
           }
         },
         child: const Text("UPLINK TO CLOUD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
