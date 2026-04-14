@@ -107,11 +107,16 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildProducerEntry() {
     final n = TextEditingController(); final d = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _catTab("LIVESTOCK"), _catTab("CROPS"), _catTab("FLEET"),
-      ]),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+          _catTab("LIVESTOCK"), const SizedBox(width: 8),
+          _catTab("CROPS"), const SizedBox(width: 8),
+          _catTab("FLEET"),
+        ]),
+      ),
       const SizedBox(height: 30),
-      TextField(controller: n, decoration: InputDecoration(labelText: "ASSET NAME")),
+      TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "FLEET" ? "MACHINE/TRUCK ID" : "ASSET NAME")),
       TextField(controller: d, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : "STATUS/DETAILS")),
       const SizedBox(height: 40),
       ElevatedButton(
@@ -123,6 +128,7 @@ class _HVFShellState extends State<HVFShell> {
             'value': val, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
           });
           n.clear(); d.clear();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ENTERPRISE UPLINK SUCCESSFUL")));
         },
         child: const Text("UPLINK TO SYSTEM", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
@@ -131,21 +137,31 @@ class _HVFShellState extends State<HVFShell> {
 
   Widget _catTab(String c) {
     bool active = activeCategory == c;
-    return ChoiceChip(label: Text(c, style: TextStyle(color: active ? Colors.black : Color(0xFFC5A059), fontSize: 10)), selected: active, onSelected: (s) => setState(() => activeCategory = c), selectedColor: Color(0xFFC5A059));
+    return ChoiceChip(
+      label: Text(c, style: TextStyle(color: active ? Colors.black : const Color(0xFFC5A059), fontSize: 10)), 
+      selected: active, 
+      onSelected: (s) => setState(() => activeCategory = c), 
+      selectedColor: const Color(0xFFC5A059),
+      backgroundColor: Colors.transparent,
+      shape: const StadiumBorder(side: BorderSide(color: Color(0xFFC5A059))),
+    );
   }
 
   Widget _buildBuyerMarket() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
         final docs = snapshot.data!.docs;
         return ListView.builder(itemCount: docs.length, itemBuilder: (context, i) {
           final data = docs[i].data() as Map<String, dynamic>;
           return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: ListTile(
             title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059))),
             subtitle: Text("${data['category']} | SOURCE: ${data['source']}"),
-            trailing: ElevatedButton(onPressed: () => docs[i].reference.update({'status': 'CLAIMED', 'buyer': userID}), child: const Text("SECURE")),
+            trailing: ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+              onPressed: () => docs[i].reference.update({'status': 'CLAIMED', 'buyer': userID}), 
+              child: const Text("SECURE", style: TextStyle(color: Colors.white))),
           ));
         });
       },
@@ -156,7 +172,7 @@ class _HVFShellState extends State<HVFShell> {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
         double totalValue = 0;
         for (var d in snapshot.data!.docs) { totalValue += (d.data() as Map<String, dynamic>)['value'] ?? 0; }
         
@@ -171,7 +187,7 @@ class _HVFShellState extends State<HVFShell> {
           Expanded(child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
             final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
             return ListTile(
-              leading: Icon(data['status'] == 'CLAIMED' ? Icons.check_circle : Icons.radio_button_unchecked, color: Color(0xFFC5A059)),
+              leading: Icon(data['status'] == 'CLAIMED' ? Icons.check_circle : Icons.radio_button_unchecked, color: const Color(0xFFC5A059)),
               title: Text(data['name']),
               subtitle: Text("SOURCE: ${data['source']} | CAT: ${data['category']}"),
               trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
