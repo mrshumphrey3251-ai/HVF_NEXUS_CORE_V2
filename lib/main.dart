@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:html' as html;
 
-// HVF NEXUS CORE V114.3 - THE DIGITAL BARN
-// FOCUS: BUYER ASSET TRACKING & POST-ACQUISITION CUSTODY
+// HVF NEXUS CORE V114.4 - FMV MARKET LOCKDOWN
+// FOCUS: RESTORING FAIR MARKET VALUE & REGIONAL INDEX
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -44,7 +44,11 @@ class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
   String activeCategory = "LIVESTOCK";
-  String buyerView = "MARKET"; // MARKET or PORTFOLIO
+  String buyerView = "MARKET";
+
+  // SOVEREIGN MARKET DATA (OKLAHOMA REGIONAL INDEX)
+  final double regionalAvgLive = 1.85; 
+  final double hvfPremiumRate = 1.15; // 15% CEO PREMIUM
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +68,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.warehouse, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.account_balance, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
         const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
@@ -103,28 +107,41 @@ class _HVFShellState extends State<HVFShell> {
 
   Widget _buildProducerEntry() {
     final n = TextEditingController(); final d1 = TextEditingController(); final d2 = TextEditingController(); final v = TextEditingController();
-    return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.center, children: [_catTab("LIVESTOCK"), const SizedBox(width: 8), _catTab("CROPS"), const SizedBox(width: 8), _catTab("FLEET")]),
-      const SizedBox(height: 30),
-      TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "CROPS" ? "CROP VARIETY" : "ASSET NAME")),
-      TextField(controller: d1, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : "PRIMARY VITAL")),
-      TextField(controller: d2, decoration: InputDecoration(labelText: "SECONDARY VITAL")),
-      TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO URL", icon: Icon(Icons.videocam, color: Colors.red))),
-      const SizedBox(height: 40),
-      ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
-        onPressed: () async {
-          double val = activeCategory == "LIVESTOCK" ? (double.tryParse(d1.text) ?? 0) * 1.85 * 1.15 : 0;
-          await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-            'name': n.text, 'vital1': d1.text, 'vital2': d2.text, 'category': activeCategory, 'video': v.text,
-            'value': val, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
-          });
-          n.clear(); d1.clear(); d2.clear(); v.clear();
-        },
-        child: const Text("UPLINK ASSET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-      )
-    ])));
+    return StatefulBuilder(builder: (context, setInternalState) {
+      double liveWt = double.tryParse(d1.text) ?? 0;
+      double fmv = liveWt * regionalAvgLive * hvfPremiumRate;
+
+      return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
+        Row(mainAxisAlignment: MainAxisAlignment.center, children: [_catTab("LIVESTOCK"), const SizedBox(width: 8), _catTab("CROPS"), const SizedBox(width: 8), _catTab("FLEET")]),
+        const SizedBox(height: 30),
+        TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "CROPS" ? "CROP VARIETY" : "ASSET NAME")),
+        TextField(controller: d1, keyboardType: TextInputType.number, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "LIVE WEIGHT (LBS)" : "PRIMARY VITAL"), 
+          onChanged: (v) => setInternalState(() {})),
+        TextField(controller: d2, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "VACCINATION STATUS" : "SECONDARY VITAL")),
+        TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO URL", icon: Icon(Icons.videocam, color: Colors.red))),
+        const SizedBox(height: 20),
+        if (activeCategory == "LIVESTOCK" && liveWt > 0) 
+          Container(padding: const EdgeInsets.all(12), decoration: BoxDecoration(border: Border.all(color: Colors.cyan)), child: Column(children: [
+            _row("EST. HANGING WEIGHT:", "${(liveWt * 0.62).toStringAsFixed(1)} LBS"),
+            _row("SOVEREIGN FMV:", "\$${fmv.toStringAsFixed(2)}"),
+          ])),
+        const SizedBox(height: 40),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+          onPressed: () async {
+            await FirebaseFirestore.instance.collection('enterprise_ledger').add({
+              'name': n.text, 'vital1': d1.text, 'vital2': d2.text, 'category': activeCategory, 'video': v.text,
+              'value': activeCategory == "LIVESTOCK" ? fmv : 0, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
+            });
+            n.clear(); d1.clear(); d2.clear(); v.clear();
+          },
+          child: const Text("UPLINK ASSET WITH FMV", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        )
+      ])));
+    });
   }
+
+  Widget _row(String l, String v) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l, style: const TextStyle(fontSize: 10, color: Colors.grey)), Text(v, style: const TextStyle(fontSize: 10, color: Colors.cyan))]);
 
   Widget _catTab(String c) {
     bool active = activeCategory == c;
@@ -150,7 +167,7 @@ class _HVFShellState extends State<HVFShell> {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
           return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: ListTile(
             title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059))),
-            subtitle: Text("${data['category']} | WT: ${data['vital1']}"),
+            subtitle: Text("FMV: \$${(data['value'] ?? 0).toStringAsFixed(2)} | WT: ${data['vital1']}"),
             trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED', 'buyer': userID}), child: const Text("SECURE")),
           ));
         });
@@ -163,13 +180,12 @@ class _HVFShellState extends State<HVFShell> {
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('buyer', isEqualTo: userID).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        if (snapshot.data!.docs.isEmpty) return const Center(child: Text("YOUR DIGITAL BARN IS EMPTY", style: TextStyle(color: Colors.grey)));
         return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
           return Card(color: const Color(0xFF111111), margin: const EdgeInsets.all(10), child: ListTile(
             leading: const Icon(Icons.check_circle, color: Colors.green),
             title: Text(data['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("ID: ${snapshot.data!.docs[i].id.substring(0,6).toUpperCase()}"),
+            subtitle: Text("SECURED AT FMV: \$${(data['value'] ?? 0).toStringAsFixed(2)}"),
             trailing: data['video'] != "" ? IconButton(icon: const Icon(Icons.play_circle, color: Colors.red), onPressed: () => html.window.open(data['video'], '_blank')) : null,
           ));
         });
@@ -182,15 +198,23 @@ class _HVFShellState extends State<HVFShell> {
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
-          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          return ListTile(
-            leading: Icon(Icons.circle, color: data['status'] == 'CLAIMED' ? Colors.green : Colors.orange, size: 12),
-            title: Text(data['name']),
-            subtitle: Text("OWNER: ${data['buyer'] ?? 'UNCLAIMED'} | AGENT: ${data['source']}"),
-            trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
-          );
-        });
+        double totalValue = 0;
+        for (var d in snapshot.data!.docs) { totalValue += (d.data() as Map<String, dynamic>)['value'] ?? 0; }
+        return Column(children: [
+          Container(padding: const EdgeInsets.all(20), width: double.infinity, color: const Color(0xFF111111), child: Column(children: [
+            const Text("TOTAL ENTERPRISE FMV", style: TextStyle(color: Colors.grey, fontSize: 10)),
+            Text("\$${totalValue.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
+          ])),
+          Expanded(child: ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
+            final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+            return ListTile(
+              leading: Icon(Icons.circle, color: data['status'] == 'CLAIMED' ? Colors.green : Colors.orange, size: 12),
+              title: Text("${data['name']} | \$${(data['value'] ?? 0).toStringAsFixed(2)}"),
+              subtitle: Text("AGENT: ${data['source']} | CAT: ${data['category']}"),
+              trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
+            );
+          }))
+        ]);
       },
     );
   }
