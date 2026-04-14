@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'dart:async';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // NOTE: Replace the placeholders below with your actual keys from Firebase Console
   await Firebase.initializeApp(
     options: const FirebaseOptions(
-      apiKey: "YOUR_API_KEY", // Ensure these match your Firebase Console
+      apiKey: "YOUR_API_KEY", 
       appId: "YOUR_APP_ID",
       messagingSenderId: "YOUR_SENDER_ID",
       projectId: "hvf-nexus",
@@ -20,6 +20,7 @@ class HVFNexus extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData.dark().copyWith(
         scaffoldBackgroundColor: const Color(0xFF0A0A0A),
       ),
@@ -38,55 +39,71 @@ class _NexusCoreState extends State<NexusCore> {
   bool isAuthorized = false;
   final TextEditingController _codeController = TextEditingController();
 
+  void _attemptLogin() {
+    if (_codeController.text == "CEO1880") {
+      setState(() {
+        isAuthorized = true;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // This is the "Force-Render" switch
     if (!isAuthorized) {
       return Scaffold(
         body: Center(
           child: Column(
-            mainAxisAlignment: Main_AxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Text("SOVEREIGN GATE", style: TextStyle(color: Color(0xFFFFD700), fontSize: 24, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 20),
+              const Text("SOVEREIGN GATE", 
+                style: TextStyle(color: Color(0xFFFFD700), fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 4)),
+              const SizedBox(height: 30),
               SizedBox(
-                width: 250,
+                width: 280,
                 child: TextField(
                   controller: _codeController,
                   obscureText: true,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
                   decoration: const InputDecoration(
-                    border: OutlineInputBorder(),
-                    labelText: 'Enter CEO Code',
+                    enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFFFD700))),
+                    focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
+                    labelText: 'ENTER AUTHORIZATION',
                     labelStyle: TextStyle(color: Colors.white54),
                   ),
-                  onSubmitted: (value) {
-                    if (value == "CEO1880") {
-                      setState(() {
-                        isAuthorized = true;
-                      });
-                    }
-                  },
+                  onSubmitted: (value) => _attemptLogin(),
                 ),
               ),
               const SizedBox(height: 20),
-              const Text("Live cloud stream active", style: TextStyle(color: Colors.green, fontSize: 12)),
+              TextButton(
+                onPressed: _attemptLogin,
+                child: const Text("UPLINK", style: TextStyle(color: Color(0xFFFFD700))),
+              ),
             ],
           ),
         ),
       );
     } else {
-      // THE COMMAND CENTER (This is what wasn't showing)
       return Scaffold(
         appBar: AppBar(
-          title: const Text(":: HVF OVERWATCH ::", style: TextStyle(color: Color(0xFFFFD700))),
+          title: const Text(":: HVF OVERWATCH ::", style: TextStyle(color: Color(0xFFFFD700), letterSpacing: 2)),
           backgroundColor: Colors.black,
+          centerTitle: true,
         ),
         body: Container(
-          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            border: Border.all(color: const Color(0xFFFFD700), width: 0.5),
+          ),
           child: const Center(
-            child: Text("COMMAND CENTER LIVE\nSystem Synchronized", 
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.white, fontSize: 18)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.radar, color: Color(0xFFFFD700), size: 50),
+                SizedBox(height: 20),
+                Text("COMMAND CENTER ACTIVE", style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.w300)),
+                Text("All systems nominal.", style: TextStyle(color: Colors.green, fontSize: 14)),
+              ],
+            ),
           ),
         ),
       );
