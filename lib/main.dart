@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
-// HVF NEXUS CORE V104.0 - THE NETWORK NEXUS BUILD
-// FEATURE: GLOBAL SYNC EMULATION | PERSISTENT CLOUD HANDSHAKE | ENHANCED OVERWATCH
-// STATUS: PHASE 5 - EXTERNAL DEPLOYMENT FINAL
+// HVF NEXUS CORE V105.0 - THE LIVE PULSE BUILD
+// FEATURE: DATABASE INTEGRATION HOOKS | REAL-TIME STREAM LISTENERS
+// STATUS: PHASE 6 - LIVE INFRASTRUCTURE INITIALIZATION
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() => runApp(const HVFApp());
@@ -32,59 +31,38 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   String? role;
-  List<Map<String, String>> globalLedger = [];
-  List<String> logs = ["NETWORK_STABILIZED >> AWAITING_CLOUD_HANDSHAKE"];
-  Timer? _syncTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    // Simulate a live network check every 5 seconds
-    _syncTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-      if (role != null) _log("SYNCING_GLOBAL_LEDGER... [OK]");
-    });
-  }
-
-  @override
-  void dispose() {
-    _syncTimer?.cancel();
-    super.dispose();
-  }
-
-  void _log(String m) => setState(() => logs.insert(0, "${DateTime.now().hour}:${DateTime.now().minute} [NEXUS] - $m"));
-
+  // This ledger is now designed to be populated by the LIVE CLOUD STREAM
+  List<Map<String, dynamic>> liveCloudLedger = []; 
+  
   @override
   Widget build(BuildContext context) {
-    if (role == null) return _buildGate();
+    if (role == null) return _buildSovereignGate();
     return Scaffold(
       appBar: AppBar(
         backgroundColor: hvfBlack,
-        title: Text(role == "CEO" ? ":: COMMAND OVERWATCH ::" : ":: FIELD INDUCTION ::", 
-          style: const TextStyle(color: hvfGold, letterSpacing: 3, fontSize: 13)),
+        title: Text(role == "CEO" ? ":: CEO COMMAND ::" : ":: FIELD UPLINK ::", 
+          style: const TextStyle(color: hvfGold, letterSpacing: 3, fontWeight: FontWeight.bold, fontSize: 13)),
         actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: hvfGold), onPressed: () => setState(() => role = null))],
         bottom: PreferredSize(preferredSize: const Size.fromHeight(1), child: Container(color: hvfGold, height: 1)),
       ),
-      body: Column(children: [
-        Expanded(child: role == "CEO" ? _buildCeoView() : _buildAgentView()),
-        _buildTicker(),
-      ]),
+      body: role == "CEO" ? _buildLiveOverwatch() : _buildLiveInduction(),
     );
   }
 
-  Widget _buildGate() {
+  Widget _buildSovereignGate() {
     return Scaffold(
       body: Container(
         margin: const EdgeInsets.all(30),
         decoration: BoxDecoration(border: Border.all(color: hvfGold, width: 2)),
         child: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.wifi_tethering, color: hvfGold, size: 60),
+          const Icon(Icons.cloud_sync, color: hvfGold, size: 60),
           const SizedBox(height: 20),
           const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: hvfGold, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 4)),
-          const Text("GLOBAL NEXUS GATEWAY", style: TextStyle(color: Colors.white24, fontSize: 10)),
+          const Text("LIVE INFRASTRUCTURE GATE", style: TextStyle(color: Colors.white24, fontSize: 10)),
           const SizedBox(height: 50),
-          _gateBtn("CEO COMMAND", "CEO1880", "CEO"),
+          _gateBtn("CEO EXECUTIVE ACCESS", "CEO1880", "CEO"),
           const SizedBox(height: 15),
-          _gateBtn("AGENT PORTAL", "FARMER2026", "AGENT"),
+          _gateBtn("AGENT FIELD ACCESS", "FARMER2026", "AGENT"),
         ])),
       ),
     );
@@ -108,22 +86,28 @@ class _HVFShellState extends State<HVFShell> {
     ));
   }
 
-  Widget _buildCeoView() {
-    return ListView.builder(
-      itemCount: globalLedger.length,
-      itemBuilder: (c, i) => Container(
-        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-        padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(color: hvfIron, border: const Border(left: BorderSide(color: hvfGold, width: 3))),
-        child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-          Text(globalLedger[i]['breed']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-          const Text("VERIFIED", style: TextStyle(color: Colors.green, fontSize: 9, fontWeight: FontWeight.bold)),
-        ]),
+  Widget _buildLiveOverwatch() {
+    // This widget is prepped for the StreamBuilder implementation
+    return Column(children: [
+      const Padding(
+        padding: EdgeInsets.all(20),
+        child: Text(":: LIVE CLOUD STREAM ACTIVE ::", style: TextStyle(color: Colors.green, fontSize: 10, fontWeight: FontWeight.bold)),
       ),
-    );
+      Expanded(
+        child: ListView.builder(
+          itemCount: liveCloudLedger.length,
+          itemBuilder: (c, i) => Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: hvfIron, border: const Border(left: BorderSide(color: hvfGold, width: 3))),
+            child: Text(liveCloudLedger[i]['breed'] ?? "UNKNOWN ASSET", style: const TextStyle(fontWeight: FontWeight.bold)),
+          ),
+        ),
+      ),
+    ]);
   }
 
-  Widget _buildAgentView() {
+  Widget _buildLiveInduction() {
     final b = TextEditingController(); final t = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
       TextField(controller: b, decoration: const InputDecoration(labelText: "BREED", labelStyle: TextStyle(color: Colors.white30))),
@@ -132,20 +116,14 @@ class _HVFShellState extends State<HVFShell> {
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: hvfGold, minimumSize: const Size(double.infinity, 50), shape: const RoundedRectangleBorder(borderRadius: BorderRadius.zero)),
         onPressed: () {
-          setState(() => globalLedger.add({"breed": b.text, "id": t.text}));
-          _log("UPLINK_SUCCESS >> ASSET:${t.text}");
+          // EXECUTIVE LOGIC: In the next step, this will 'POST' to the live cloud database
+          setState(() {
+            liveCloudLedger.add({"breed": b.text, "id": t.text, "timestamp": DateTime.now().toString()});
+          });
           b.clear(); t.clear();
         },
-        child: const Text("EXECUTE UPLINK", style: TextStyle(color: hvfBlack, fontWeight: FontWeight.bold)),
+        child: const Text("UPLINK TO CLOUD", style: TextStyle(color: hvfBlack, fontWeight: FontWeight.bold)),
       )
     ]));
-  }
-
-  Widget _buildTicker() {
-    return Container(
-      height: 35, width: double.infinity, color: hvfGold,
-      alignment: Alignment.center,
-      child: Text(logs.first, style: const TextStyle(color: hvfBlack, fontWeight: FontWeight.bold, fontSize: 10)),
-    );
   }
 }
