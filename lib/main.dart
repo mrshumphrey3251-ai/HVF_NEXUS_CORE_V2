@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V115.5 - SECURE SHIELD
-// FOCUS: MORTALITY INSURANCE & REPLACEMENT LOGIC
+// HVF NEXUS CORE V115.7 - REINFORCED ARCHITECTURE
+// FOCUS: FIXING WIDGET DEFINITIONS & STABILIZING SHIELD LOGIC
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -25,7 +27,12 @@ class HVFApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
+      theme: ThemeData(
+        brightness: Brightness.dark, 
+        scaffoldBackgroundColor: Colors.black, 
+        fontFamily: 'Courier',
+        primaryColor: const Color(0xFFC5A059),
+      ),
       home: const HVFShell(),
     );
   }
@@ -49,7 +56,10 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() { role = null; userID = null; })),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), 
+          onPressed: () => setState(() { role = null; userID = null; })
+        ),
         title: Text(":: $role PORTAL ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11)),
       ),
       body: _buildBody(),
@@ -59,7 +69,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.shield, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.security, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
         const Text("HVF NEXUS CORE V115", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
@@ -91,49 +101,56 @@ class _HVFShellState extends State<HVFShell> {
   }
 
   Widget _buildBody() {
-    if (role == "PRODUCER") return const Center(child: Text("PRODUCER TOOLS LOCKED"));
+    if (role == "PRODUCER") return const Center(child: Text("PRODUCER INTERFACE ACTIVE", style: TextStyle(color: Colors.grey)));
     if (role == "BUYER") return _buildBuyerCheckout();
     return _buildCEOOversight();
   }
 
-  // --- BUYER: NOW WITH MORTALITY INSURANCE TOGGLE ---
   Widget _buildBuyerCheckout() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
-          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          double insCost = data['species'] == "CATTLE" ? 10.0 : 5.0;
-          
-          return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: Column(children: [
-            ListTile(
-              title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-              subtitle: Text("FMV: \$${(data['value'] ?? 0).toStringAsFixed(2)}"),
-            ),
-            CheckboxListTile(
-              title: const Text("ADD MORTALITY INSURANCE", style: TextStyle(fontSize: 10)),
-              subtitle: Text("PROTECT FULL FMV FOR \$${insCost.toStringAsFixed(2)}/MO", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
-              value: insuranceOptIn,
-              onChanged: (val) => setState(() => insuranceOptIn = val!),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(double.infinity, 50)),
-                onPressed: () async {
-                  await snapshot.data!.docs[i].reference.update({
-                    'status': 'STEWARDSHIP',
-                    'buyer': userID,
-                    'insured': insuranceOptIn,
-                    'ins_premium': insuranceOptIn ? insCost : 0.0
-                  });
-                },
-                child: const Text("SECURE & PROTECT"),
-              ),
-            )
-          ]));
-        });
+        final docs = snapshot.data!.docs;
+        return ListView.builder(
+          itemCount: docs.length, 
+          itemBuilder: (context, i) {
+            final data = docs[i].data() as Map<String, dynamic>;
+            double insCost = data['species'] == "CATTLE" ? 10.0 : 5.0;
+            
+            return Card(
+              color: const Color(0xFF1A1A1A), 
+              margin: const EdgeInsets.all(10), 
+              child: Column(children: [
+                ListTile(
+                  title: Text(data['name'] ?? "UNKNOWN ASSET", style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+                  subtitle: Text("FMV: \$${(data['value'] ?? 0).toStringAsFixed(2)}"),
+                ),
+                CheckboxListTile(
+                  title: const Text("ADD MORTALITY INSURANCE", style: TextStyle(fontSize: 10)),
+                  subtitle: Text("PROTECT FULL FMV FOR \$${insCost.toStringAsFixed(2)}/MO", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+                  value: insuranceOptIn,
+                  onChanged: (val) => setState(() => insuranceOptIn = val!),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(double.infinity, 50)),
+                    onPressed: () async {
+                      await docs[i].reference.update({
+                        'status': 'STEWARDSHIP',
+                        'buyer': userID,
+                        'insured': insuranceOptIn,
+                        'ins_premium': insuranceOptIn ? insCost : 0.0
+                      });
+                    },
+                    child: const Text("SECURE & PROTECT"),
+                  ),
+                )
+              ]),
+            );
+          }
+        );
       },
     );
   }
@@ -143,16 +160,26 @@ class _HVFShellState extends State<HVFShell> {
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
-          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          bool insured = data['insured'] ?? false;
-          return ListTile(
-            leading: Icon(Icons.verified_user, color: insured ? Colors.cyan : Colors.grey),
-            title: Text(data['name']),
-            subtitle: Text("OWNER: ${data['buyer'] ?? 'PENDING'} | INSURED: ${insured ? 'YES' : 'NO'}"),
-            trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
-          );
-        });
+        final docs = snapshot.data!.docs;
+        return ListView.builder(
+          itemCount: docs.length, 
+          itemBuilder: (context, i) {
+            final data = docs[i].data() as Map<String, dynamic>;
+            bool insured = data['insured'] ?? false;
+            String owner = data['buyer'] ?? 'PENDING';
+            String status = data['status'] ?? 'N/A';
+
+            return ListTile(
+              leading: Icon(Icons.verified_user, color: insured ? Colors.cyan : Colors.grey),
+              title: Text(data['name'] ?? "UNNAMED", style: const TextStyle(color: Colors.white)),
+              subtitle: Text("OWNER: $owner | STATUS: $status", style: const TextStyle(fontSize: 10)),
+              trailing: IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red), 
+                onPressed: () => docs[i].reference.delete()
+              ),
+            );
+          }
+        );
       },
     );
   }
