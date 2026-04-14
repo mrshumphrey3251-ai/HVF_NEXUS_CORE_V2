@@ -1,111 +1,141 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-// THE HVF NEXUS CORE - V106.3 HARDENED
-void main() {
-  runApp(const HVFNexus());
+// HVF NEXUS CORE V107.0 - THE LIVE HANDSHAKE
+// STATUS: PHASE 7 - FIRESTORE SYNC ACTIVE
+// AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // DIRECT CLOUD INITIALIZATION
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
+      authDomain: "hvf-nexus.firebaseapp.com",
+      projectId: "hvf-nexus",
+      storageBucket: "hvf-nexus.firebasestorage.app",
+      messagingSenderId: "892263251736",
+      appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
+    ),
+  );
+  runApp(const HVFApp());
 }
 
-class HVFNexus extends StatelessWidget {
-  const HVFNexus({super.key});
+const Color hvfGold = Color(0xFFC5A059); 
+const Color hvfBlack = Color(0xFF0D0D0D);
+
+class HVFApp extends StatelessWidget {
+  const HVFApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF0A0A0A),
-      ),
-      home: const NexusCore(),
+      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: hvfBlack, fontFamily: 'Courier'),
+      home: const HVFShell(),
     );
   }
 }
 
-class NexusCore extends StatefulWidget {
-  const NexusCore({super.key});
+class HVFShell extends StatefulWidget {
+  const HVFShell({super.key});
   @override
-  State<NexusCore> createState() => _NexusCoreState();
+  State<HVFShell> createState() => _HVFShellState();
 }
 
-class _NexusCoreState extends State<NexusCore> {
-  bool isAuthorized = false;
-  final TextEditingController _codeController = TextEditingController();
-
-  void _verifyAccess() {
-    if (_codeController.text == "CEO1880") {
-      setState(() {
-        isAuthorized = true;
-      });
-    }
-  }
+class _HVFShellState extends State<HVFShell> {
+  String? role;
 
   @override
   Widget build(BuildContext context) {
-    if (!isAuthorized) {
-      return Scaffold(
-        body: Container(
-          decoration: BoxDecoration(
-            border: Border.all(color: const Color(0xFFFFD700), width: 2),
-          ),
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("SOVEREIGN GATE", 
-                  style: TextStyle(color: Color(0xFFFFD700), fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 5)),
-                const SizedBox(height: 40),
-                SizedBox(
-                  width: 280,
-                  child: TextField(
-                    controller: _codeController,
-                    obscureText: true,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                    decoration: const InputDecoration(
-                      enabledBorder: OutlineInputBorder(borderSide: BorderSide(color: Color(0xFFFFD700))),
-                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color: Colors.white)),
-                      labelText: 'AUTHORIZATION CODE',
-                      labelStyle: TextStyle(color: Colors.white54),
-                    ),
-                    onSubmitted: (_) => _verifyAccess(),
-                  ),
-                ),
-                const SizedBox(height: 30),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFFFD700)),
-                  onPressed: _verifyAccess,
-                  child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
-    } else {
-      return Scaffold(
-        appBar: AppBar(
-          title: const Text(":: HVF OVERWATCH ::", style: TextStyle(color: Color(0xFFFFD700))),
-          backgroundColor: Colors.black,
-          centerTitle: true,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.security, color: Color(0xFFFFD700), size: 80),
-              const SizedBox(height: 20),
-              const Text("SYSTEM ONLINE", style: TextStyle(color: Colors.white, fontSize: 24)),
-              const Text("Welcome, CEO Jeffery.", style: TextStyle(color: Colors.green, fontSize: 16)),
-              const SizedBox(height: 40),
-              Container(
-                padding: const EdgeInsets.all(20),
-                color: Colors.white10,
-                child: const Text("25 ACRE LAKE: STABLE\nJOHNSTON COUNTY UPLINK: ACTIVE", 
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xFFFFD700), fontFamily: 'monospace')),
-              )
-            ],
-          ),
-        ),
-      );
-    }
+    if (role == null) return _buildSovereignGate();
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: hvfBlack,
+        title: Text(role == "CEO" ? ":: CEO COMMAND ::" : ":: FIELD UPLINK ::", 
+          style: const TextStyle(color: hvfGold, letterSpacing: 3, fontWeight: FontWeight.bold, fontSize: 13)),
+        actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: hvfGold), onPressed: () => setState(() => role = null))],
+      ),
+      body: role == "CEO" ? _buildOverwatch() : _buildInduction(),
+    );
+  }
+
+  // LOGIN GATE
+  Widget _buildSovereignGate() {
+    return Scaffold(
+      body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.security, color: hvfGold, size: 60),
+        const SizedBox(height: 20),
+        const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: hvfGold, fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 4)),
+        const SizedBox(height: 50),
+        _gateBtn("CEO EXECUTIVE ACCESS", "CEO1880", "CEO"),
+        const SizedBox(height: 15),
+        _gateBtn("AGENT FIELD ACCESS", "FARMER2026", "AGENT"),
+      ])),
+    );
+  }
+
+  Widget _gateBtn(String l, String k, String r) {
+    return OutlinedButton(
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: hvfGold), minimumSize: const Size(250, 55)),
+      onPressed: () => _verify(k, r), child: Text(l, style: const TextStyle(color: hvfGold)),
+    );
+  }
+
+  void _verify(String k, String r) {
+    String val = "";
+    showDialog(context: context, builder: (c) => AlertDialog(
+      backgroundColor: Color(0xFF1E1E1E),
+      title: const Text("VERIFY_ID", style: TextStyle(color: hvfGold)),
+      content: TextField(obscureText: true, style: const TextStyle(color: Colors.white), onChanged: (v) => val = v),
+      actions: [TextButton(onPressed: () { if(val == k) { Navigator.pop(c); setState(() => role = r); } }, child: const Text("ACCESS"))],
+    ));
+  }
+
+  // CEO VIEW: STREAMING LIVE FROM FIRESTORE
+  Widget _buildOverwatch() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('ledger').orderBy('timestamp', descending: true).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: hvfGold));
+        final docs = snapshot.data!.docs;
+        return ListView.builder(
+          itemCount: docs.length,
+          itemBuilder: (context, i) {
+            final data = docs[i].data() as Map<String, dynamic>;
+            return ListTile(
+              title: Text(data['breed'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text(data['id'] ?? 'No ID', style: const TextStyle(color: hvfGold)),
+              trailing: const Icon(Icons.cloud_done, color: Colors.green, size: 15),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // AGENT VIEW: PUSHING TO FIRESTORE
+  Widget _buildInduction() {
+    final b = TextEditingController(); final t = TextEditingController();
+    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
+      TextField(controller: b, decoration: const InputDecoration(labelText: "ASSET_BREED")),
+      TextField(controller: t, decoration: const InputDecoration(labelText: "ASSET_ID")),
+      const SizedBox(height: 30),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: hvfGold, minimumSize: const Size(double.infinity, 50)),
+        onPressed: () async {
+          if (b.text.isNotEmpty) {
+            await FirebaseFirestore.instance.collection('ledger').add({
+              'breed': b.text,
+              'id': t.text,
+              'timestamp': FieldValue.serverTimestamp(),
+            });
+            b.clear(); t.clear();
+          }
+        },
+        child: const Text("UPLINK TO CLOUD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      )
+    ]));
   }
 }
