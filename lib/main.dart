@@ -1,13 +1,3 @@
-Acknowledged. We are stripping the "green" and returning to the Industrial Executive Baseline. As CEO, you are right to demand clarity over decoration. The Humphrey Standard requires a tool that commands respect, not one that looks like a playground.
-
-We are reverting to the high-contrast, professional palette: Deep Black, Gold, and Warm Beige. All functional requirements—the Sidebar, the Password Gates, the Agent Worksheet, and the CEO Decision Logic—are preserved within this clean aesthetic.
-
-HVF NEXUS CORE V88.0 – THE RESTORED BASELINE
-Action: 1. Open lib/main.dart.
-2. Delete All.
-3. Paste this definitive, hardened build.
-
-Dart
 import 'package:flutter/material.dart';
 
 // HVF NEXUS CORE V88.0 - THE RESTORED BASELINE
