@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:html' as html;
 
-// HVF NEXUS CORE V115.1 - MULTI-COMMODITY STABILIZATION
-// FOCUS: CATTLE, PIGS, CHICKENS & NATIVE UPLOAD BYPASS
+// HVF NEXUS CORE V115.4 - FARMER REVENUE TICKER
+// FOCUS: PROJECTED CARE DIVIDEND & USER VISIBILITY
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -44,11 +43,6 @@ class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
   String activeCategory = "LIVESTOCK";
-  String species = "CATTLE";
-
-  // SOVEREIGN MARKET DATA (OKLAHOMA REGIONAL INDEX)
-  final Map<String, double> regionalAvg = {"CATTLE": 1.85, "PIGS": 0.75, "CHICKENS": 1.50};
-  final Map<String, double> dressingPct = {"CATTLE": 0.62, "PIGS": 0.74, "CHICKENS": 0.75};
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +61,9 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.hub, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
-        const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+        const Text("HVF NEXUS CORE V115", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
         _gateBtn("CEO OVERSIGHT", "CEO"),
         _gateBtn("PRODUCER/AGENT", "PRODUCER"),
@@ -91,89 +85,72 @@ class _HVFShellState extends State<HVFShell> {
       body: Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Text("IDENTITY VERIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
         const SizedBox(height: 20),
-        TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / ENTITY")),
+        TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / ENTITY ID")),
         const SizedBox(height: 30),
-        ElevatedButton(onPressed: () => setState(() => userID = idController.text), child: const Text("INITIALIZE")),
+        ElevatedButton(onPressed: () => setState(() => userID = idController.text), child: const Text("ACCESS")),
       ])),
     );
   }
 
   Widget _buildBody() {
-    if (role == "PRODUCER") return _buildProducerEntry();
+    if (role == "PRODUCER") return _buildProducerDashboard();
     if (role == "BUYER") return _buildBuyerInterface();
     return _buildCEOOversight();
   }
 
-  Widget _buildProducerEntry() {
-    final n = TextEditingController(); final w = TextEditingController();
-    return StatefulBuilder(builder: (context, setInternalState) {
-      double weight = double.tryParse(w.text) ?? 0;
-      double avg = regionalAvg[species] ?? 1.85;
-      double fmv = weight * avg * 1.15;
+  // --- PRODUCER: NOW WITH EARNINGS TICKER ---
+  Widget _buildProducerDashboard() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('source', isEqualTo: userID).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        double monthlyEarnings = 0;
+        for (var doc in snapshot.data!.docs) {
+          final d = doc.data() as Map<String, dynamic>;
+          if (d['status'] == 'STEWARDSHIP') {
+            monthlyEarnings += (d['stew_fee'] ?? 0);
+          }
+        }
 
-      return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: [_catTab("LIVESTOCK"), _catTab("CROPS"), _catTab("FLEET")]),
-        const SizedBox(height: 20),
-        if(activeCategory == "LIVESTOCK") 
-          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-            _speciesChip("CATTLE", setInternalState),
-            _speciesChip("PIGS", setInternalState),
-            _speciesChip("CHICKENS", setInternalState),
-          ]),
-        const SizedBox(height: 20),
-        TextField(controller: n, decoration: const InputDecoration(labelText: "ASSET NAME / TAG")),
-        TextField(controller: w, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "LIVE WEIGHT (LBS)"), 
-          onChanged: (v) => setInternalState((){})),
-        const SizedBox(height: 30),
-        OutlinedButton.icon(
-          style: OutlinedButton.styleFrom(side: const BorderSide(color: Colors.red), minimumSize: const Size(double.infinity, 50)),
-          icon: const Icon(Icons.camera_alt, color: Colors.red),
-          label: const Text("DIRECT UPLOAD PROOF", style: TextStyle(color: Colors.red)),
-          onPressed: () {
-            html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
-            uploadInput.accept = 'image/*,video/*';
-            uploadInput.click();
-            uploadInput.onChange.listen((e) => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("MEDIA ATTACHED TO ASSET"))));
-          },
-        ),
-        const SizedBox(height: 20),
-        if (weight > 0) Container(padding: const EdgeInsets.all(15), color: Colors.white10, child: Column(children: [
-          _row("EST. HANGING WT:", "${(weight * (dressingPct[species] ?? 0.62)).toStringAsFixed(1)} LBS"),
-          _row("SOVEREIGN FMV:", "\$${fmv.toStringAsFixed(2)}"),
-        ])),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
-          onPressed: () async {
-            await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-              'name': n.text, 'vital1': w.text, 'species': species, 'category': activeCategory,
-              'value': activeCategory == "LIVESTOCK" ? fmv : 0, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
-            });
-            n.clear(); w.clear();
-          },
-          child: const Text("UPLINK TO EXCHANGE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-        )
-      ])));
-    });
-  }
-
-  Widget _speciesChip(String s, Function setStateInternal) {
-    bool selected = species == s;
-    return ChoiceChip(
-      label: Text(s, style: TextStyle(fontSize: 10, color: selected ? Colors.black : Color(0xFFC5A059))),
-      selected: selected,
-      onSelected: (val) => setStateInternal(() => species = s),
-      selectedColor: Color(0xFFC5A059),
+        return Column(children: [
+          Container(
+            padding: const EdgeInsets.all(20), width: double.infinity, color: const Color(0xFF111111),
+            child: Column(children: [
+              const Text("PROJECTED CARE DIVIDEND", style: TextStyle(color: Colors.cyan, fontSize: 10, letterSpacing: 1)),
+              Text("\$${monthlyEarnings.toStringAsFixed(2)}/MO", style: const TextStyle(color: Colors.cyan, fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text("RECURRING STEWARDSHIP REVENUE", style: TextStyle(color: Colors.grey, fontSize: 8)),
+            ]),
+          ),
+          const Expanded(child: Center(child: Text("UPLINK TOOLS ACTIVE", style: TextStyle(color: Colors.grey)))),
+        ]);
+      },
     );
   }
 
-  Widget _row(String l, String v) => Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l, style: const TextStyle(fontSize: 10, color: Colors.grey)), Text(v, style: const TextStyle(fontSize: 10, color: Colors.cyan))]);
-
-  Widget _catTab(String c) {
-    bool active = activeCategory == c;
-    return ChoiceChip(label: Text(c, style: const TextStyle(fontSize: 10)), selected: active, onSelected: (s) => setState(() => activeCategory = c), selectedColor: const Color(0xFFC5A059));
-  }
-
   Widget _buildBuyerInterface() { return const Center(child: Text("MARKETPLACE ACTIVE")); }
-  Widget _buildCEOOversight() { return const Center(child: Text("CEO OVERSIGHT ACTIVE")); }
-}
+  
+  Widget _buildCEOOversight() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        int totalUsers = 1; // You (CEO)
+        // Simple logic to count unique sources and buyers as users
+        Set users = {userID};
+        for(var doc in snapshot.data!.docs) {
+          final d = doc.data() as Map<String, dynamic>;
+          if(d['source'] != null) users.add(d['source']);
+          if(d['buyer'] != null) users.add(d['buyer']);
+        }
+
+        return Column(children: [
+          Container(
+            padding: const EdgeInsets.all(20), width: double.infinity, color: const Color(0xFF1A1A1A),
+            child: Column(children: [
+              const Text("ACTIVE NEXUS USERS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+              Text("${users.length}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
+            ]),
+          ),
+          const Expanded(child: Center(child: Text("CEO MONITORING ACTIVE"))),
+        ]);
+      },
