@@ -2,27 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V108.0 - THE FINAL CHANNEL LOCK
-// STATUS: DEPLOYMENT STAGE 8
+// HVF NEXUS CORE V109.0 - MULTI-ASSET INTEGRATION
+// STATUS: HELIOGRID ONLINE
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  try {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
-        authDomain: "hvf-nexus.firebaseapp.com",
-        projectId: "hvf-nexus",
-        storageBucket: "hvf-nexus.firebasestorage.app",
-        messagingSenderId: "892263251736",
-        appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
-      ),
-    );
-    print("HVF_NEXUS: Firebase Connected Successfully");
-  } catch (e) {
-    print("HVF_NEXUS: Connection Failed: $e");
-  }
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
+      authDomain: "hvf-nexus.firebaseapp.com",
+      projectId: "hvf-nexus",
+      storageBucket: "hvf-nexus.firebasestorage.app",
+      messagingSenderId: "892263251736",
+      appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
+    ),
+  );
   runApp(const HVFApp());
 }
 
@@ -49,6 +44,7 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   String? role;
+  String activeCategory = "LIVESTOCK";
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +53,7 @@ class _HVFShellState extends State<HVFShell> {
       appBar: AppBar(
         backgroundColor: hvfBlack,
         title: Text(role == "CEO" ? ":: CEO COMMAND ::" : ":: FIELD UPLINK ::", 
-          style: const TextStyle(color: hvfGold, letterSpacing: 3, fontWeight: FontWeight.bold, fontSize: 13)),
+          style: const TextStyle(color: hvfGold, letterSpacing: 2, fontWeight: FontWeight.bold, fontSize: 12)),
         actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: hvfGold), onPressed: () => setState(() => role = null))],
       ),
       body: role == "CEO" ? _buildOverwatch() : _buildInduction(),
@@ -101,15 +97,16 @@ class _HVFShellState extends State<HVFShell> {
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: hvfGold));
         final docs = snapshot.data!.docs;
-        if (docs.isEmpty) return const Center(child: Text("WAITING FOR FIELD ASSETS...", style: TextStyle(color: Colors.grey)));
         return ListView.builder(
           itemCount: docs.length,
           itemBuilder: (context, i) {
             final data = docs[i].data() as Map<String, dynamic>;
+            bool isEnergy = data['category'] == "ENERGY";
             return ListTile(
-              title: Text(data['breed'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("ID: ${data['id'] ?? '---'}", style: const TextStyle(color: hvfGold)),
-              trailing: const Icon(Icons.cloud_done, color: Colors.green, size: 15),
+              leading: Icon(isEnergy ? Icons.bolt : Icons.pets, color: hvfGold),
+              title: Text(data['name'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: isEnergy ? Colors.cyan : hvfGold)),
+              trailing: Text(data['category'] ?? "MISC", style: const TextStyle(fontSize: 10, color: Colors.grey)),
             );
           },
         );
@@ -118,30 +115,40 @@ class _HVFShellState extends State<HVFShell> {
   }
 
   Widget _buildInduction() {
-    final b = TextEditingController(); final t = TextEditingController();
+    final n = TextEditingController(); final d = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      TextField(controller: b, decoration: const InputDecoration(labelText: "ASSET_BREED", labelStyle: TextStyle(color: Colors.grey))),
-      TextField(controller: t, decoration: const InputDecoration(labelText: "ASSET_ID", labelStyle: TextStyle(color: Colors.grey))),
+      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
+        _catBtn("LIVESTOCK"), _catBtn("ENERGY"),
+      ]),
+      const SizedBox(height: 30),
+      TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME")),
+      TextField(controller: d, decoration: InputDecoration(labelText: activeCategory == "ENERGY" ? "VOLTAGE_OR_STATUS" : "ASSET_ID")),
       const SizedBox(height: 30),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: hvfGold, minimumSize: const Size(double.infinity, 50)),
         onPressed: () async {
-          if (b.text.isNotEmpty) {
-            try {
-              await FirebaseFirestore.instance.collection('ledger').add({
-                'breed': b.text,
-                'id': t.text,
-                'timestamp': FieldValue.serverTimestamp(),
-              });
-              b.clear(); t.clear();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
-            } catch (e) {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("UPLINK FAILED: $e")));
-            }
+          if (n.text.isNotEmpty) {
+            await FirebaseFirestore.instance.collection('ledger').add({
+              'name': n.text,
+              'detail': d.text,
+              'category': activeCategory,
+              'timestamp': FieldValue.serverTimestamp(),
+            });
+            n.clear(); d.clear();
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
           }
         },
         child: const Text("UPLINK TO CLOUD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
     ]));
+  }
+
+  Widget _catBtn(String c) {
+    bool active = activeCategory == c;
+    return ChoiceChip(
+      label: Text(c), selected: active, 
+      onSelected: (s) => setState(() => activeCategory = c),
+      selectedColor: hvfGold, labelStyle: TextStyle(color: active ? Colors.black : hvfGold),
+    );
   }
 }
