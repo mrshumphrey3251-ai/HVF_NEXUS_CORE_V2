@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:html' as html; // Native Web Linking - No extra library needed
+import 'dart:html' as html;
 
-// HVF NEXUS CORE V114.1 - STABILIZED VISION & HARVEST
-// FOCUS: NATIVE VIDEO LINKING & COMPILER BYPASS
+// HVF NEXUS CORE V114.2 - VITAL DATA ENRICHMENT
+// FOCUS: MULTI-SECTOR FIELD DEPTH & PORTFOLIO VALUATION
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -63,7 +63,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.videocam, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.fact_check, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
         const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
@@ -85,11 +85,11 @@ class _HVFShellState extends State<HVFShell> {
     final idController = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("IDENTITY VERIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("ID VERIFICATION REQUIRED", style: TextStyle(color: Color(0xFFC5A059))),
         const SizedBox(height: 20),
-        TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / AGENT ID")),
+        TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / ENTITY")),
         const SizedBox(height: 30),
-        ElevatedButton(onPressed: () => setState(() => userID = idController.text), child: const Text("ACCESS")),
+        ElevatedButton(onPressed: () => setState(() => userID = idController.text), child: const Text("INITIALIZE")),
       ])),
     );
   }
@@ -102,26 +102,28 @@ class _HVFShellState extends State<HVFShell> {
 
   Widget _buildProducerEntry() {
     final n = TextEditingController(); 
-    final d = TextEditingController(); 
+    final d1 = TextEditingController(); 
+    final d2 = TextEditingController();
     final v = TextEditingController();
     
     return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [_catTab("LIVESTOCK"), const SizedBox(width: 8), _catTab("CROPS"), const SizedBox(width: 8), _catTab("FLEET")]),
       const SizedBox(height: 30),
       TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "CROPS" ? "CROP VARIETY" : "ASSET NAME")),
-      TextField(controller: d, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : (activeCategory == "CROPS" ? "ACREAGE" : "STATUS"))),
-      TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO URL (YOUTUBE/DRIVE)", icon: Icon(Icons.videocam, color: Colors.red))),
+      TextField(controller: d1, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : (activeCategory == "CROPS" ? "ACREAGE" : "SERVICE HOURS"))),
+      TextField(controller: d2, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "VACCINATION STATUS" : (activeCategory == "CROPS" ? "MOISTURE %" : "FUEL LEVEL %"))),
+      TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO EVIDENCE URL", icon: Icon(Icons.videocam, color: Colors.red))),
       const SizedBox(height: 40),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
         onPressed: () async {
-          double val = activeCategory == "LIVESTOCK" ? (double.tryParse(d.text) ?? 0) * 1.85 * 1.15 : 0;
+          double val = activeCategory == "LIVESTOCK" ? (double.tryParse(d1.text) ?? 0) * 1.85 * 1.15 : 0;
           await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-            'name': n.text, 'detail': d.text, 'category': activeCategory, 'video': v.text,
+            'name': n.text, 'vital1': d1.text, 'vital2': d2.text, 'category': activeCategory, 'video': v.text,
             'value': val, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
           });
-          n.clear(); d.clear(); v.clear();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
+          n.clear(); d1.clear(); d2.clear(); v.clear();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VITAL DATA UPLINKED")));
         },
         child: const Text("UPLINK TO SYSTEM", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
@@ -143,18 +145,11 @@ class _HVFShellState extends State<HVFShell> {
           return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: Column(children: [
             ListTile(
               title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-              subtitle: Text("${data['category']} | SOURCE: ${data['source']}"),
+              subtitle: Text("${data['vital1']} | ${data['vital2']}"),
             ),
             if (data['video'] != null && data['video'].toString().isNotEmpty)
-              TextButton.icon(
-                icon: const Icon(Icons.play_circle_fill, color: Colors.red), 
-                label: const Text("WATCH VIDEO PROOF"), 
-                onPressed: () => html.window.open(data['video'], '_blank'),
-              ),
-            Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE ASSET")),
-            )
+              TextButton.icon(icon: const Icon(Icons.play_circle_fill, color: Colors.red), label: const Text("WATCH VIDEO PROOF"), onPressed: () => html.window.open(data['video'], '_blank')),
+            Padding(padding: const EdgeInsets.all(12), child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE ASSET")))
           ]));
         });
       },
@@ -168,11 +163,10 @@ class _HVFShellState extends State<HVFShell> {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          bool hasVideo = data['video'] != null && data['video'].toString().isNotEmpty;
           return ListTile(
-            leading: Icon(Icons.analytics, color: hasVideo ? Colors.green : Colors.grey),
+            leading: Icon(Icons.analytics, color: data['video'] != "" ? Colors.green : Colors.grey),
             title: Text(data['name']),
-            subtitle: Text("SOURCE: ${data['source']} | VIDEO: ${hasVideo ? "YES" : "NO"}"),
+            subtitle: Text("${data['category']} | Vitals: ${data['vital1']} / ${data['vital2']}"),
             trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
           );
         });
