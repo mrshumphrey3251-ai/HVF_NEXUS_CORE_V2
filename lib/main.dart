@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V110.0 - HEAVY INDUSTRY & FLEET INTEGRATION
-// STATUS: LOGISTICS CHANNEL ACTIVE
+// HVF NEXUS CORE V110.1 - ICON LOGIC PATCH
+// STATUS: VISUAL SYMBOLS LOCKED
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -101,17 +101,31 @@ class _HVFShellState extends State<HVFShell> {
           itemCount: docs.length,
           itemBuilder: (context, i) {
             final data = docs[i].data() as Map<String, dynamic>;
-            IconData icon = Icons.pets;
-            Color iconColor = hvfGold;
+            final cat = data['category']?.toString().toUpperCase() ?? "LIVESTOCK";
             
-            if (data['category'] == "ENERGY") { icon = Icons.bolt; iconColor = Colors.cyan; }
-            if (data['category'] == "FLEET") { icon = Icons.local_shipping; iconColor = Colors.orange; }
+            IconData displayIcon;
+            Color displayColor;
+
+            if (cat == "ENERGY") {
+              displayIcon = Icons.bolt;
+              displayColor = Colors.cyan;
+            } else if (cat == "FLEET") {
+              displayIcon = Icons.local_shipping;
+              displayColor = Colors.orange;
+            } else {
+              displayIcon = Icons.pets;
+              displayColor = hvfGold;
+            }
 
             return ListTile(
-              leading: Icon(icon, color: iconColor),
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: displayColor.withOpacity(0.1)),
+                child: Icon(displayIcon, color: displayColor, size: 24),
+              ),
               title: Text(data['name'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: iconColor.withOpacity(0.7))),
-              trailing: Text(data['category'] ?? "MISC", style: const TextStyle(fontSize: 10, color: Colors.grey)),
+              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: displayColor.withOpacity(0.8))),
+              trailing: Text(cat, style: const TextStyle(fontSize: 10, color: Colors.grey)),
             );
           },
         );
@@ -132,10 +146,12 @@ class _HVFShellState extends State<HVFShell> {
       ),
       const SizedBox(height: 30),
       TextField(controller: n, decoration: InputDecoration(
-        labelText: activeCategory == "FLEET" ? "ASSET_NAME (e.g. Mixer #05)" : (activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME")
+        labelText: activeCategory == "FLEET" ? "ASSET_NAME (e.g. Mixer #05)" : (activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME"),
+        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: hvfGold)),
       )),
       TextField(controller: d, decoration: InputDecoration(
-        labelText: activeCategory == "FLEET" ? "OPERATIONAL_STATUS" : (activeCategory == "ENERGY" ? "VOLTAGE/CHARGE" : "ASSET_ID")
+        labelText: activeCategory == "FLEET" ? "OPERATIONAL_STATUS" : (activeCategory == "ENERGY" ? "VOLTAGE/CHARGE" : "ASSET_ID"),
+        focusedBorder: const UnderlineInputBorder(borderSide: BorderSide(color: hvfGold)),
       )),
       const SizedBox(height: 30),
       ElevatedButton(
@@ -163,6 +179,8 @@ class _HVFShellState extends State<HVFShell> {
       label: Text(c), selected: active, 
       onSelected: (s) => setState(() => activeCategory = c),
       selectedColor: hvfGold, labelStyle: TextStyle(color: active ? Colors.black : hvfGold),
+      backgroundColor: Colors.transparent,
+      shape: StadiumBorder(side: BorderSide(color: active ? hvfGold : Colors.grey)),
     );
   }
 }
