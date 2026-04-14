@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V77.0 - THE PERSISTENT LEDGER
-// FEATURE: FULL TRANSACTIONAL SYNC (PRODUCER -> CEO -> BUYER)
+// HVF NEXUS CORE V77.1 - THE HARDENED LEDGER
+// FIX: RESOLVED VARIABLE MISMATCH IN TRANSACTION LOGIC
 // STATUS: TOTAL PROOF OF CONCEPT | TOUR-READY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
@@ -26,10 +26,10 @@ class HVFShell extends StatefulWidget {
 class _HVFShellState extends State<HVFShell> {
   int _selectedIndex = 0;
   
-  // THE GLOBAL LEDGER: This is the "Truth" the board needs to see.
-  List<Map<String, String>> pendingInductions = []; // Data from Farmer
-  List<Map<String, String>> marketplace = [];       // Data after CEO Approval
-  List<Map<String, String>> buyerVault = [];        // Data after Purchase
+  // THE GLOBAL LEDGER: THE SINGLE SOURCE OF TRUTH
+  List<Map<String, String>> pendingInductions = []; 
+  List<Map<String, String>> marketplace = [];       
+  List<Map<String, String>> buyerVault = [];        
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +40,10 @@ class _HVFShellState extends State<HVFShell> {
             backgroundColor: deepBlack,
             selectedIndex: _selectedIndex,
             onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-            leading: const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)),
+            leading: const Padding(
+              padding: EdgeInsets.symmetric(vertical: 20), 
+              child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)
+            ),
             labelType: NavigationRailLabelType.all,
             unselectedLabelTextStyle: const TextStyle(color: Colors.white38, fontSize: 10),
             selectedLabelTextStyle: const TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold),
@@ -60,22 +63,22 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildRoom() {
     switch (_selectedIndex) {
       case 0: return const Center(child: Text("HVF FLAGSHIP: JOHNSTON CO.", style: TextStyle(color: goldAccent, letterSpacing: 2)));
-      case 1: // FARMER ROOM
+      case 1: 
         return FarmerRoom(onSync: (id) {
-          setState(() { pendingInductions.add({"id": id, "status": "Pending SME Review"}); });
+          setState(() { pendingInductions.add({"id": id, "status": "Awaiting SME Review"}); });
         });
-      case 2: // CEO ROOM
+      case 2: 
         return CEORoom(queue: pendingInductions, onApprove: (item) {
           setState(() {
             pendingInductions.remove(item);
             marketplace.add({"id": item['id']!, "price": "\$2,750.00"});
           });
         });
-      case 3: // BUYER ROOM
+      case 3: 
         return BuyerRoom(market: marketplace, vault: buyerVault, onBuy: (item) {
           setState(() {
             marketplace.remove(item);
-            buyerViewVault.add(item);
+            buyerVault.add(item); // FIXED: Variable alignment secured
           });
         });
       default: return const SizedBox();
@@ -97,6 +100,8 @@ class FarmerRoom extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(40),
         child: Column(children: [
+          const Text("ASSET INDUCTION ENGINE", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.brown)),
+          const SizedBox(height: 30),
           TextField(controller: _controller, decoration: const InputDecoration(labelText: "DNA TAG / ASSET NAME", border: OutlineInputBorder())),
           const SizedBox(height: 20),
           ElevatedButton(
@@ -170,6 +175,7 @@ class BuyerRoom extends StatelessWidget {
           ]),
         ),
         body: TabBarView(children: [
+          market.isEmpty ? const Center(child: Text("MARKETPLACE EMPTY")) :
           ListView.builder(
             padding: const EdgeInsets.all(20),
             itemCount: market.length,
@@ -185,6 +191,7 @@ class BuyerRoom extends StatelessWidget {
               ),
             ),
           ),
+          vault.isEmpty ? const Center(child: Text("VAULT EMPTY")) :
           ListView.builder(
             padding: const EdgeInsets.all(20),
             itemCount: vault.length,
@@ -192,7 +199,7 @@ class BuyerRoom extends StatelessWidget {
               child: ListTile(
                 leading: const Icon(Icons.verified, color: goldAccent),
                 title: Text(vault[i]['id']!),
-                subtitle: const Text("SME CERTIFIED", style: TextStyle(fontSize: 10)),
+                subtitle: const Text("OFFICIAL CERTIFICATE ISSUED", style: TextStyle(fontSize: 10)),
               ),
             ),
           ),
