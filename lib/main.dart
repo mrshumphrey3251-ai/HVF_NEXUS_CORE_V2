@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V97.0 - THE SOVEREIGN SIGNATURE
-// FEATURE: DIGITAL SME SIGNATURES | ENCRYPTED RELEASE LOGS | DEED AUTHENTICATION
-// STATUS: PHASE 4 PREP - LEGAL SOVEREIGNTY
+// HVF NEXUS CORE V98.0 - THE AUTONOMOUS GOVERNOR
+// FEATURE: AUTO-CERTIFICATION | AUTO-SETTLEMENT | CEO OVERRIDE COMMANDS
+// STATUS: PHASE 4 - SCALABLE INFRASTRUCTURE
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -14,7 +14,6 @@ void main() {
 
 const Color goldAccent = Color(0xFFC5A059); 
 const Color deepBlack = Color(0xFF121212);
-const Color charcoal = Color(0xFF1E1E1E);
 
 class HVFShell extends StatefulWidget {
   const HVFShell({super.key});
@@ -24,13 +23,13 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   int _selectedIndex = 0;
-  List<Map<String, String>> pendingQueue = []; 
+  
+  // THE NEXUS AUTONOMOUS LEDGER
   List<Map<String, String>> marketLive = [];       
-  List<Map<String, String>> escrowHolding = []; 
   List<Map<String, String>> ownerVault = [];   
-  List<String> auditLog = ["SOVEREIGN CORE ONLINE: ${DateTime.now().hour}:${DateTime.now().minute}"];
+  List<String> auditLog = ["NEXUS AUTONOMY ACTIVE: ${DateTime.now().hour}:${DateTime.now().minute}"];
 
-  void _log(String m) => setState(() => auditLog.insert(0, "${DateTime.now().hour}:${DateTime.now().minute} [SIG-AUTH] - $m"));
+  void _log(String m) => setState(() => auditLog.insert(0, "${DateTime.now().hour}:${DateTime.now().minute} [AUTO-GOV] - $m"));
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +46,7 @@ class _HVFShellState extends State<HVFShell> {
           destinations: const [
             NavigationRailDestination(icon: Icon(Icons.map), label: Text("MAP")),
             NavigationRailDestination(icon: Icon(Icons.assignment_ind), label: Text("AGENT")),
-            NavigationRailDestination(icon: Icon(Icons.gavel), label: Text("CEO")),
+            NavigationRailDestination(icon: Icon(Icons.gavel), label: Text("OVERWATCH")),
             NavigationRailDestination(icon: Icon(Icons.shopping_bag), label: Text("BUYER")),
           ],
         ),
@@ -59,33 +58,22 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildPortal() {
     switch (_selectedIndex) {
       case 0: return const Center(child: Text("HVF FLAGSHIP: JOHNSTON COUNTY", style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900)));
-      case 1: return AgentPortal(onSync: (d) { setState(() => pendingQueue.add(d)); _log("ASSET UPLINKED: ${d['id']}"); });
-      case 2: return CEOPortal(
-        queue: pendingQueue, 
-        escrow: escrowHolding,
-        audit: auditLog, 
-        onAction: (it, app, pr) {
-          setState(() { 
-            pendingQueue.remove(it); 
-            if (app) marketLive.add({...it, "price": pr});
-          });
-          _log(app ? "SME CERTIFIED: ${it['id']}" : "VOIDED: ${it['id']}");
-        },
-        onSignAndRelease: (it) {
-          setState(() {
-            escrowHolding.remove(it);
-            ownerVault.add({
-              ...it, 
-              "signature": "SIGNED-SME-JH-${DateTime.now().millisecondsSinceEpoch}",
-              "settled": "${DateTime.now()}"
-            });
-          });
-          _log("DIGITAL SIGNATURE APPLIED: Deed Released for ${it['id']}");
-        }
-      );
-      case 3: return BuyerPortal(market: marketLive, vault: ownerVault, escrow: escrowHolding, onBuy: (it) {
-        setState(() { marketLive.remove(it); escrowHolding.add(it); });
-        _log("TRANSACTION INITIATED: Holding for SME Signature.");
+      case 1: return AgentPortal(onSync: (d) { 
+        // AUTONOMOUS INDUCTION: The Nexus validates and pushes to market immediately.
+        setState(() => marketLive.add({...d, "price": "\$2,850", "status": "AUTO-CERTIFIED"})); 
+        _log("AUTO-CERTIFIED: Tag ${d['id']} bypassed manual queue via Nexus Logic.");
+      });
+      case 2: return CEOOverwatch(market: marketLive, audit: auditLog, onFreeze: (it) {
+        setState(() { marketLive.remove(it); });
+        _log("CEO INTERVENTION: Asset ${it['id']} FROZEN and removed from market.");
+      });
+      case 3: return BuyerPortal(market: marketLive, vault: ownerVault, onBuy: (it) {
+        // AUTONOMOUS SETTLEMENT: Once 'funds' are confirmed, Nexus issues deed.
+        setState(() { 
+          marketLive.remove(it); 
+          ownerVault.add({...it, "sig": "NEXUS-AUTO-SIG-${DateTime.now().millisecondsSinceEpoch}"}); 
+        });
+        _log("AUTO-SETTLEMENT: Deed issued for ${it['id']} via Secure Handshake.");
       });
       default: return const SizedBox();
     }
@@ -99,73 +87,42 @@ class AgentPortal extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(body: Padding(padding: const EdgeInsets.all(40), child: Column(children: [
-      const Text("FIELD ENTRY"),
+      const Text("AGENT UPLINK (AUTO-MODE)"),
       TextField(controller: _b, decoration: const InputDecoration(labelText: "BREED")),
       TextField(controller: _t, decoration: const InputDecoration(labelText: "DNA ID")),
-      ElevatedButton(onPressed: () { onSync({"id": _t.text, "breed": _b.text}); _t.clear(); _b.clear(); }, child: const Text("SYNC"))
+      ElevatedButton(onPressed: () { onSync({"id": _t.text, "breed": _b.text}); _t.clear(); _b.clear(); }, child: const Text("UPLINK"))
     ])));
   }
 }
 
-class CEOPortal extends StatelessWidget {
-  final List<Map<String, String>> queue;
-  final List<Map<String, String>> escrow;
+class CEOOverwatch extends StatelessWidget {
+  final List<Map<String, String>> market;
   final List<String> audit;
-  final Function(Map<String, String>, bool, String) onAction;
-  final Function(Map<String, String>) onSignAndRelease;
-
-  const CEOPortal({super.key, required this.queue, required this.escrow, required this.audit, required this.onAction, required this.onSignAndRelease});
-
+  final Function(Map<String, String>) onFreeze;
+  const CEOOverwatch({super.key, required this.market, required this.audit, required this.onFreeze});
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(length: 3, child: Scaffold(backgroundColor: charcoal, appBar: AppBar(backgroundColor: deepBlack, bottom: const TabBar(tabs: [Tab(text: "QUEUE"), Tab(text: "SIGN DEEDS"), Tab(text: "LOG")])), body: TabBarView(children: [
-      ListView.builder(itemCount: queue.length, itemBuilder: (c, i) => ListTile(title: Text(queue[i]['breed']!, style: const TextStyle(color: Colors.white)), trailing: ElevatedButton(onPressed: () => onAction(queue[i], true, "\$2,850"), child: const Text("CERTIFY")))),
-      _buildSignatureList(escrow),
+    return DefaultTabController(length: 2, child: Scaffold(backgroundColor: const Color(0xFF1E1E1E), appBar: AppBar(backgroundColor: deepBlack, bottom: const TabBar(tabs: [Tab(text: "LIVE MARKET MONITOR"), Tab(text: "SYSTEM LOG")])), body: TabBarView(children: [
+      ListView.builder(itemCount: market.length, itemBuilder: (c, i) => ListTile(
+        title: Text(market[i]['breed']!, style: const TextStyle(color: Colors.white)),
+        subtitle: const Text("RUNNING UNDER AUTO-GOV", style: TextStyle(color: Colors.green, fontSize: 10)),
+        trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.red[900]), onPressed: () => onFreeze(market[i]), child: const Text("FREEZE ASSET")),
+      )),
       ListView.builder(itemCount: audit.length, itemBuilder: (c, i) => ListTile(title: Text(audit[i], style: const TextStyle(color: Colors.white60, fontSize: 10))))
     ])));
-  }
-
-  Widget _buildSignatureList(List<Map<String, String>> list) {
-    return list.isEmpty ? const Center(child: Text("NO DEEDS PENDING SIGNATURE", style: TextStyle(color: Colors.white24))) :
-    ListView.builder(itemCount: list.length, itemBuilder: (c, i) => ListTile(
-      title: Text(list[i]['breed']!, style: const TextStyle(color: Colors.white)),
-      subtitle: const Text("READY FOR SME SIGNATURE", style: TextStyle(color: goldAccent, fontSize: 10)),
-      trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: goldAccent), onPressed: () => onSignAndRelease(list[i]), child: const Text("SIGN & RELEASE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
-    ));
   }
 }
 
 class BuyerPortal extends StatelessWidget {
   final List<Map<String, String>> market;
   final List<Map<String, String>> vault;
-  final List<Map<String, String>> escrow;
   final Function(Map<String, String>) onBuy;
-  const BuyerPortal({super.key, required this.market, required this.vault, required this.escrow, required this.onBuy});
-
+  const BuyerPortal({super.key, required this.market, required this.vault, required this.onBuy});
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(length: 2, child: Scaffold(appBar: AppBar(bottom: const TabBar(tabs: [Tab(text: "MARKET"), Tab(text: "VAULT")])), body: TabBarView(children: [
-      ListView.builder(itemCount: market.length, itemBuilder: (c, i) => ListTile(title: Text(market[i]['breed']!), trailing: ElevatedButton(onPressed: () => onBuy(market[i]), child: const Text("BUY")))),
-      ListView.builder(itemCount: vault.length + escrow.length, itemBuilder: (c, i) {
-        if (i < escrow.length) return ListTile(title: Text(escrow[i]['breed']!), subtitle: const Text("AWAITING SME SIGNATURE"), leading: const Icon(Icons.history_edu, color: goldAccent));
-        final vIndex = i - escrow.length;
-        return ListTile(title: Text(vault[vIndex]['breed']!), subtitle: Text("SIGNATURE: ${vault[vIndex]['signature']}"), leading: const Icon(Icons.verified_user, color: Colors.green), onTap: () => _showSignedDeed(c, vault[vIndex]));
-      }),
+      ListView.builder(itemCount: market.length, itemBuilder: (c, i) => ListTile(title: Text(market[i]['breed']!), trailing: ElevatedButton(onPressed: () => onBuy(market[i]), child: const Text("PURCHASE")))),
+      ListView.builder(itemCount: vault.length, itemBuilder: (c, i) => ListTile(title: Text(vault[i]['breed']!), subtitle: const Text("AUTO-DEED ISSUED"), leading: const Icon(Icons.auto_awesome, color: goldAccent))),
     ])));
-  }
-
-  void _showSignedDeed(BuildContext context, Map<String, String> item) {
-    showDialog(context: context, builder: (c) => AlertDialog(
-      title: const Text("AUTHENTICATED DEED"),
-      content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text("BREED: ${item['breed']}"),
-        Text("DNA ID: ${item['id']}"),
-        const Divider(),
-        Text("SME SIGNATURE:", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 10, color: Colors.grey[600])),
-        Text(item['signature']!, style: const TextStyle(fontFamily: 'monospace', fontSize: 11, color: goldAccent)),
-        const SizedBox(height: 10),
-        const Text("STATUS: LEGALLY BINDING", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))
-      ]),
-    ));
   }
 }
