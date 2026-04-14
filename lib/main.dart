@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V72.0 - THE DIGITAL DEED
-// FEATURE: INTEGRATED CERTIFICATE OF LINEAGE & ASSET VAULT
-// STATUS: DOMINANT UNIFIED BUILD | COMPLETING THE TRANSACTION LOOP
+// HVF NEXUS CORE V71.0 - THE SME DATA ENGINE
+// FEATURE: FUNCTIONAL DATA ENTRY WITHIN THE ANCHOR SHELL
+// STATUS: DOMINANT UNIFIED BUILD | REVENUE-READY ASSET LOGGING
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -15,7 +15,7 @@ void main() {
 const Color goldAccent = Color(0xFFC5A059); 
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color warmBeige = Color(0xFFF9F6F0);
-const Color certificateGold = Color(0xFFD4AF37);
+const Color fieldGreen = Color(0xFF152215);
 
 class HVFShell extends StatefulWidget {
   const HVFShell({super.key});
@@ -50,10 +50,10 @@ class _HVFShellState extends State<HVFShell> {
             unselectedLabelTextStyle: const TextStyle(color: Colors.white38, fontSize: 10),
             selectedLabelTextStyle: const TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold),
             destinations: const [
-              NavigationRailDestination(icon: Icon(Icons.map), label: Text("MAP")),
-              NavigationRailDestination(icon: Icon(Icons.admin_panel_settings), label: Text("CEO")),
-              NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("FARMER")),
-              NavigationRailDestination(icon: Icon(Icons.shopping_bag), label: Text("BUYER")),
+              NavigationRailDestination(icon: Icon(Icons.map, color: Colors.white), selectedIcon: Icon(Icons.map, color: goldAccent), label: Text("MAP")),
+              NavigationRailDestination(icon: Icon(Icons.admin_panel_settings, color: Colors.white), selectedIcon: Icon(Icons.admin_panel_settings, color: goldAccent), label: Text("CEO")),
+              NavigationRailDestination(icon: Icon(Icons.agriculture, color: Colors.white), selectedIcon: Icon(Icons.agriculture, color: goldAccent), label: Text("FARMER")),
+              NavigationRailDestination(icon: Icon(Icons.shopping_bag, color: Colors.white), selectedIcon: Icon(Icons.shopping_bag, color: goldAccent), label: Text("BUYER")),
             ],
           ),
           Expanded(child: _pages[_selectedIndex]),
@@ -63,29 +63,51 @@ class _HVFShellState extends State<HVFShell> {
   }
 }
 
-// --- MAP ---
+// --- ROOM 1: MAP ---
 class FlagshipIntegratedMap extends StatelessWidget {
   const FlagshipIntegratedMap({super.key});
   @override
   Widget build(BuildContext context) {
-    return Container(color: const Color(0xFF152215), child: const Center(child: Text("HVF FLAGSHIP CAMPUS", style: TextStyle(color: goldAccent))));
+    return Container(
+      color: fieldGreen,
+      child: const Center(child: Text("HVF FLAGSHIP: JOHNSTON COUNTY CAMPUS", style: TextStyle(color: goldAccent, letterSpacing: 2))),
+    );
   }
 }
 
-// --- CEO ---
+// --- ROOM 2: CEO ---
 class CEODashboard extends StatelessWidget {
   const CEODashboard({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: deepBlack,
-      appBar: AppBar(backgroundColor: deepBlack, title: const Text("CEO COMMAND")),
-      body: const Center(child: Text("Executive Approval Queue: 2 Pending", style: TextStyle(color: Colors.white70))),
+      appBar: AppBar(backgroundColor: deepBlack, title: const Text("CEO COMMAND DESK", style: TextStyle(color: goldAccent))),
+      body: ListView(
+        padding: const EdgeInsets.all(30),
+        children: [
+          const Text("PENDING SME REVIEW", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
+          _queueCard("ASSET #ANGUS-V77", "DNA: Verified | Awaiting CEO Stamp"),
+          _queueCard("ASSET #BISON-K02", "DNA: Pending | Data Review Required"),
+        ],
+      ),
+    );
+  }
+
+  Widget _queueCard(String title, String sub) {
+    return Card(
+      color: const Color(0xFF2A2A2A),
+      child: ListTile(
+        title: Text(title, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+        subtitle: Text(sub, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        trailing: const Icon(Icons.gavel, color: goldAccent),
+      ),
     );
   }
 }
 
-// --- FARMER ---
+// --- ROOM 3: FARMER (DATA ENGINE ACTIVE) ---
 class ProducerDashboard extends StatelessWidget {
   const ProducerDashboard({super.key});
   @override
@@ -93,12 +115,36 @@ class ProducerDashboard extends StatelessWidget {
     return Scaffold(
       backgroundColor: warmBeige,
       appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER CONSOLE")),
-      body: const Center(child: Text("SME Data Induction Active")),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(30),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text("INITIALIZE ASSET INDUCTION", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.brown)),
+            const SizedBox(height: 30),
+            const TextField(decoration: InputDecoration(labelText: "BREED (SME STANDARD)", border: OutlineInputBorder())),
+            const SizedBox(height: 20),
+            const TextField(decoration: InputDecoration(labelText: "DNA TAG IDENTIFIER", border: OutlineInputBorder())),
+            const SizedBox(height: 20),
+            const Row(children: [
+              Expanded(child: TextField(decoration: InputDecoration(labelText: "AGE (MONTHS)", border: OutlineInputBorder()))),
+              SizedBox(width: 20),
+              Expanded(child: TextField(decoration: InputDecoration(labelText: "EST. WEIGHT (LBS)", border: OutlineInputBorder()))),
+            ]),
+            const SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 60)),
+              onPressed: () {},
+              child: const Text("SYNC DATA TO CEO DESK", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
 
-// --- BUYER (VAULT ACTIVE) ---
+// --- ROOM 4: BUYER ---
 class BuyerDashboard extends StatelessWidget {
   const BuyerDashboard({super.key});
   @override
@@ -109,61 +155,9 @@ class BuyerDashboard extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text("MY SECURED ASSETS", style: TextStyle(fontWeight: FontWeight.bold)),
-          const SizedBox(height: 10),
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.verified, color: goldAccent),
-              title: const Text("ANGUS UNIT #044"),
-              subtitle: const Text("SME Certified Superior"),
-              trailing: const Icon(Icons.arrow_forward_ios, size: 14),
-              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const CertificateView())),
-            ),
-          ),
+          const Text("HVF SUPERIOR MARKETPLACE", style: TextStyle(fontWeight: FontWeight.bold)),
+          Card(child: ListTile(title: const Text("ANGUS UNIT #044"), subtitle: const Text("SME CERTIFIED"), trailing: const Text("\$2,695.00", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)))),
         ],
-      ),
-    );
-  }
-}
-
-// --- THE CERTIFICATE (THE DEED) ---
-class CertificateView extends StatelessWidget {
-  const CertificateView({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: deepBlack,
-      appBar: AppBar(backgroundColor: Colors.transparent, iconTheme: const IconThemeData(color: Colors.white)),
-      body: Center(
-        child: Container(
-          width: 450,
-          padding: const EdgeInsets.all(40),
-          decoration: BoxDecoration(
-            color: const Color(0xFFFFFDF7),
-            border: Border.all(color: certificateGold, width: 10),
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text("HVF - EST. 1880", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent, fontSize: 24)),
-              const Divider(color: goldAccent, thickness: 2),
-              const SizedBox(height: 20),
-              const Text("CERTIFICATE OF LINEAGE", style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.bold, fontSize: 16)),
-              const SizedBox(height: 40),
-              const Text("ASSET ID: ANGUS-UNIT-044", style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
-              const Text("GRADE: SUPERIOR (SME CERTIFIED)", style: TextStyle(fontSize: 12, color: Colors.brown)),
-              const SizedBox(height: 60),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Column(children: [Text("ISSUED BY", style: TextStyle(fontSize: 8)), Text("HVF NEXUS", style: TextStyle(fontWeight: FontWeight.bold))]),
-                  const Icon(Icons.shield, color: goldAccent, size: 50),
-                  const Column(children: [Text("SME SIGNATURE", style: TextStyle(fontSize: 8)), Text("CEO J. HUMPHREY", style: TextStyle(fontWeight: FontWeight.bold))]),
-                ],
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
