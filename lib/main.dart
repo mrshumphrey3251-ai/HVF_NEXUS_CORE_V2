@@ -1,9 +1,7 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V115.6 - SECURE SHIELD (CLEAN BUILD)
-// FOCUS: FIXING COMPILER SYNTAX & STABILIZING INSURANCE LOGIC
+// HVF NEXUS CORE V115.5 - SECURE SHIELD
+// FOCUS: MORTALITY INSURANCE & REPLACEMENT LOGIC
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -27,11 +25,7 @@ class HVFApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark, 
-        scaffoldBackgroundColor: Colors.black, 
-        fontFamily: 'Courier'
-      ),
+      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
       home: const HVFShell(),
     );
   }
@@ -55,10 +49,7 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), 
-          onPressed: () => setState(() { role = null; userID = null; })
-        ),
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() { role = null; userID = null; })),
         title: Text(":: $role PORTAL ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11)),
       ),
       body: _buildBody(),
@@ -100,19 +91,19 @@ class _HVFShellState extends State<HVFShell> {
   }
 
   Widget _buildBody() {
-    if (role == "PRODUCER") return const Center(child: Text("PRODUCER TOOLS ACTIVE"));
+    if (role == "PRODUCER") return const Center(child: Text("PRODUCER TOOLS LOCKED"));
     if (role == "BUYER") return _buildBuyerCheckout();
     return _buildCEOOversight();
   }
 
+  // --- BUYER: NOW WITH MORTALITY INSURANCE TOGGLE ---
   Widget _buildBuyerCheckout() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        final docs = snapshot.data!.docs;
-        return ListView.builder(itemCount: docs.length, itemBuilder: (context, i) {
-          final data = docs[i].data() as Map<String, dynamic>;
+        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
+          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
           double insCost = data['species'] == "CATTLE" ? 10.0 : 5.0;
           
           return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: Column(children: [
@@ -131,7 +122,7 @@ class _HVFShellState extends State<HVFShell> {
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(double.infinity, 50)),
                 onPressed: () async {
-                  await docs[i].reference.update({
+                  await snapshot.data!.docs[i].reference.update({
                     'status': 'STEWARDSHIP',
                     'buyer': userID,
                     'insured': insuranceOptIn,
@@ -152,18 +143,14 @@ class _HVFShellState extends State<HVFShell> {
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        final docs = snapshot.data!.docs;
-        return ListView.builder(itemCount: docs.length, itemBuilder: (context, i) {
-          final data = docs[i].data() as Map<String, dynamic>;
+        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
+          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
           bool insured = data['insured'] ?? false;
           return ListTile(
             leading: Icon(Icons.verified_user, color: insured ? Colors.cyan : Colors.grey),
             title: Text(data['name']),
             subtitle: Text("OWNER: ${data['buyer'] ?? 'PENDING'} | INSURED: ${insured ? 'YES' : 'NO'}"),
-            trailing: IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red), 
-              onPressed: () => docs[i].reference.delete()
-            ),
+            trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
           );
         });
       },
