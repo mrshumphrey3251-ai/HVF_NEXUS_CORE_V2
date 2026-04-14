@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V115.4 - FARMER REVENUE TICKER
-// FOCUS: PROJECTED CARE DIVIDEND & USER VISIBILITY
+// HVF NEXUS CORE V115.6 - SECURE SHIELD (CLEAN BUILD)
+// FOCUS: FIXING COMPILER SYNTAX & STABILIZING INSURANCE LOGIC
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -27,7 +27,11 @@ class HVFApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
+      theme: ThemeData(
+        brightness: Brightness.dark, 
+        scaffoldBackgroundColor: Colors.black, 
+        fontFamily: 'Courier'
+      ),
       home: const HVFShell(),
     );
   }
@@ -42,7 +46,7 @@ class HVFShell extends StatefulWidget {
 class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
-  String activeCategory = "LIVESTOCK";
+  bool insuranceOptIn = false;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,10 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() { role = null; userID = null; })),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), 
+          onPressed: () => setState(() { role = null; userID = null; })
+        ),
         title: Text(":: $role PORTAL ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11)),
       ),
       body: _buildBody(),
@@ -61,7 +68,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.shield, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
         const Text("HVF NEXUS CORE V115", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
@@ -93,64 +100,73 @@ class _HVFShellState extends State<HVFShell> {
   }
 
   Widget _buildBody() {
-    if (role == "PRODUCER") return _buildProducerDashboard();
-    if (role == "BUYER") return _buildBuyerInterface();
+    if (role == "PRODUCER") return const Center(child: Text("PRODUCER TOOLS ACTIVE"));
+    if (role == "BUYER") return _buildBuyerCheckout();
     return _buildCEOOversight();
   }
 
-  // --- PRODUCER: NOW WITH EARNINGS TICKER ---
-  Widget _buildProducerDashboard() {
+  Widget _buildBuyerCheckout() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('source', isEqualTo: userID).snapshots(),
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        double monthlyEarnings = 0;
-        for (var doc in snapshot.data!.docs) {
-          final d = doc.data() as Map<String, dynamic>;
-          if (d['status'] == 'STEWARDSHIP') {
-            monthlyEarnings += (d['stew_fee'] ?? 0);
-          }
-        }
-
-        return Column(children: [
-          Container(
-            padding: const EdgeInsets.all(20), width: double.infinity, color: const Color(0xFF111111),
-            child: Column(children: [
-              const Text("PROJECTED CARE DIVIDEND", style: TextStyle(color: Colors.cyan, fontSize: 10, letterSpacing: 1)),
-              Text("\$${monthlyEarnings.toStringAsFixed(2)}/MO", style: const TextStyle(color: Colors.cyan, fontSize: 24, fontWeight: FontWeight.bold)),
-              const Text("RECURRING STEWARDSHIP REVENUE", style: TextStyle(color: Colors.grey, fontSize: 8)),
-            ]),
-          ),
-          const Expanded(child: Center(child: Text("UPLINK TOOLS ACTIVE", style: TextStyle(color: Colors.grey)))),
-        ]);
+        final docs = snapshot.data!.docs;
+        return ListView.builder(itemCount: docs.length, itemBuilder: (context, i) {
+          final data = docs[i].data() as Map<String, dynamic>;
+          double insCost = data['species'] == "CATTLE" ? 10.0 : 5.0;
+          
+          return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: Column(children: [
+            ListTile(
+              title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              subtitle: Text("FMV: \$${(data['value'] ?? 0).toStringAsFixed(2)}"),
+            ),
+            CheckboxListTile(
+              title: const Text("ADD MORTALITY INSURANCE", style: TextStyle(fontSize: 10)),
+              subtitle: Text("PROTECT FULL FMV FOR \$${insCost.toStringAsFixed(2)}/MO", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+              value: insuranceOptIn,
+              onChanged: (val) => setState(() => insuranceOptIn = val!),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(double.infinity, 50)),
+                onPressed: () async {
+                  await docs[i].reference.update({
+                    'status': 'STEWARDSHIP',
+                    'buyer': userID,
+                    'insured': insuranceOptIn,
+                    'ins_premium': insuranceOptIn ? insCost : 0.0
+                  });
+                },
+                child: const Text("SECURE & PROTECT"),
+              ),
+            )
+          ]));
+        });
       },
     );
   }
 
-  Widget _buildBuyerInterface() { return const Center(child: Text("MARKETPLACE ACTIVE")); }
-  
   Widget _buildCEOOversight() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        int totalUsers = 1; // You (CEO)
-        // Simple logic to count unique sources and buyers as users
-        Set users = {userID};
-        for(var doc in snapshot.data!.docs) {
-          final d = doc.data() as Map<String, dynamic>;
-          if(d['source'] != null) users.add(d['source']);
-          if(d['buyer'] != null) users.add(d['buyer']);
-        }
-
-        return Column(children: [
-          Container(
-            padding: const EdgeInsets.all(20), width: double.infinity, color: const Color(0xFF1A1A1A),
-            child: Column(children: [
-              const Text("ACTIVE NEXUS USERS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-              Text("${users.length}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
-            ]),
-          ),
-          const Expanded(child: Center(child: Text("CEO MONITORING ACTIVE"))),
-        ]);
+        final docs = snapshot.data!.docs;
+        return ListView.builder(itemCount: docs.length, itemBuilder: (context, i) {
+          final data = docs[i].data() as Map<String, dynamic>;
+          bool insured = data['insured'] ?? false;
+          return ListTile(
+            leading: Icon(Icons.verified_user, color: insured ? Colors.cyan : Colors.grey),
+            title: Text(data['name']),
+            subtitle: Text("OWNER: ${data['buyer'] ?? 'PENDING'} | INSURED: ${insured ? 'YES' : 'NO'}"),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete, color: Colors.red), 
+              onPressed: () => docs[i].reference.delete()
+            ),
+          );
+        });
       },
+    );
+  }
+}
