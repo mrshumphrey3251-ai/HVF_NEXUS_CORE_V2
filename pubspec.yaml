@@ -1,20 +1,21 @@
-name: hvf_nexus_core_v2
-description: Humphrey Virtual Farms Nexus Core - Build #36
-publish_to: 'none'
+name: hvf_nexus
+description: Humphrey Virtual Farms Nexus Core
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.0.0 <4.0.0'
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^1.0.2
+  firebase_core: ^3.1.1
+  cloud_firestore: ^5.0.2
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^2.0.0
+  flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
