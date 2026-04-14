@@ -153,3 +153,4 @@ class BuyerPortal extends StatelessWidget {
       ListView.builder(itemCount: vault.length, itemBuilder: (c, i) => ListTile(title: Text(vault[i]['breed']!), subtitle: const Text("RECORD SECURED"))),
     ])));
   }
+}
