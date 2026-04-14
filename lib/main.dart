@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V94.0 - ASSET INTEGRITY BUILD
-// FEATURE: HEALTH METRIC LOGGING | LIVE WEIGHT VERIFICATION | AUDIT ENHANCEMENT
-// STATUS: PHASE 3 - ASSET HARDENING
+// HVF NEXUS CORE V95.0 - THE DEED ISSUANCE BUILD
+// FEATURE: AUTOMATED LINEAGE DEEDS | CEO AUTHENTICATION STAMPS | TRANSACTIONAL FINALITY
+// STATUS: PHASE 3 COMPLETE | INVESTOR READY
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -14,7 +14,7 @@ void main() {
 
 const Color goldAccent = Color(0xFFC5A059); 
 const Color deepBlack = Color(0xFF121212);
-const Color warmBeige = Color(0xFFF5F5F0);
+const Color charcoal = Color(0xFF1E1E1E);
 
 class HVFShell extends StatefulWidget {
   const HVFShell({super.key});
@@ -24,15 +24,12 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   int _selectedIndex = 0;
-  bool _isCeoAuth = false;
-  bool _isAgentAuth = false;
-
   List<Map<String, String>> pendingQueue = []; 
   List<Map<String, String>> marketLive = [];       
   List<Map<String, String>> ownerVault = [];   
-  List<String> auditLog = ["INTEGRITY ENGINE ONLINE: ${DateTime.now().hour}:${DateTime.now().minute}"];
+  List<String> auditLog = ["DEED SYSTEM ONLINE: ${DateTime.now().hour}:${DateTime.now().minute}"];
 
-  void _log(String m) => setState(() => auditLog.insert(0, "${DateTime.now().hour}:${DateTime.now().minute} [LOG] - $m"));
+  void _log(String m) => setState(() => auditLog.insert(0, "${DateTime.now().hour}:${DateTime.now().minute} [DEED] - $m"));
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +38,7 @@ class _HVFShellState extends State<HVFShell> {
         NavigationRail(
           backgroundColor: deepBlack,
           selectedIndex: _selectedIndex,
-          onDestinationSelected: (i) {
-             if (i == 1 && !_isAgentAuth) {
-               _gate("AGENT ACCESS", "FARMER2026", () { setState(() { _isAgentAuth = true; _selectedIndex = 1; }); });
-             } else if (i == 2 && !_isCeoAuth) {
-               _gate("CEO COMMAND", "CEO1880", () { setState(() { _isCeoAuth = true; _selectedIndex = 2; }); });
-             } else {
-               setState(() => _selectedIndex = i);
-             }
-          },
+          onDestinationSelected: (i) => setState(() => _selectedIndex = i),
           leading: const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)),
           labelType: NavigationRailLabelType.all,
           unselectedLabelTextStyle: const TextStyle(color: Colors.white38, fontSize: 10),
@@ -66,33 +55,20 @@ class _HVFShellState extends State<HVFShell> {
     );
   }
 
-  void _gate(String t, String k, VoidCallback s) {
-    String val = "";
-    showDialog(context: context, builder: (c) => AlertDialog(
-      backgroundColor: deepBlack,
-      title: Text(t, style: const TextStyle(color: goldAccent, fontSize: 14)),
-      content: TextField(obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CODE"), onChanged: (v) => val = v),
-      actions: [ElevatedButton(onPressed: () { if(val == k) { Navigator.pop(c); s(); _log("SME ACCESS VERIFIED"); } }, child: const Text("VERIFY"))],
-    ));
-  }
-
   Widget _buildPortal() {
     switch (_selectedIndex) {
       case 0: return const Center(child: Text("HVF FLAGSHIP: JOHNSTON COUNTY", style: TextStyle(letterSpacing: 3, fontWeight: FontWeight.w900)));
-      case 1: return AgentPortal(onSync: (d) {
-        setState(() => pendingQueue.add(d));
-        _log("INDUCTION: Tag ${d['id']} (${d['weight']} lbs) Uploaded.");
-      });
+      case 1: return AgentPortal(onSync: (d) { setState(() => pendingQueue.add(d)); _log("ASSET INDUCTED: ${d['id']}"); });
       case 2: return CEOPortal(queue: pendingQueue, audit: auditLog, onAction: (it, app, pr) {
         setState(() { 
           pendingQueue.remove(it); 
-          if (app) marketLive.add({...it, "price": pr, "verified": "TRUE"});
+          if (app) marketLive.add({...it, "price": pr, "ceo_stamp": "CERTIFIED BY JEFFERY HUMPHREY"});
         });
-        _log(app ? "CERTIFIED: Asset ${it['id']} Verified for Market." : "REJECTED: Asset ${it['id']} Failed Integrity.");
+        _log(app ? "CEO CERTIFIED: ${it['id']}" : "REJECTED: ${it['id']}");
       });
       case 3: return BuyerPortal(market: marketLive, vault: ownerVault, onBuy: (it) {
         setState(() { marketLive.remove(it); ownerVault.add(it); });
-        _log("SETTLEMENT: Asset ${it['id']} Ownership Transferred.");
+        _log("DEED ISSUED: ${it['id']}");
       });
       default: return const SizedBox();
     }
@@ -102,21 +78,15 @@ class _HVFShellState extends State<HVFShell> {
 class AgentPortal extends StatelessWidget {
   final Function(Map<String, String>) onSync;
   AgentPortal({super.key, required this.onSync});
-  final _b = TextEditingController(); final _t = TextEditingController(); final _w = TextEditingController(); final _h = TextEditingController();
+  final _b = TextEditingController(); final _t = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: warmBeige, body: Padding(padding: const EdgeInsets.all(40), child: SingleChildScrollView(child: Column(children: [
-      const Text("ASSET INTEGRITY FORM", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.brown)),
+    return Scaffold(body: Padding(padding: const EdgeInsets.all(40), child: Column(children: [
+      const Text("AGENT FIELD UPLINK"),
       TextField(controller: _b, decoration: const InputDecoration(labelText: "BREED")),
       TextField(controller: _t, decoration: const InputDecoration(labelText: "DNA ID")),
-      TextField(controller: _w, decoration: const InputDecoration(labelText: "WEIGHT (LBS)")),
-      TextField(controller: _h, decoration: const InputDecoration(labelText: "LAST VET DATE")),
-      const SizedBox(height: 20),
-      ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: deepBlack), onPressed: () { 
-        if(_t.text.isNotEmpty) onSync({"id": _t.text, "breed": _b.text, "weight": _w.text, "vet": _h.text}); 
-        _t.clear(); _b.clear(); _w.clear(); _h.clear();
-      }, child: const Text("UPLINK TO COMMAND", style: TextStyle(color: goldAccent)))
-    ]))));
+      ElevatedButton(onPressed: () { onSync({"id": _t.text, "breed": _b.text}); _t.clear(); _b.clear(); }, child: const Text("SYNC"))
+    ])));
   }
 }
 
@@ -127,15 +97,8 @@ class CEOPortal extends StatelessWidget {
   const CEOPortal({super.key, required this.queue, required this.audit, required this.onAction});
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(length: 2, child: Scaffold(backgroundColor: Colors.grey[900], appBar: AppBar(backgroundColor: deepBlack, bottom: const TabBar(tabs: [Tab(text: "ASSET QUEUE"), Tab(text: "AUDIT LOG")])), body: TabBarView(children: [
-      ListView.builder(itemCount: queue.length, itemBuilder: (c, i) => Card(color: deepBlack, child: Column(children: [
-        ListTile(title: Text(queue[i]['breed']!, style: const TextStyle(color: Colors.white)), subtitle: Text("TAG: ${queue[i]['id']} | ${queue[i]['weight']} LBS", style: const TextStyle(color: goldAccent))),
-        Padding(padding: const EdgeInsets.all(8.0), child: Text("HEALTH STATUS: ${queue[i]['vet']}", style: const TextStyle(color: Colors.white54, fontSize: 10))),
-        Row(mainAxisAlignment: MainAxisAlignment.end, children: [
-          TextButton(onPressed: () => onAction(queue[i], false, ""), child: const Text("REJECT", style: TextStyle(color: Colors.red))),
-          ElevatedButton(onPressed: () => onAction(queue[i], true, "\$2,850"), child: const Text("CERTIFY"))
-        ])
-      ]))),
+    return DefaultTabController(length: 2, child: Scaffold(backgroundColor: charcoal, appBar: AppBar(backgroundColor: deepBlack, bottom: const TabBar(tabs: [Tab(text: "QUEUE"), Tab(text: "AUDIT")])), body: TabBarView(children: [
+      ListView.builder(itemCount: queue.length, itemBuilder: (c, i) => ListTile(title: Text(queue[i]['breed']!, style: const TextStyle(color: Colors.white)), trailing: ElevatedButton(onPressed: () => onAction(queue[i], true, "\$2,850"), child: const Text("CERTIFY")))),
       ListView.builder(itemCount: audit.length, itemBuilder: (c, i) => ListTile(title: Text(audit[i], style: const TextStyle(color: Colors.white60, fontSize: 10))))
     ])));
   }
@@ -148,9 +111,27 @@ class BuyerPortal extends StatelessWidget {
   const BuyerPortal({super.key, required this.market, required this.vault, required this.onBuy});
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(length: 2, child: Scaffold(appBar: AppBar(bottom: const TabBar(tabs: [Tab(text: "MARKET"), Tab(text: "OWNED")])), body: TabBarView(children: [
-      ListView.builder(itemCount: market.length, itemBuilder: (c, i) => ListTile(title: Text(market[i]['breed']!), subtitle: Text("${market[i]['weight']} LBS | CERTIFIED"), trailing: ElevatedButton(onPressed: () => onBuy(market[i]), child: Text("BUY ${market[i]['price']}")))),
-      ListView.builder(itemCount: vault.length, itemBuilder: (c, i) => ListTile(title: Text(vault[i]['breed']!), subtitle: const Text("RECORD SECURED"))),
+    return DefaultTabController(length: 2, child: Scaffold(appBar: AppBar(bottom: const TabBar(tabs: [Tab(text: "MARKET"), Tab(text: "MY VAULT")])), body: TabBarView(children: [
+      ListView.builder(itemCount: market.length, itemBuilder: (c, i) => ListTile(title: Text(market[i]['breed']!), trailing: ElevatedButton(onPressed: () => onBuy(market[i]), child: const Text("BUY")))),
+      ListView.builder(itemCount: vault.length, itemBuilder: (c, i) => ListTile(title: Text(vault[i]['breed']!), subtitle: const Text("VIEW DEED"), onTap: () => _showDeed(c, vault[i]))),
     ])));
+  }
+
+  void _showDeed(BuildContext context, Map<String, String> item) {
+    showDialog(context: context, builder: (c) => AlertDialog(
+      backgroundColor: Colors.white,
+      title: const Text("OFFICIAL CERTIFICATE OF LINEAGE", style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+      content: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Divider(color: goldAccent, thickness: 2),
+        Text("ASSET ID: ${item['id']}"),
+        Text("BREED: ${item['breed']}"),
+        Text("PRICE: ${item['price']}"),
+        const SizedBox(height: 20),
+        Text(item['ceo_stamp'] ?? "", style: const TextStyle(color: Colors.brown, fontWeight: FontWeight.bold, fontSize: 10)),
+        const SizedBox(height: 10),
+        const Text("DEED STATUS: LEGALLY SECURED", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+      ]),
+      actions: [TextButton(onPressed: () => Navigator.pop(c), child: const Text("CLOSE"))],
+    ));
   }
 }
