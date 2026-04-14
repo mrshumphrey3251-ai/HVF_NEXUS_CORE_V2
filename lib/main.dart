@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V74.0 - THE DOMINANT OPERATIONAL BUILD
-// FEATURE: GLOBAL PERSISTENCE & HARDENED SECURITY GATES
-// STATUS: TOUR-READY | STAGE COMPLETE
+// HVF NEXUS CORE V75.0 - THE COMPLETE BUYER CIRCUIT
+// FEATURE: MARKET-TO-VAULT SETTLEMENT & DIGITAL DEED ISSUANCE
+// STATUS: DOMINANT UNIFIED BUILD | FULL TRANSACTIONAL PROOF
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -25,44 +25,13 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   int _selectedIndex = 0;
-  bool _isCeoAuth = false;
-  bool _isFarmerAuth = false;
-
-  // GLOBAL LEDGER - This is the "Truth" of the app
-  List<Map<String, String>> pendingQueue = [
-    {"id": "ANGUS-V77", "origin": "Johnston Co.", "stats": "DNA: Verified | 1200 lbs"},
+  
+  // SHARED STATE FOR DEMO
+  List<Map<String, String>> marketplace = [
+    {"id": "ANGUS-V77", "price": "\$2,750.00", "grade": "SUPERIOR"},
+    {"id": "HEREFORD-B12", "price": "\$2,400.00", "grade": "SUPERIOR"},
   ];
-  List<Map<String, String>> liveMarket = [
-    {"id": "HEREFORD-01", "price": "\$2,800.00", "grade": "SUPERIOR"},
-  ];
-
-  void _navigate(int index) {
-    if (index == 1 && !_isCeoAuth) {
-      _gate("CEO COMMAND ACCESS", "CEO1880", () => setState(() { _isCeoAuth = true; _selectedIndex = 1; }));
-    } else if (index == 2 && !_isFarmerAuth) {
-      _gate("PRODUCER UPLINK", "FARMER2026", () => setState(() { _isFarmerAuth = true; _selectedIndex = 2; }));
-    } else {
-      setState(() => _selectedIndex = index);
-    }
-  }
-
-  void _gate(String title, String key, VoidCallback success) {
-    String entry = "";
-    showDialog(context: context, builder: (context) => AlertDialog(
-      backgroundColor: deepBlack,
-      title: Text(title, style: const TextStyle(color: goldAccent, fontSize: 14)),
-      content: TextField(
-        obscureText: true,
-        style: const TextStyle(color: Colors.white),
-        decoration: const InputDecoration(labelText: "ACCESS CODE", labelStyle: TextStyle(color: Colors.white54)),
-        onChanged: (v) => entry = v,
-      ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
-        ElevatedButton(onPressed: () { if(entry == key){ Navigator.pop(context); success(); } }, child: const Text("ACCESS")),
-      ],
-    ));
-  }
+  List<Map<String, String>> myVault = [];
 
   @override
   Widget build(BuildContext context) {
@@ -72,74 +41,61 @@ class _HVFShellState extends State<HVFShell> {
           NavigationRail(
             backgroundColor: deepBlack,
             selectedIndex: _selectedIndex,
-            onDestinationSelected: _navigate,
+            onDestinationSelected: (i) => setState(() => _selectedIndex = i),
             leading: const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)),
             labelType: NavigationRailLabelType.all,
             unselectedLabelTextStyle: const TextStyle(color: Colors.white38, fontSize: 10),
             selectedLabelTextStyle: const TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold),
             destinations: const [
               NavigationRailDestination(icon: Icon(Icons.map), label: Text("MAP")),
-              NavigationRailDestination(icon: Icon(Icons.admin_panel_settings), label: Text("CEO")),
-              NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("FARMER")),
-              NavigationRailDestination(icon: Icon(Icons.shopping_bag), label: Text("BUYER")),
+              NavigationRailDestination(icon: Icon(Icons.shopping_bag), label: Text("MARKET")),
+              NavigationRailDestination(icon: Icon(Icons.lock_person), label: Text("VAULT")),
             ],
           ),
-          Expanded(child: _buildActiveRoom()),
+          Expanded(child: _buildRoom()),
         ],
       ),
     );
   }
 
-  Widget _buildActiveRoom() {
+  Widget _buildRoom() {
     switch (_selectedIndex) {
-      case 0: return const CampusMap();
-      case 1: return CEORoom(queue: pendingQueue, onApprove: (item) {
+      case 0: return const Center(child: Text("HVF FLAGSHIP MAP", style: TextStyle(color: goldAccent)));
+      case 1: return MarketplaceRoom(assets: marketplace, onPurchase: (item) {
         setState(() {
-          pendingQueue.remove(item);
-          liveMarket.add({"id": item['id']!, "price": "\$2,750.00", "grade": "SUPERIOR"});
+          marketplace.remove(item);
+          myVault.add(item);
         });
       });
-      case 2: return FarmerRoom(onSync: (id) {
-        setState(() { pendingQueue.add({"id": id, "origin": "LOCAL", "stats": "Awaiting SME Review"}); });
-      });
-      case 3: return BuyerRoom(market: liveMarket);
-      default: return const CampusMap();
+      case 2: return VaultRoom(assets: myVault);
+      default: return const SizedBox();
     }
   }
 }
 
-// --- DOMINANT COMPONENTS ---
+// --- BUYER MARKETPLACE ---
+class MarketplaceRoom extends StatelessWidget {
+  final List<Map<String, String>> assets;
+  final Function(Map<String, String>) onPurchase;
+  const MarketplaceRoom({super.key, required this.assets, required this.onPurchase});
 
-class CampusMap extends StatelessWidget {
-  const CampusMap({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Container(color: const Color(0xFF152215), child: const Center(child: Text("HVF FLAGSHIP: JOHNSTON COUNTY CAMPUS", style: TextStyle(color: goldAccent, letterSpacing: 3))));
-  }
-}
-
-class CEORoom extends StatelessWidget {
-  final List<Map<String, String>> queue;
-  final Function(Map<String, String>) onApprove;
-  const CEORoom({super.key, required this.queue, required this.onApprove});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: deepBlack,
-      appBar: AppBar(backgroundColor: deepBlack, title: const Text("EXECUTIVE COMMAND DESK", style: TextStyle(color: goldAccent))),
-      body: queue.isEmpty ? const Center(child: Text("QUEUE CLEAR", style: TextStyle(color: Colors.white24))) :
+      backgroundColor: warmBeige,
+      appBar: AppBar(backgroundColor: warmBeige, title: const Text("HVF MARKETPLACE")),
+      body: assets.isEmpty ? const Center(child: Text("ALL ASSETS ACQUIRED")) :
       ListView.builder(
-        padding: const EdgeInsets.all(25),
-        itemCount: queue.length,
+        padding: const EdgeInsets.all(20),
+        itemCount: assets.length,
         itemBuilder: (context, i) => Card(
-          color: const Color(0xFF252525),
           child: ListTile(
-            title: Text(queue[i]['id']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text(queue[i]['stats']!, style: const TextStyle(color: goldAccent, fontSize: 11)),
+            title: Text(assets[i]['id']!, style: const TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: const Text("CEO CERTIFIED: SUPERIOR", style: TextStyle(color: goldAccent, fontSize: 10)),
             trailing: ElevatedButton(
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900),
-              onPressed: () => onApprove(queue[i]),
-              child: const Text("STAMP & CERTIFY"),
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade800),
+              onPressed: () => onPurchase(assets[i]),
+              child: Text("BUY ${assets[i]['price']}"),
             ),
           ),
         ),
@@ -148,50 +104,58 @@ class CEORoom extends StatelessWidget {
   }
 }
 
-class FarmerRoom extends StatelessWidget {
-  final Function(String) onSync;
-  const FarmerRoom({super.key, required this.onSync});
+// --- BUYER VAULT ---
+class VaultRoom extends StatelessWidget {
+  final List<Map<String, String>> assets;
+  const VaultRoom({super.key, required this.assets});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: warmBeige,
-      appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER UPLINK")),
-      body: Padding(
-        padding: const EdgeInsets.all(40),
-        child: Column(children: [
-          const TextField(decoration: InputDecoration(labelText: "DNA TAG ID", border: OutlineInputBorder())),
-          const SizedBox(height: 30),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 65)),
-            onPressed: () { 
-              onSync("NEW-ASSET-${DateTime.now().millisecond}");
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET UPLINKED TO CEO")));
-            },
-            child: const Text("SYNC TO NEXUS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+      appBar: AppBar(backgroundColor: warmBeige, title: const Text("MY SECURED VAULT")),
+      body: assets.isEmpty ? const Center(child: Text("NO ASSETS OWNED")) :
+      ListView.builder(
+        padding: const EdgeInsets.all(20),
+        itemCount: assets.length,
+        itemBuilder: (context, i) => Card(
+          child: ListTile(
+            leading: const Icon(Icons.verified, color: goldAccent),
+            title: Text(assets[i]['id']!),
+            subtitle: const Text("VIEW CERTIFICATE OF LINEAGE", style: TextStyle(fontSize: 10)),
+            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const DeedView())),
           ),
-        ]),
+        ),
       ),
     );
   }
 }
 
-class BuyerRoom extends StatelessWidget {
-  final List<Map<String, String>> market;
-  const BuyerRoom({super.key, required this.market});
+// --- THE DIGITAL DEED (THE PROOF) ---
+class DeedView extends StatelessWidget {
+  const DeedView({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: warmBeige,
-      appBar: AppBar(backgroundColor: warmBeige, title: const Text("SME MARKETPLACE")),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: market.length,
-        itemBuilder: (context, i) => Card(
-          child: ListTile(
-            title: Text(market[i]['id']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text("CEO CERTIFIED: ${market[i]['grade']}", style: const TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold)),
-            trailing: Text(market[i]['price']!, style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-          ),
+      backgroundColor: deepBlack,
+      appBar: AppBar(backgroundColor: Colors.transparent, iconTheme: const IconThemeData(color: Colors.white)),
+      body: Center(
+        child: Container(
+          width: 400,
+          padding: const EdgeInsets.all(30),
+          decoration: BoxDecoration(color: const Color(0xFFFFFDF7), border: Border.all(color: certificateGold, width: 8)),
+          child: Column(mainAxisSize: MainAxisSize.min, children: [
+            const Text("HVF - 1880 STANDARD", style: TextStyle(fontWeight: FontWeight.bold, color: goldAccent)),
+            const Divider(color: goldAccent),
+            const SizedBox(height: 20),
+            const Text("CERTIFICATE OF LINEAGE", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+            const SizedBox(height: 40),
+            const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+              Text("OFFICIAL SEAL", style: TextStyle(fontSize: 8)),
+              Icon(Icons.shield, color: goldAccent, size: 40),
+              Text("CEO J. HUMPHREY", style: TextStyle(fontSize: 8)),
+            ]),
+          ]),
         ),
       ),
     );
