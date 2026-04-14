@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V110.2 - HIGH VISIBILITY PATCH
-// STATUS: ICON FONT FORCE-LOADED
+// HVF NEXUS CORE V111.0 - THE PERFECT PATH
+// PRIMARY FOCUS: PRODUCER -> BUYER -> CEO OVERSIGHT
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -27,12 +27,7 @@ class HVFApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark, 
-        scaffoldBackgroundColor: const Color(0xFF0D0D0D), 
-        fontFamily: 'Courier',
-        useMaterial3: true, // Forces modern rendering
-      ),
+      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
       home: const HVFShell(),
     );
   }
@@ -46,7 +41,6 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   String? role;
-  String activeCategory = "LIVESTOCK";
 
   @override
   Widget build(BuildContext context) {
@@ -54,83 +48,82 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(role == "CEO" ? ":: CEO COMMAND ::" : ":: FIELD UPLINK ::", 
-          style: const TextStyle(color: Color(0xFFC5A059), letterSpacing: 2, fontWeight: FontWeight.bold, fontSize: 12)),
-        actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: Color(0xFFC5A059)), onPressed: () => setState(() => role = null))],
+        title: Text(":: $role DASHBOARD ::", style: const TextStyle(color: Color(0xFFC5A059), letterSpacing: 2)),
+        actions: [IconButton(icon: const Icon(Icons.logout, color: Color(0xFFC5A059)), onPressed: () => setState(() => role = null))],
       ),
-      body: role == "CEO" ? _buildOverwatch() : _buildInduction(),
+      body: _buildBody(),
     );
   }
 
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.security, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.agriculture, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
-        const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 4)),
-        const SizedBox(height: 50),
-        _gateBtn("CEO EXECUTIVE ACCESS", "CEO1880", "CEO"),
-        const SizedBox(height: 15),
-        _gateBtn("AGENT FIELD ACCESS", "FARMER2026", "AGENT"),
+        const Text("HVF TRANSACTION ENGINE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 40),
+        _gateBtn("CEO OVERSIGHT", "CEO1880", "CEO"),
+        _gateBtn("PRODUCER (ENTRY)", "FARMER2026", "PRODUCER"),
+        _gateBtn("BUYER (MARKET)", "BUYER2026", "BUYER"),
       ])),
     );
   }
 
   Widget _gateBtn(String l, String k, String r) {
-    return OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(250, 55)),
-      onPressed: () => _verify(k, r), child: Text(l, style: const TextStyle(color: Color(0xFFC5A059))),
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: OutlinedButton(
+        style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(280, 50)),
+        onPressed: () => setState(() => role = r), child: Text(l, style: const TextStyle(color: Color(0xFFC5A059))),
+      ),
     );
   }
 
-  void _verify(String k, String r) {
-    String val = "";
-    showDialog(context: context, builder: (c) => AlertDialog(
-      backgroundColor: const Color(0xFF1E1E1E),
-      title: const Text("VERIFY_ID", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(obscureText: true, style: const TextStyle(color: Colors.white), onChanged: (v) => val = v),
-      actions: [TextButton(onPressed: () { if(val == k) { Navigator.pop(c); setState(() => role = r); } }, child: const Text("ACCESS"))],
-    ));
+  Widget _buildBody() {
+    if (role == "PRODUCER") return _buildProducerEntry();
+    if (role == "BUYER") return _buildBuyerMarket();
+    return _buildCEOOversight();
   }
 
-  Widget _buildOverwatch() {
+  // --- PRODUCER: INDUCTION OF ASSETS ---
+  Widget _buildProducerEntry() {
+    final b = TextEditingController(); final i = TextEditingController();
+    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
+      const Text("ADD ASSET TO PIPELINE", style: TextStyle(color: Colors.grey)),
+      TextField(controller: b, decoration: const InputDecoration(labelText: "ANIMAL BREED")),
+      TextField(controller: i, decoration: const InputDecoration(labelText: "ANIMAL ID / TAG")),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
+        onPressed: () async {
+          await FirebaseFirestore.instance.collection('pipeline').add({
+            'breed': b.text, 'id': i.text, 'status': 'AVAILABLE', 'producer': 'PRODUCER_01', 'timestamp': FieldValue.serverTimestamp(),
+          });
+          b.clear(); i.clear();
+        },
+        child: const Text("UPLINK TO MARKET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      )
+    ]));
+  }
+
+  // --- BUYER: CLAIMING ASSETS ---
+  Widget _buildBuyerMarket() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('ledger').orderBy('timestamp', descending: true).snapshots(),
+      stream: FirebaseFirestore.instance.collection('pipeline').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final docs = snapshot.data!.docs;
         return ListView.builder(
           itemCount: docs.length,
-          itemBuilder: (context, i) {
-            final data = docs[i].data() as Map<String, dynamic>;
-            final cat = data['category']?.toString().toUpperCase() ?? "LIVESTOCK";
-            
-            IconData displayIcon;
-            Color displayColor;
-
-            if (cat == "ENERGY") {
-              displayIcon = Icons.bolt;
-              displayColor = Colors.cyan;
-            } else if (cat == "FLEET") {
-              displayIcon = Icons.local_shipping;
-              displayColor = Colors.orange;
-            } else {
-              displayIcon = Icons.pets;
-              displayColor = const Color(0xFFC5A059);
-            }
-
+          itemBuilder: (context, index) {
+            final data = docs[index].data() as Map<String, dynamic>;
             return ListTile(
-              leading: Container(
-                width: 45, height: 45,
-                decoration: BoxDecoration(
-                  border: Border.all(color: displayColor, width: 2),
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(displayIcon, color: displayColor, size: 28),
+              title: Text(data['breed'], style: const TextStyle(fontWeight: FontWeight.bold)),
+              subtitle: Text("TAG: ${data['id']}"),
+              trailing: ElevatedButton(
+                onPressed: () => docs[index].reference.update({'status': 'CLAIMED', 'buyer': 'BUYER_01'}),
+                child: const Text("BUY NOW"),
               ),
-              title: Text(data['name'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: displayColor)),
-              trailing: Text(cat, style: const TextStyle(fontSize: 10, color: Colors.grey)),
             );
           },
         );
@@ -138,50 +131,27 @@ class _HVFShellState extends State<HVFShell> {
     );
   }
 
-  Widget _buildInduction() {
-    final n = TextEditingController(); final d = TextEditingController();
-    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(children: [
-          _catBtn("LIVESTOCK"), const SizedBox(width: 8),
-          _catBtn("ENERGY"), const SizedBox(width: 8),
-          _catBtn("FLEET"),
-        ]),
-      ),
-      const SizedBox(height: 30),
-      TextField(controller: n, decoration: InputDecoration(
-        labelText: activeCategory == "FLEET" ? "ASSET_NAME" : (activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME"),
-      )),
-      TextField(controller: d, decoration: InputDecoration(
-        labelText: activeCategory == "FLEET" ? "OPERATIONAL_STATUS" : (activeCategory == "ENERGY" ? "VOLTAGE/CHARGE" : "ASSET_ID"),
-      )),
-      const SizedBox(height: 30),
-      ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
-        onPressed: () async {
-          if (n.text.isNotEmpty) {
-            await FirebaseFirestore.instance.collection('ledger').add({
-              'name': n.text,
-              'detail': d.text,
-              'category': activeCategory,
-              'timestamp': FieldValue.serverTimestamp(),
-            });
-            n.clear(); d.clear();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
-          }
-        },
-        child: const Text("UPLINK TO CLOUD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-      )
-    ]));
-  }
-
-  Widget _catBtn(String c) {
-    bool active = activeCategory == c;
-    return ChoiceChip(
-      label: Text(c), selected: active, 
-      onSelected: (s) => setState(() => activeCategory = c),
-      selectedColor: const Color(0xFFC5A059), labelStyle: TextStyle(color: active ? Colors.black : const Color(0xFFC5A059)),
+  // --- CEO: OVERSIGHT OF ALL ---
+  Widget _buildCEOOversight() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('pipeline').orderBy('timestamp', descending: true).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        final docs = snapshot.data!.docs;
+        return ListView.builder(
+          itemCount: docs.length,
+          itemBuilder: (context, index) {
+            final data = docs[index].data() as Map<String, dynamic>;
+            Color sColor = data['status'] == 'AVAILABLE' ? Colors.green : Colors.orange;
+            return ListTile(
+              leading: Icon(Icons.analytics, color: sColor),
+              title: Text("${data['breed']} (${data['id']})"),
+              subtitle: Text("STATUS: ${data['status']}"),
+              trailing: IconButton(icon: const Icon(Icons.delete_forever, color: Colors.red), onPressed: () => docs[index].reference.delete()),
+            );
+          },
+        );
+      },
     );
   }
 }
