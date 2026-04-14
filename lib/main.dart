@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V109.0 - MULTI-ASSET INTEGRATION
-// STATUS: HELIOGRID ONLINE
+// HVF NEXUS CORE V110.0 - HEAVY INDUSTRY & FLEET INTEGRATION
+// STATUS: LOGISTICS CHANNEL ACTIVE
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -101,11 +101,16 @@ class _HVFShellState extends State<HVFShell> {
           itemCount: docs.length,
           itemBuilder: (context, i) {
             final data = docs[i].data() as Map<String, dynamic>;
-            bool isEnergy = data['category'] == "ENERGY";
+            IconData icon = Icons.pets;
+            Color iconColor = hvfGold;
+            
+            if (data['category'] == "ENERGY") { icon = Icons.bolt; iconColor = Colors.cyan; }
+            if (data['category'] == "FLEET") { icon = Icons.local_shipping; iconColor = Colors.orange; }
+
             return ListTile(
-              leading: Icon(isEnergy ? Icons.bolt : Icons.pets, color: hvfGold),
+              leading: Icon(icon, color: iconColor),
               title: Text(data['name'] ?? 'Unknown', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: isEnergy ? Colors.cyan : hvfGold)),
+              subtitle: Text("${data['detail'] ?? '---'}", style: TextStyle(color: iconColor.withOpacity(0.7))),
               trailing: Text(data['category'] ?? "MISC", style: const TextStyle(fontSize: 10, color: Colors.grey)),
             );
           },
@@ -117,12 +122,21 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildInduction() {
     final n = TextEditingController(); final d = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-        _catBtn("LIVESTOCK"), _catBtn("ENERGY"),
-      ]),
+      SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(children: [
+          _catBtn("LIVESTOCK"), const SizedBox(width: 8),
+          _catBtn("ENERGY"), const SizedBox(width: 8),
+          _catBtn("FLEET"),
+        ]),
+      ),
       const SizedBox(height: 30),
-      TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME")),
-      TextField(controller: d, decoration: InputDecoration(labelText: activeCategory == "ENERGY" ? "VOLTAGE_OR_STATUS" : "ASSET_ID")),
+      TextField(controller: n, decoration: InputDecoration(
+        labelText: activeCategory == "FLEET" ? "ASSET_NAME (e.g. Mixer #05)" : (activeCategory == "ENERGY" ? "ARRAY_NAME" : "BREED_NAME")
+      )),
+      TextField(controller: d, decoration: InputDecoration(
+        labelText: activeCategory == "FLEET" ? "OPERATIONAL_STATUS" : (activeCategory == "ENERGY" ? "VOLTAGE/CHARGE" : "ASSET_ID")
+      )),
       const SizedBox(height: 30),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: hvfGold, minimumSize: const Size(double.infinity, 50)),
