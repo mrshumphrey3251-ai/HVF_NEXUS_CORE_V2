@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:html' as html;
 
-// HVF NEXUS CORE V114.2 - VITAL DATA ENRICHMENT
-// FOCUS: MULTI-SECTOR FIELD DEPTH & PORTFOLIO VALUATION
+// HVF NEXUS CORE V114.3 - THE DIGITAL BARN
+// FOCUS: BUYER ASSET TRACKING & POST-ACQUISITION CUSTODY
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -44,6 +44,7 @@ class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
   String activeCategory = "LIVESTOCK";
+  String buyerView = "MARKET"; // MARKET or PORTFOLIO
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +54,7 @@ class _HVFShellState extends State<HVFShell> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() { role = null; userID = null; })),
-        title: Text(":: $role DASHBOARD ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11)),
+        title: Text(":: $role PORTAL ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11)),
         actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red), onPressed: () => setState(() { role = null; userID = null; }))],
       ),
       body: _buildBody(),
@@ -63,7 +64,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.fact_check, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.warehouse, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
         const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
@@ -85,7 +86,7 @@ class _HVFShellState extends State<HVFShell> {
     final idController = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("ID VERIFICATION REQUIRED", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("IDENTITY VERIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
         const SizedBox(height: 20),
         TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / ENTITY")),
         const SizedBox(height: 30),
@@ -96,23 +97,19 @@ class _HVFShellState extends State<HVFShell> {
 
   Widget _buildBody() {
     if (role == "PRODUCER") return _buildProducerEntry();
-    if (role == "BUYER") return _buildBuyerMarket();
+    if (role == "BUYER") return _buildBuyerInterface();
     return _buildCEOOversight();
   }
 
   Widget _buildProducerEntry() {
-    final n = TextEditingController(); 
-    final d1 = TextEditingController(); 
-    final d2 = TextEditingController();
-    final v = TextEditingController();
-    
+    final n = TextEditingController(); final d1 = TextEditingController(); final d2 = TextEditingController(); final v = TextEditingController();
     return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [_catTab("LIVESTOCK"), const SizedBox(width: 8), _catTab("CROPS"), const SizedBox(width: 8), _catTab("FLEET")]),
       const SizedBox(height: 30),
       TextField(controller: n, decoration: InputDecoration(labelText: activeCategory == "CROPS" ? "CROP VARIETY" : "ASSET NAME")),
-      TextField(controller: d1, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : (activeCategory == "CROPS" ? "ACREAGE" : "SERVICE HOURS"))),
-      TextField(controller: d2, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "VACCINATION STATUS" : (activeCategory == "CROPS" ? "MOISTURE %" : "FUEL LEVEL %"))),
-      TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO EVIDENCE URL", icon: Icon(Icons.videocam, color: Colors.red))),
+      TextField(controller: d1, decoration: InputDecoration(labelText: activeCategory == "LIVESTOCK" ? "WEIGHT (LBS)" : "PRIMARY VITAL")),
+      TextField(controller: d2, decoration: InputDecoration(labelText: "SECONDARY VITAL")),
+      TextField(controller: v, decoration: const InputDecoration(labelText: "VIDEO URL", icon: Icon(Icons.videocam, color: Colors.red))),
       const SizedBox(height: 40),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
@@ -123,9 +120,8 @@ class _HVFShellState extends State<HVFShell> {
             'value': val, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
           });
           n.clear(); d1.clear(); d2.clear(); v.clear();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VITAL DATA UPLINKED")));
         },
-        child: const Text("UPLINK TO SYSTEM", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        child: const Text("UPLINK ASSET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
     ])));
   }
@@ -135,6 +131,16 @@ class _HVFShellState extends State<HVFShell> {
     return ChoiceChip(label: Text(c), selected: active, onSelected: (s) => setState(() => activeCategory = c), selectedColor: Color(0xFFC5A059));
   }
 
+  Widget _buildBuyerInterface() {
+    return Column(children: [
+      Row(children: [
+        Expanded(child: InkWell(onTap: () => setState(() => buyerView = "MARKET"), child: Container(padding: const EdgeInsets.all(15), color: buyerView == "MARKET" ? const Color(0xFFC5A059) : Colors.transparent, child: Center(child: Text("MARKETPLACE", style: TextStyle(color: buyerView == "MARKET" ? Colors.black : Colors.grey)))))),
+        Expanded(child: InkWell(onTap: () => setState(() => buyerView = "PORTFOLIO"), child: Container(padding: const EdgeInsets.all(15), color: buyerView == "PORTFOLIO" ? const Color(0xFFC5A059) : Colors.transparent, child: Center(child: Text("MY ASSETS", style: TextStyle(color: buyerView == "PORTFOLIO" ? Colors.black : Colors.grey)))))),
+      ]),
+      Expanded(child: buyerView == "MARKET" ? _buildBuyerMarket() : _buildBuyerPortfolio())
+    ]);
+  }
+
   Widget _buildBuyerMarket() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -142,15 +148,30 @@ class _HVFShellState extends State<HVFShell> {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: Column(children: [
-            ListTile(
-              title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-              subtitle: Text("${data['vital1']} | ${data['vital2']}"),
-            ),
-            if (data['video'] != null && data['video'].toString().isNotEmpty)
-              TextButton.icon(icon: const Icon(Icons.play_circle_fill, color: Colors.red), label: const Text("WATCH VIDEO PROOF"), onPressed: () => html.window.open(data['video'], '_blank')),
-            Padding(padding: const EdgeInsets.all(12), child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE ASSET")))
-          ]));
+          return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(10), child: ListTile(
+            title: Text(data['name'], style: const TextStyle(color: Color(0xFFC5A059))),
+            subtitle: Text("${data['category']} | WT: ${data['vital1']}"),
+            trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED', 'buyer': userID}), child: const Text("SECURE")),
+          ));
+        });
+      },
+    );
+  }
+
+  Widget _buildBuyerPortfolio() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('buyer', isEqualTo: userID).snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+        if (snapshot.data!.docs.isEmpty) return const Center(child: Text("YOUR DIGITAL BARN IS EMPTY", style: TextStyle(color: Colors.grey)));
+        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
+          final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+          return Card(color: const Color(0xFF111111), margin: const EdgeInsets.all(10), child: ListTile(
+            leading: const Icon(Icons.check_circle, color: Colors.green),
+            title: Text(data['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: Text("ID: ${snapshot.data!.docs[i].id.substring(0,6).toUpperCase()}"),
+            trailing: data['video'] != "" ? IconButton(icon: const Icon(Icons.play_circle, color: Colors.red), onPressed: () => html.window.open(data['video'], '_blank')) : null,
+          ));
         });
       },
     );
@@ -164,9 +185,9 @@ class _HVFShellState extends State<HVFShell> {
         return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
           return ListTile(
-            leading: Icon(Icons.analytics, color: data['video'] != "" ? Colors.green : Colors.grey),
+            leading: Icon(Icons.circle, color: data['status'] == 'CLAIMED' ? Colors.green : Colors.orange, size: 12),
             title: Text(data['name']),
-            subtitle: Text("${data['category']} | Vitals: ${data['vital1']} / ${data['vital2']}"),
+            subtitle: Text("OWNER: ${data['buyer'] ?? 'UNCLAIMED'} | AGENT: ${data['source']}"),
             trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
           );
         });
