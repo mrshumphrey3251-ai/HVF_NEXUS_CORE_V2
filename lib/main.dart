@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'dart:html' as html; // Native Web Linking - No extra library needed
 
-// HVF NEXUS CORE V114.0 - VISION & HARVEST
-// FOCUS: VIDEO EVIDENCE & CROP METRICS
+// HVF NEXUS CORE V114.1 - STABILIZED VISION & HARVEST
+// FOCUS: NATIVE VIDEO LINKING & COMPILER BYPASS
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -63,9 +63,9 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildSovereignGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.visibility, color: Color(0xFFC5A059), size: 60),
+        const Icon(Icons.videocam, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
-        const Text("HVF NEXUS CORE V114", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+        const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
         const SizedBox(height: 40),
         _gateBtn("CEO OVERSIGHT", "CEO"),
         _gateBtn("PRODUCER/AGENT", "PRODUCER"),
@@ -85,7 +85,7 @@ class _HVFShellState extends State<HVFShell> {
     final idController = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(40), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("VERIFY IDENTITY", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("IDENTITY VERIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
         const SizedBox(height: 20),
         TextField(controller: idController, decoration: const InputDecoration(labelText: "NAME / AGENT ID")),
         const SizedBox(height: 30),
@@ -121,7 +121,7 @@ class _HVFShellState extends State<HVFShell> {
             'value': val, 'status': 'AVAILABLE', 'source': userID, 'timestamp': FieldValue.serverTimestamp(),
           });
           n.clear(); d.clear(); v.clear();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VISION & HARVEST UPLINKED")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
         },
         child: const Text("UPLINK TO SYSTEM", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
@@ -146,9 +146,13 @@ class _HVFShellState extends State<HVFShell> {
               subtitle: Text("${data['category']} | SOURCE: ${data['source']}"),
             ),
             if (data['video'] != null && data['video'].toString().isNotEmpty)
-              TextButton.icon(icon: const Icon(Icons.play_circle_fill, color: Colors.red), label: const Text("WATCH VIDEO PROOF"), onPressed: () {}),
+              TextButton.icon(
+                icon: const Icon(Icons.play_circle_fill, color: Colors.red), 
+                label: const Text("WATCH VIDEO PROOF"), 
+                onPressed: () => html.window.open(data['video'], '_blank'),
+              ),
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE ASSET")),
             )
           ]));
@@ -164,10 +168,11 @@ class _HVFShellState extends State<HVFShell> {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
           final data = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+          bool hasVideo = data['video'] != null && data['video'].toString().isNotEmpty;
           return ListTile(
-            leading: Icon(Icons.analytics, color: data['video'] != "" ? Colors.green : Colors.grey),
+            leading: Icon(Icons.analytics, color: hasVideo ? Colors.green : Colors.grey),
             title: Text(data['name']),
-            subtitle: Text("SOURCE: ${data['source']} | VIDEO: ${data['video'] != "" ? "YES" : "NO"}"),
+            subtitle: Text("SOURCE: ${data['source']} | VIDEO: ${hasVideo ? "YES" : "NO"}"),
             trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
           );
         });
