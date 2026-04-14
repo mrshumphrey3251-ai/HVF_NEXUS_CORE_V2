@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-// HVF NEXUS CORE V77.1 - THE HARDENED LEDGER
-// FIX: RESOLVED VARIABLE MISMATCH IN TRANSACTION LOGIC
-// STATUS: TOTAL PROOF OF CONCEPT | TOUR-READY
+// HVF NEXUS CORE V78.0 - THE AGENT-READY INFRASTRUCTURE
+// FEATURE: FULL SME GRADING WORKSHEET & AGENT-TO-CEO SYNC
+// STATUS: DEPLOYMENT READY | 40-CITY TOUR COMPLIANT
 // AUTHORIZED: CEO JEFFERY DONNELL HUMPHREY
 
 void main() {
@@ -15,7 +15,6 @@ void main() {
 const Color goldAccent = Color(0xFFC5A059); 
 const Color deepBlack = Color(0xFF1A1A1A);
 const Color warmBeige = Color(0xFFF9F6F0);
-const Color certificateGold = Color(0xFFD4AF37);
 
 class HVFShell extends StatefulWidget {
   const HVFShell({super.key});
@@ -26,9 +25,9 @@ class HVFShell extends StatefulWidget {
 class _HVFShellState extends State<HVFShell> {
   int _selectedIndex = 0;
   
-  // THE GLOBAL LEDGER: THE SINGLE SOURCE OF TRUTH
-  List<Map<String, String>> pendingInductions = []; 
-  List<Map<String, String>> marketplace = [];       
+  // THE AGENT-CEO LEDGER
+  List<Map<String, String>> masterInductionQueue = []; 
+  List<Map<String, String>> marketplaceLive = [];       
   List<Map<String, String>> buyerVault = [];        
 
   @override
@@ -40,45 +39,42 @@ class _HVFShellState extends State<HVFShell> {
             backgroundColor: deepBlack,
             selectedIndex: _selectedIndex,
             onDestinationSelected: (i) => setState(() => _selectedIndex = i),
-            leading: const Padding(
-              padding: EdgeInsets.symmetric(vertical: 20), 
-              child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)
-            ),
+            leading: const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Icon(Icons.shield_rounded, color: goldAccent, size: 40)),
             labelType: NavigationRailLabelType.all,
             unselectedLabelTextStyle: const TextStyle(color: Colors.white38, fontSize: 10),
             selectedLabelTextStyle: const TextStyle(color: goldAccent, fontSize: 10, fontWeight: FontWeight.bold),
             destinations: const [
               NavigationRailDestination(icon: Icon(Icons.map), label: Text("MAP")),
-              NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("FARMER")),
-              NavigationRailDestination(icon: Icon(Icons.admin_panel_settings), label: Text("CEO")),
-              NavigationRailDestination(icon: Icon(Icons.shopping_bag), label: Text("BUYER")),
+              NavigationRailDestination(icon: Icon(Icons.assignment_ind), label: Text("AGENT")),
+              NavigationRailDestination(icon: Icon(Icons.gavel), label: Text("CEO")),
+              NavigationRailDestination(icon: Icon(Icons.payments), label: Text("BUYER")),
             ],
           ),
-          Expanded(child: _buildRoom()),
+          Expanded(child: _buildOperationalRoom()),
         ],
       ),
     );
   }
 
-  Widget _buildRoom() {
+  Widget _buildOperationalRoom() {
     switch (_selectedIndex) {
       case 0: return const Center(child: Text("HVF FLAGSHIP: JOHNSTON CO.", style: TextStyle(color: goldAccent, letterSpacing: 2)));
       case 1: 
-        return FarmerRoom(onSync: (id) {
-          setState(() { pendingInductions.add({"id": id, "status": "Awaiting SME Review"}); });
+        return AgentInductionWorksheet(onSubmission: (data) {
+          setState(() { masterInductionQueue.add(data); });
         });
       case 2: 
-        return CEORoom(queue: pendingInductions, onApprove: (item) {
+        return CEOCommandDesk(queue: masterInductionQueue, onCertify: (item) {
           setState(() {
-            pendingInductions.remove(item);
-            marketplace.add({"id": item['id']!, "price": "\$2,750.00"});
+            masterInductionQueue.remove(item);
+            marketplaceLive.add({...item, "price": "\$2,850.00"});
           });
         });
       case 3: 
-        return BuyerRoom(market: marketplace, vault: buyerVault, onBuy: (item) {
+        return BuyerTerminal(market: marketplaceLive, vault: buyerVault, onPurchase: (item) {
           setState(() {
-            marketplace.remove(item);
-            buyerVault.add(item); // FIXED: Variable alignment secured
+            marketplaceLive.remove(item);
+            buyerVault.add(item);
           });
         });
       default: return const SizedBox();
@@ -86,34 +82,51 @@ class _HVFShellState extends State<HVFShell> {
   }
 }
 
-// --- FARMER: THE INPUT ---
-class FarmerRoom extends StatelessWidget {
-  final Function(String) onSync;
-  FarmerRoom({super.key, required this.onSync});
-  final TextEditingController _controller = TextEditingController();
+// --- THE AGENT'S WORKSHEET ---
+class AgentInductionWorksheet extends StatefulWidget {
+  final Function(Map<String, String>) onSubmission;
+  const AgentInductionWorksheet({super.key, required this.onSubmission});
+
+  @override
+  State<AgentInductionWorksheet> createState() => _AgentInductionWorksheetState();
+}
+
+class _AgentInductionWorksheetState extends State<AgentInductionWorksheet> {
+  final _breed = TextEditingController();
+  final _tag = TextEditingController();
+  final _weight = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: warmBeige,
-      appBar: AppBar(backgroundColor: warmBeige, title: const Text("PRODUCER UPLINK")),
-      body: Padding(
+      appBar: AppBar(backgroundColor: warmBeige, title: const Text("AGENT INDUCTION WORKSHEET")),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(40),
-        child: Column(children: [
-          const Text("ASSET INDUCTION ENGINE", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.brown)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("SME FIELD DATA ENTRY", style: TextStyle(fontWeight: FontWeight.w900, color: Colors.brown)),
           const SizedBox(height: 30),
-          TextField(controller: _controller, decoration: const InputDecoration(labelText: "DNA TAG / ASSET NAME", border: OutlineInputBorder())),
+          TextField(controller: _breed, decoration: const InputDecoration(labelText: "BREED / LINEAGE", border: OutlineInputBorder())),
           const SizedBox(height: 20),
+          TextField(controller: _tag, decoration: const InputDecoration(labelText: "DNA TAG ID", border: OutlineInputBorder())),
+          const SizedBox(height: 20),
+          TextField(controller: _weight, decoration: const InputDecoration(labelText: "EST. WEIGHT (LBS)", border: OutlineInputBorder())),
+          const SizedBox(height: 40),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 65)),
-            onPressed: () { 
-              if(_controller.text.isNotEmpty) {
-                onSync(_controller.text);
-                _controller.clear();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET UPLINKED TO CEO DESK")));
+            style: ElevatedButton.styleFrom(backgroundColor: deepBlack, minimumSize: const Size(double.infinity, 70)),
+            onPressed: () {
+              if(_tag.text.isNotEmpty) {
+                widget.onSubmission({
+                  "id": _tag.text,
+                  "breed": _breed.text,
+                  "weight": _weight.text,
+                  "status": "Awaiting CEO Approval"
+                });
+                _tag.clear(); _breed.clear(); _weight.clear();
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("DATA SYNCED TO CEO COMMAND")));
               }
             },
-            child: const Text("SYNC TO NEXUS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
+            child: const Text("OFFICIALLY SYNC TO NEXUS", style: TextStyle(color: goldAccent, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -121,30 +134,30 @@ class FarmerRoom extends StatelessWidget {
   }
 }
 
-// --- CEO: THE AUTHORITY ---
-class CEORoom extends StatelessWidget {
+// --- CEO COMMAND DESK ---
+class CEOCommandDesk extends StatelessWidget {
   final List<Map<String, String>> queue;
-  final Function(Map<String, String>) onApprove;
-  const CEORoom({super.key, required this.queue, required this.onApprove});
+  final Function(Map<String, String>) onCertify;
+  const CEOCommandDesk({super.key, required this.queue, required this.onCertify});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: deepBlack,
       appBar: AppBar(backgroundColor: deepBlack, title: const Text("CEO COMMAND DESK", style: TextStyle(color: goldAccent))),
-      body: queue.isEmpty ? const Center(child: Text("QUEUE CLEAR", style: TextStyle(color: Colors.white24))) :
+      body: queue.isEmpty ? const Center(child: Text("NO PENDING ASSETS", style: TextStyle(color: Colors.white24))) :
       ListView.builder(
         padding: const EdgeInsets.all(20),
         itemCount: queue.length,
         itemBuilder: (context, i) => Card(
           color: const Color(0xFF252525),
           child: ListTile(
-            title: Text(queue[i]['id']!, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: const Text("DNA VERIFIED | AWAITING SIGNATURE", style: TextStyle(color: goldAccent, fontSize: 10)),
+            title: Text("${queue[i]['breed']} - TAG: ${queue[i]['id']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: Text("WEIGHT: ${queue[i]['weight']} lbs", style: const TextStyle(color: goldAccent, fontSize: 11)),
             trailing: ElevatedButton(
               style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900),
-              onPressed: () => onApprove(queue[i]),
-              child: const Text("CERTIFY"),
+              onPressed: () => onCertify(queue[i]),
+              child: const Text("APPROVE"),
             ),
           ),
         ),
@@ -153,12 +166,12 @@ class CEORoom extends StatelessWidget {
   }
 }
 
-// --- BUYER: THE SETTLEMENT ---
-class BuyerRoom extends StatelessWidget {
+// --- BUYER TERMINAL ---
+class BuyerTerminal extends StatelessWidget {
   final List<Map<String, String>> market;
   final List<Map<String, String>> vault;
-  final Function(Map<String, String>) onBuy;
-  const BuyerRoom({super.key, required this.market, required this.vault, required this.onBuy});
+  final Function(Map<String, String>) onPurchase;
+  const BuyerTerminal({super.key, required this.market, required this.vault, required this.onPurchase});
 
   @override
   Widget build(BuildContext context) {
@@ -175,31 +188,29 @@ class BuyerRoom extends StatelessWidget {
           ]),
         ),
         body: TabBarView(children: [
-          market.isEmpty ? const Center(child: Text("MARKETPLACE EMPTY")) :
           ListView.builder(
             padding: const EdgeInsets.all(20),
             itemCount: market.length,
             itemBuilder: (context, i) => Card(
               child: ListTile(
-                title: Text(market[i]['id']!, style: const TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: const Text("CEO CERTIFIED: SUPERIOR", style: TextStyle(color: goldAccent, fontSize: 10)),
+                title: Text("${market[i]['breed']} #${market[i]['id']}", style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: const Text("CEO CERTIFIED SUPERIOR", style: TextStyle(color: goldAccent, fontSize: 10)),
                 trailing: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade800),
-                  onPressed: () => onBuy(market[i]),
+                  onPressed: () => onPurchase(market[i]),
                   child: Text("BUY ${market[i]['price']}"),
                 ),
               ),
             ),
           ),
-          vault.isEmpty ? const Center(child: Text("VAULT EMPTY")) :
           ListView.builder(
             padding: const EdgeInsets.all(20),
             itemCount: vault.length,
             itemBuilder: (context, i) => Card(
               child: ListTile(
                 leading: const Icon(Icons.verified, color: goldAccent),
-                title: Text(vault[i]['id']!),
-                subtitle: const Text("OFFICIAL CERTIFICATE ISSUED", style: TextStyle(fontSize: 10)),
+                title: Text("${vault[i]['breed']} #${vault[i]['id']}"),
+                subtitle: const Text("OWNERSHIP RECORD SECURED", style: TextStyle(fontSize: 10)),
               ),
             ),
           ),
