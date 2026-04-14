@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V111.1 - COMMAND & CONTROL NAV
-// FOCUS: GLOBAL NAVIGATION & ESCAPE PROTOCOLS
+// HVF NEXUS CORE V112.0 - MARKET INTELLIGENCE & YIELD
+// FOCUS: LIVE VS HANGING WEIGHTS & REGIONAL PRICING
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -41,29 +41,22 @@ class HVFShell extends StatefulWidget {
 
 class _HVFShellState extends State<HVFShell> {
   String? role;
+  // Regional Market Standards (Example: Oklahoma Region)
+  final double regionalAvgLive = 1.85; // $/lb
+  final double hvfPremiumRate = 1.15; // 15% Premium
 
   @override
   Widget build(BuildContext context) {
     if (role == null) return _buildSovereignGate();
-    
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        elevation: 4,
-        // The Global Return: Sends you back to the Role Selection screen
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)),
-          onPressed: () => setState(() => role = null),
-        ),
-        title: Text(":: $role DASHBOARD ::", 
-          style: const TextStyle(color: Color(0xFFC5A059), letterSpacing: 2, fontSize: 14)),
-        actions: [
-          // The Executive Kill-Switch: Immediate Sign Out
-          IconButton(
-            icon: const Icon(Icons.power_settings_new, color: Colors.red),
-            onPressed: () => setState(() => role = null),
-          )
-        ],
+        leading: IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() => role = null)),
+        title: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(":: $role DASHBOARD ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 12)),
+          Text("REGIONAL AVG: \$$regionalAvgLive/LB | HVF PREM: +15%", style: const TextStyle(color: Colors.cyan, fontSize: 9)),
+        ]),
+        actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red), onPressed: () => setState(() => role = null))],
       ),
       body: _buildBody(),
     );
@@ -71,32 +64,23 @@ class _HVFShellState extends State<HVFShell> {
 
   Widget _buildSovereignGate() {
     return Scaffold(
-      body: Center(child: SingleChildScrollView(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.agriculture, color: Color(0xFFC5A059), size: 60),
+      body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.analytics, color: Color(0xFFC5A059), size: 60),
         const SizedBox(height: 20),
-        const Text("HVF TRANSACTION ENGINE", 
-          style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 3)),
+        const Text("HVF COMMODITY EXCHANGE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 2)),
         const SizedBox(height: 40),
         _gateBtn("CEO OVERSIGHT", "CEO"),
         _gateBtn("PRODUCER (ENTRY)", "PRODUCER"),
         _gateBtn("BUYER (MARKET)", "BUYER"),
-      ]))),
+      ])),
     );
   }
 
   Widget _gateBtn(String l, String r) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10.0),
-      child: OutlinedButton(
-        style: OutlinedButton.styleFrom(
-          side: const BorderSide(color: Color(0xFFC5A059), width: 2),
-          minimumSize: const Size(300, 60),
-          backgroundColor: Colors.black.withOpacity(0.5),
-        ),
-        onPressed: () => setState(() => role = r), 
-        child: Text(l, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-      ),
-    );
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: OutlinedButton(
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 60)),
+      onPressed: () => setState(() => role = r), child: Text(l, style: const TextStyle(color: Color(0xFFC5A059))),
+    ));
   }
 
   Widget _buildBody() {
@@ -105,82 +89,78 @@ class _HVFShellState extends State<HVFShell> {
     return _buildCEOOversight();
   }
 
-  // --- PRODUCER: INDUCTION ---
   Widget _buildProducerEntry() {
-    final b = TextEditingController(); final i = TextEditingController();
+    final b = TextEditingController(); final w = TextEditingController();
+    double liveWt = 0;
     return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      const Text("INDUCT ASSET TO PIPELINE", style: TextStyle(color: Colors.grey, letterSpacing: 2)),
+      const Text("INDUCT CATTLE TO PIPELINE", style: TextStyle(color: Colors.grey)),
+      TextField(controller: b, decoration: const InputDecoration(labelText: "BREED")),
+      TextField(controller: w, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: "LIVE WEIGHT (LBS)"), 
+        onChanged: (v) => setState(() { liveWt = double.tryParse(v) ?? 0; })),
       const SizedBox(height: 20),
-      TextField(controller: b, decoration: const InputDecoration(labelText: "ANIMAL BREED", focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059))))),
-      TextField(controller: i, decoration: const InputDecoration(labelText: "ANIMAL ID / TAG", focusedBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059))))),
-      const SizedBox(height: 40),
+      if (liveWt > 0) ...[
+        _calcRow("EST. HANGING WT:", "${(liveWt * 0.62).toStringAsFixed(1)} LBS"),
+        _calcRow("HVF TARGET PRICE:", "\$${(liveWt * regionalAvgLive * hvfPremiumRate).toStringAsFixed(2)}"),
+      ],
+      const SizedBox(height: 30),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
         onPressed: () async {
-          if(b.text.isNotEmpty && i.text.isNotEmpty) {
-            await FirebaseFirestore.instance.collection('pipeline').add({
-              'breed': b.text, 'id': i.text, 'status': 'AVAILABLE', 'timestamp': FieldValue.serverTimestamp(),
-            });
-            b.clear(); i.clear();
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET INDUCTED SUCCESSFULLY")));
-          }
+          await FirebaseFirestore.instance.collection('pipeline').add({
+            'breed': b.text,
+            'live_weight': liveWt,
+            'hanging_weight': liveWt * 0.62,
+            'price': liveWt * regionalAvgLive * hvfPremiumRate,
+            'status': 'AVAILABLE',
+            'timestamp': FieldValue.serverTimestamp(),
+          });
+          b.clear(); w.clear();
         },
-        child: const Text("UPLINK TO MARKET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        child: const Text("UPLINK TO EXCHANGE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       )
     ]));
   }
 
-  // --- BUYER: MARKETPLACE ---
+  Widget _calcRow(String l, String v) {
+    return Padding(padding: const EdgeInsets.symmetric(vertical: 4), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(l, style: const TextStyle(fontSize: 12, color: Colors.cyan)),
+      Text(v, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.white)),
+    ]));
+  }
+
   Widget _buildBuyerMarket() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('pipeline').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final docs = snapshot.data!.docs;
-        if (docs.isEmpty) return const Center(child: Text("MARKETPLACE EMPTY", style: TextStyle(color: Colors.grey)));
-        return ListView.builder(
-          padding: const EdgeInsets.all(10),
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-            return Card(
-              color: const Color(0xFF1A1A1A),
-              child: ListTile(
-                title: Text(data['breed'], style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-                subtitle: Text("ID: ${data['id']}", style: const TextStyle(color: Colors.white70)),
-                trailing: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                  onPressed: () => docs[index].reference.update({'status': 'CLAIMED'}),
-                  child: const Text("BUY", style: TextStyle(color: Colors.white)),
-                ),
-              ),
-            );
-          },
-        );
+        return ListView.builder(itemCount: docs.length, itemBuilder: (context, index) {
+          final data = docs[index].data() as Map<String, dynamic>;
+          return Card(color: const Color(0xFF1A1A1A), margin: const EdgeInsets.all(8), child: ListTile(
+            title: Text("${data['breed']} - ${data['live_weight']} LBS", style: const TextStyle(color: Color(0xFFC5A059))),
+            subtitle: Text("EST. HANGING: ${data['hanging_weight'].toStringAsFixed(1)} LBS"),
+            trailing: Text("\$${data['price'].toStringAsFixed(2)}", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+            onLongPress: () => docs[index].reference.update({'status': 'CLAIMED'}),
+          ));
+        });
       },
     );
   }
 
-  // --- CEO: OVERSIGHT ---
   Widget _buildCEOOversight() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('pipeline').orderBy('timestamp', descending: true).snapshots(),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
+        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final docs = snapshot.data!.docs;
-        return ListView.builder(
-          itemCount: docs.length,
-          itemBuilder: (context, index) {
-            final data = docs[index].data() as Map<String, dynamic>;
-            bool isClaimed = data['status'] == 'CLAIMED';
-            return ListTile(
-              leading: Icon(isClaimed ? Icons.check_circle : Icons.radio_button_unchecked, color: isClaimed ? Colors.green : Colors.orange),
-              title: Text("${data['breed']} [${data['id']}]"),
-              subtitle: Text("STATUS: ${data['status']}"),
-              trailing: IconButton(icon: const Icon(Icons.delete_sweep, color: Colors.red), onPressed: () => docs[index].reference.delete()),
-            );
-          },
-        );
+        return ListView.builder(itemCount: docs.length, itemBuilder: (context, index) {
+          final data = docs[index].data() as Map<String, dynamic>;
+          return ListTile(
+            title: Text("${data['breed']} | \$${data['price'].toStringAsFixed(2)}"),
+            subtitle: Text("STATUS: ${data['status']} | WT: ${data['live_weight']}"),
+            trailing: IconButton(icon: const Icon(Icons.delete_sweep, color: Colors.red), onPressed: () => docs[index].reference.delete()),
+          );
+        });
       },
     );
   }
