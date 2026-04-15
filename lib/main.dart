@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS - GAUGE INTEGRATION V1.3.6
-// REAL-TIME KPI MONITORING | MECHANICAL COMPLETION
+// HVF NEXUS - GAUGE REPAIR V1.3.7
+// SENSOR FIX: REPLACED FAULTY COLOR MAPPING
 // CAGE: 1AHA8 | AUTHORIZED: JEFFERY DONNELL HUMPHREY
 // =========================================================
 
@@ -71,8 +71,6 @@ class _MainCommandCenterState extends State<MainCommandCenter> {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
         final docs = snapshot.data!.docs;
         
-        // --- CALCULATE GAUGES ---
-        int totalUnits = docs.length;
         int verifiedUnits = docs.where((d) => (d.data() as Map)['status'] == 'SOLD').length;
         double revenue = 0;
         for (var d in docs) {
@@ -99,7 +97,7 @@ class _MainCommandCenterState extends State<MainCommandCenter> {
                         children: [
                           _gauge("ACREAGE", "200.0", Colors.cyan),
                           _gauge("ADA_UNITS", "$verifiedUnits / 200", Colors.orangeAccent),
-                          _gauge("VET_CAP", "85%", Colors.magentaAccent),
+                          _gauge("VET_CAP", "85%", Colors.purpleAccent), // FIXED SENSOR COLOR
                         ],
                       )
                     ],
