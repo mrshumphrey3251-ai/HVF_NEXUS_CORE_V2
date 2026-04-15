@@ -137,3 +137,4 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       },
     );
   }
+}
