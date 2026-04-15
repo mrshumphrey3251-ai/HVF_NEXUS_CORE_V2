@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS OS - THE SOVEREIGN CHASSIS V152.0
-// THE COMPLETED INDUSTRIAL UNIT | ZERO-SNIPPET POLICY
+// HVF NEXUS OS - SURVIVAL CORE V155.0
+// THE COMPLETED INDUSTRIAL UNIT | DIRECT DEPLOYMENT
 // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
 // AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO / SME)
 // =========================================================
@@ -51,19 +51,15 @@ class _SovereignCommandHubState extends State<SovereignCommandHub> {
   int _activeRoleIndex = 0;
   double _stormChestBalance = 2400000.00;
   int _totalInventory = 450;
-  List<String> _auditLog = ["SYSTEM_LOCK_ENGAGED: CAGE_1AHA8"];
+  List<String> _auditLog = ["CRITICAL_START_SUCCESS: CAGE_1AHA8"];
 
-  // --- INTEGRATED MASTER LOGIC ---
+  // --- CROSS-MODULE LOGIC ---
   void _executePurchase(String lot, double price) {
     setState(() {
       _totalInventory -= 50; 
       _stormChestBalance += (price * 0.05);
-      _auditLog.insert(0, "TX_SUCCESS: $lot | FEE_COLLECTED: \$${(price * 0.05).toStringAsFixed(2)} | 4PL_DEPLOYED");
+      _auditLog.insert(0, "TX_LOCKED: $lot | FEE: \$${(price * 0.05).toStringAsFixed(2)} | 4PL_ACTIVE");
     });
-  }
-
-  void _triggerLog(String msg) {
-    setState(() => _auditLog.insert(0, msg));
   }
 
   @override
@@ -71,9 +67,9 @@ class _SovereignCommandHubState extends State<SovereignCommandHub> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF_NEXUS_V152_FINAL", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 2)),
+        title: const Text("HVF_NEXUS_CORE_V155", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 2)),
         actions: [
-          Center(child: Text("STORM_CHEST: \$${_stormChestBalance.toStringAsFixed(2)}  ", 
+          Center(child: Text("CHEST: \$${_stormChestBalance.toStringAsFixed(2)}  ", 
           style: const TextStyle(fontSize: 8, color: Colors.greenAccent, fontWeight: FontWeight.bold))),
         ],
       ),
@@ -88,7 +84,6 @@ class _SovereignCommandHubState extends State<SovereignCommandHub> {
               NavigationRailDestination(icon: Icon(Icons.security), label: Text("OVERSEER", style: TextStyle(fontSize: 7))),
               NavigationRailDestination(icon: Icon(Icons.business_center), label: Text("BUYER", style: TextStyle(fontSize: 7))),
               NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("PRODUCER", style: TextStyle(fontSize: 7))),
-              NavigationRailDestination(icon: Icon(Icons.history_edu), label: Text("MISSION", style: TextStyle(fontSize: 7))),
             ],
           ),
           const VerticalDivider(width: 1, color: Colors.white10),
@@ -110,58 +105,47 @@ class _SovereignCommandHubState extends State<SovereignCommandHub> {
       case 0: return _viewOverseer();
       case 1: return _viewBuyer();
       case 2: return _viewProducer();
-      case 3: return _viewMission();
       default: return _viewOverseer();
     }
   }
 
-  Widget _viewOverseer() => _panelLayout("EXECUTIVE_WAR_ROOM", [
-    _tile("HELIOGRID_POLL", "482 KW", Icons.bolt, () => _triggerLog("UTILITY_SYNC: GRID_STABLE")),
-    _tile("RESERVOIR_TELEMETRY", "22.4 FT", Icons.waves, () => _triggerLog("UTILITY_SYNC: WATER_OPTIMAL")),
-    _tile("INVENTORY_COUNT", "$_totalInventory HEAD", Icons.inventory, () {}),
+  Widget _viewOverseer() => _panel("WAR_ROOM", [
+    _tile("GRID_STATUS", "482 KW", Icons.bolt, () {}),
+    _tile("INVENTORY", "$_totalInventory HEAD", Icons.inventory, () {}),
   ]);
 
-  Widget _viewBuyer() => _panelLayout("INSTITUTIONAL_LEDGER", [
-    _tile("ACQUIRE: LOT_A (ANGUS)", "\$75,000", Icons.add_shopping_cart, () => _executePurchase("LOT_A", 75000)),
-    _tile("ACQUIRE: LOT_B (MACHINERY)", "\$420,000", Icons.add_shopping_cart, () => _executePurchase("LOT_B", 420000)),
+  Widget _viewBuyer() => _panel("INSTITUTIONAL_BUYER", [
+    _tile("ACQUIRE: LOT_772", "\$75,000", Icons.add_shopping_cart, () => _executePurchase("LOT_772", 75000)),
+    _tile("ACQUIRE: LOT_901", "\$420,000", Icons.local_shipping, () => _executePurchase("LOT_901", 420000)),
   ]);
 
-  Widget _viewProducer() => _panelLayout("PROOF_OF_LIFE_GATEWAY", [
-    _tile("INITIALIZE_SME_VIDEO", "WAPANUCKA_NODE", Icons.videocam, () => _triggerLog("MEDIA_START: RECORDING_PROOF")),
-    _tile("UPLOAD_HEALTH_LOGS", "UID_TRACEABLE", Icons.assignment_turned_in, () => _triggerLog("DATA_SYNC: LOGS_UPLOADED")),
+  Widget _viewProducer() => _panel("PRODUCER_VAULT", [
+    _tile("VIDEO_PROOF", "INITIALIZE", Icons.videocam, () => setState(() => _auditLog.insert(0, "SME_VIDEO_CAPTURE_START"))),
   ]);
 
-  Widget _viewMission() => _panelLayout("RESTORATION_VAULT", [
-    _tile("90_DAY_GRACE", "8_ACTIVE", Icons.timer, () {}),
-    _tile("SME_CERTIFICATIONS", "12_NCCO", Icons.verified, () {}),
-  ]);
-
-  Widget _panelLayout(String title, List<Widget> children) => ListView(
+  Widget _panel(String t, List<Widget> c) => ListView(
     padding: const EdgeInsets.all(25),
     children: [
-      Text(title, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 3)),
+      Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
       const Divider(color: Colors.white10),
-      const SizedBox(height: 10),
-      ...children,
+      ...c,
     ],
   );
 
   Widget _tile(String l, String v, IconData i, VoidCallback a) => Card(
     color: const Color(0xFF0D0D0D),
-    margin: const EdgeInsets.only(bottom: 15),
     child: ListTile(
       leading: Icon(i, color: const Color(0xFFC5A059), size: 18),
       title: Text(l, style: const TextStyle(fontSize: 8)),
-      subtitle: Text(v, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.cyan)),
+      subtitle: Text(v, style: const TextStyle(fontSize: 10, color: Colors.cyan)),
       onTap: a,
-      trailing: const Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white10),
     ),
   );
 
   Widget _buildAuditTerminal() => Container(
-    height: 180, width: double.infinity, color: Colors.black,
-    decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.white10))),
+    height: 150, width: double.infinity, color: Colors.black,
     padding: const EdgeInsets.all(15),
+    decoration: const BoxDecoration(border: Border(top: BorderSide(color: Colors.white10))),
     child: ListView.builder(
       itemCount: _auditLog.length,
       itemBuilder: (context, i) => Text("> ${_auditLog[i]}", style: const TextStyle(fontSize: 7, color: Colors.white38)),
