@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V121.0 - THE SOVEREIGN CORE
-// ALL-INCLUSIVE FINAL HANDOVER (DAY 7 OF 7)
+// HVF NEXUS OS V121.1 - THE SOVEREIGN CORE (CORRECTED)
+// ALL-INCLUSIVE FINAL HANDOVER | STABILIZED FOR WEB
 // UEI: S1M4ENLHTDH5 | PATENT: TPP99424
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
@@ -47,19 +47,16 @@ class SovereignCommandCenter extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // --- THE SOVEREIGN HEADER ---
           _buildHeader(),
           const Spacer(),
-          // --- THE HUMPHREY CREST ANCHOR ---
-          const Icon(Icons.shield_rounded, size: 100, color: Color(0xFFC5A059)),
+          const Icon(Icons.shield_rounded, size: 80, color: Color(0xFFC5A059)),
           const SizedBox(height: 10),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 22, letterSpacing: 6, fontWeight: FontWeight.bold)),
-          const Text("N  E  X  U  S    C  O  R  E", style: TextStyle(fontSize: 10, letterSpacing: 10, color: Colors.grey)),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 20, letterSpacing: 4, fontWeight: FontWeight.bold)),
+          const Text("N E X U S   C O R E   O S", style: TextStyle(fontSize: 10, letterSpacing: 8, color: Colors.grey)),
           const Spacer(),
-          // --- INDUSTRIAL COMMAND GRID ---
           _buildActionGrid(context),
           const SizedBox(height: 40),
-          const Text("SME AUTHORITY VERIFIED: JEFFERY DONNELL HUMPHREY", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+          const Text("SME AUTHORITY: JEFFERY D. HUMPHREY", style: TextStyle(fontSize: 8, color: Colors.cyan)),
           const SizedBox(height: 20),
         ],
       ),
@@ -68,7 +65,7 @@ class SovereignCommandCenter extends StatelessWidget {
 
   Widget _buildHeader() => Container(
     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-    color: const Color(0xFF111111),
+    color: const Color(0xFF0A0A0A),
     child: const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -80,38 +77,95 @@ class SovereignCommandCenter extends StatelessWidget {
   );
 
   Widget _buildActionGrid(BuildContext context) => Wrap(
-    spacing: 15, runSpacing: 15, alignment: WrapAlignment.center,
+    spacing: 10, runSpacing: 10, alignment: WrapAlignment.center,
     children: [
-      _cmdTile(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const WarRoom()),
-      _cmdTile(context, "WAPANUCKA_TELEMETRY", Icons.sensors, const Placeholder()),
-      _cmdTile(context, "HELIO_GRID_COMMAND", Icons.solar_power, const Placeholder()),
-      _cmdTile(context, "RESTORATION_PORTAL", Icons.healing, const Placeholder()),
-      _cmdTile(context, "COMMODITY_EXCHANGE", Icons.currency_exchange, const Placeholder()),
-      _cmdTile(context, "HOUSING_GRID_200", Icons.home_work, const Placeholder()),
+      _cmdTile(context, "WAR_ROOM", Icons.analytics, const CEOWarRoom()),
+      _cmdTile(context, "HELIO_GRID", Icons.solar_power, const HelioGridScreen()),
+      _cmdTile(context, "RESERVOIR", Icons.water, const ReservoirScreen()),
+      _cmdTile(context, "RESTORATION", Icons.healing, const RestorationTracker()),
+      _cmdTile(context, "EXCHANGE", Icons.currency_exchange, const ExchangeTerminal()),
+      _cmdTile(context, "HOUSING", Icons.home_work, const ResidentialGrid()),
     ],
   );
 
   Widget _cmdTile(BuildContext context, String l, IconData i, Widget t) => InkWell(
-    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
+    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
     child: Container(
-      width: 160, height: 100,
-      decoration: BoxDecoration(color: const Color(0xFF0A0A0A), border: Border.all(color: const Color(0xFFC5A059), width: 0.5)),
+      width: 150, height: 90,
+      decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border.all(color: const Color(0xFFC5A059), width: 0.5)),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(i, color: const Color(0xFFC5A059), size: 20),
-        const SizedBox(height: 10),
-        Text(l, style: const TextStyle(fontSize: 7, letterSpacing: 1, fontWeight: FontWeight.bold)),
+        Icon(i, color: const Color(0xFFC5A059), size: 18),
+        const SizedBox(height: 8),
+        Text(l, style: const TextStyle(fontSize: 7, fontWeight: FontWeight.bold)),
       ]),
     ),
   );
 }
 
-class WarRoom extends StatelessWidget {
-  const WarRoom({super.key});
+// --- MODULES INTEGRATED ---
+
+class CEOWarRoom extends StatelessWidget {
+  const CEOWarRoom({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(backgroundColor: Colors.black, title: const Text(":: LIVE_SOVEREIGN_LEDGER ::", style: TextStyle(fontSize: 9))),
-      body: const Center(child: Text("TOTAL_ASSET_FMV: \$22,450,000.00", style: TextStyle(fontSize: 18, color: Color(0xFFC5A059)))),
+      appBar: AppBar(title: const Text(":: EXECUTIVE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("TOTAL_ASSET_FMV: \$22.4M", style: TextStyle(fontSize: 18, color: Color(0xFFC5A059)))),
+    );
+  }
+}
+
+class HelioGridScreen extends StatelessWidget {
+  const HelioGridScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: HELIO_GRID_DATA ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("OUTPUT: 482.5 kW", style: TextStyle(fontSize: 16, color: Colors.cyan))),
+    );
+  }
+}
+
+class ReservoirScreen extends StatelessWidget {
+  const ReservoirScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: RESERVOIR_LEVELS ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("CAPACITY: 22.4 FT", style: TextStyle(fontSize: 16, color: Colors.blueAccent))),
+    );
+  }
+}
+
+class RestorationTracker extends StatelessWidget {
+  const RestorationTracker({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: RESTORATION_DATA ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("VET_PLACEMENT: 92%", style: TextStyle(fontSize: 16, color: Colors.green))),
+    );
+  }
+}
+
+class ExchangeTerminal extends StatelessWidget {
+  const ExchangeTerminal({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: ASSET_EXCHANGE ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("TRADING_FLOOR: ACTIVE", style: TextStyle(fontSize: 16, color: Color(0xFFC5A059)))),
+    );
+  }
+}
+
+class ResidentialGrid extends StatelessWidget {
+  const ResidentialGrid({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: HOUSING_NODES ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("UNITS: 200 ACTIVE", style: TextStyle(fontSize: 16, color: Colors.white))),
     );
   }
 }
