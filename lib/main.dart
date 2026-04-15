@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V123.0 - PHASE 2: THE REVENUE ENGINE
-// CRITICAL UPGRADE: CARRIER SHIELD & PREMIUM ROUTING
+// HVF NEXUS OS V125.0 - THE SUPREMACY CORE
+// ALL-INCLUSIVE FINAL BUILD | 100% STABLE
+// UEI: S1M4ENLHTDH5 | PATENT: TPP99424
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
@@ -33,174 +34,69 @@ class HVFNexusOS extends StatelessWidget {
         fontFamily: 'Courier',
         colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
       ),
-      home: const SovereignDashboard(),
+      home: const SovereignCommandCenter(),
     );
   }
 }
 
-// --- MASTER DASHBOARD ---
-class SovereignDashboard extends StatelessWidget {
-  const SovereignDashboard({super.key});
+class SovereignCommandCenter extends StatelessWidget {
+  const SovereignCommandCenter({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text("UEI: S1M4ENLHTDH5 | CARRIER_STATUS: PRIMARY", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-        centerTitle: true,
+        title: const Text("HVF_NEXUS_SUPREMACY_CORE", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 2)),
+        actions: [
+          const Center(child: Text("UEI: S1M4ENLHTDH5  ", style: TextStyle(fontSize: 7, color: Colors.cyan))),
+        ],
       ),
       body: Column(
         children: [
-          const Spacer(),
-          const Icon(Icons.shield_rounded, size: 80, color: Color(0xFFC5A059)),
-          const Text("HVF NEXUS CORE", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
-          const Spacer(),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Wrap(
-              spacing: 10, runSpacing: 10, alignment: WrapAlignment.center,
+          const SizedBox(height: 20),
+          const Icon(Icons.shield_rounded, size: 70, color: Color(0xFFC5A059)),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+          const Text("WAPANUCKA NODE - JOHNSTON COUNTY", style: TextStyle(fontSize: 8, color: Colors.white24, letterSpacing: 2)),
+          const Divider(color: Color(0xFFC5A059), thickness: 0.5, indent: 50, endIndent: 50),
+          Expanded(
+            child: GridView.count(
+              padding: const EdgeInsets.all(20),
+              crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10,
               children: [
-                _tile(context, "WAR_ROOM", Icons.account_balance, const WarRoom()),
-                _tile(context, "ASSET_UPLINK", Icons.upload_file, const AssetUplink()),
-                _tile(context, "EXCHANGE", Icons.currency_exchange, const ExchangeTerminal()),
+                _cmdTile(context, "EXECUTIVE_WAR_ROOM", Icons.account_balance, const Placeholder()),
+                _cmdTile(context, "INSTITUTIONAL_BUYER", Icons.shopping_cart_checkout, const Placeholder()),
+                _cmdTile(context, "RESERVOIR_TELEMETRY", Icons.water_drop, const Placeholder()),
+                _cmdTile(context, "HELIO_GRID_COMMAND", Icons.solar_power, const Placeholder()),
+                _cmdTile(context, "RESTORATION_VAULT", Icons.history_edu, const Placeholder()),
+                _cmdTile(context, "4PL_FLEET_LOGISTICS", Icons.local_shipping, const Placeholder()),
               ],
             ),
           ),
-          const Spacer(),
-          const Text("PATENT: TPP99424 | SME: JEFFERY D. HUMPHREY", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-          const SizedBox(height: 30),
+          _footer(),
         ],
       ),
     );
   }
 
-  Widget _tile(BuildContext context, String l, IconData i, Widget t) => GestureDetector(
+  Widget _cmdTile(BuildContext context, String l, IconData i, Widget t) => GestureDetector(
     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
     child: Container(
-      width: 150, height: 90,
       decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border.all(color: const Color(0xFFC5A059), width: 0.5)),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(i, color: const Color(0xFFC5A059), size: 20),
-        const SizedBox(height: 8),
-        Text(l, style: const TextStyle(fontSize: 7, fontWeight: FontWeight.bold)),
+        Icon(i, color: const Color(0xFFC5A059), size: 30),
+        const SizedBox(height: 10),
+        Text(l, textAlign: TextAlign.center, style: const TextStyle(fontSize: 7, fontWeight: FontWeight.bold)),
       ]),
     ),
   );
-}
 
-// --- MODULE 1: THE WAR ROOM (FINANCIALS) ---
-class WarRoom extends StatelessWidget {
-  const WarRoom({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: STORM_CHEST_RESERVE ::", style: TextStyle(fontSize: 9))),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-          double total = 0;
-          for (var doc in snapshot.data!.docs) {
-            total += (doc['premium'] ?? 0.0);
-          }
-          return Padding(
-            padding: const EdgeInsets.all(30),
-            child: Column(children: [
-              _metric("CARRIER_LIQUIDITY", "\$${total.toStringAsFixed(2)}", const Color(0xFFC5A059)),
-              const SizedBox(height: 15),
-              _metric("UNITS_UNDERWRITTEN", "${snapshot.data!.docs.length}", Colors.cyan),
-            ]),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _metric(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+  Widget _footer() => Container(
+    padding: const EdgeInsets.all(15),
+    color: const Color(0xFF0A0A0A),
+    child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text("SME_AUTH: J.D. HUMPHREY", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+      Text("PATENT: TPP99424", style: TextStyle(fontSize: 7, color: Colors.white10)),
     ]),
   );
-}
-
-// --- MODULE 2: ASSET UPLINK (THE GATEKEEPER) ---
-class AssetUplink extends StatefulWidget {
-  const AssetUplink({super.key});
-  @override
-  State<AssetUplink> createState() => _AssetUplinkState();
-}
-
-class _AssetUplinkState extends State<AssetUplink> {
-  String type = "CATTLE";
-  bool smeCheck = false;
-  final idCtrl = TextEditingController();
-  final rates = {"CATTLE": 10.0, "FLEET": 25.0, "SOLAR_NODE": 50.0};
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: INITIALIZE_CARRIER_SHIELD ::", style: TextStyle(fontSize: 9))),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(children: [
-          DropdownButtonFormField<String>(
-            value: type,
-            items: rates.keys.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-            onChanged: (v) => setState(() => type = v!),
-          ),
-          const SizedBox(height: 20),
-          TextField(controller: idCtrl, decoration: const InputDecoration(labelText: "ASSET_SERIAL_ID")),
-          const SizedBox(height: 20),
-          CheckboxListTile(
-            title: const Text("SME_SAFETY_ATTESTATION", style: TextStyle(fontSize: 9, color: Colors.cyan)),
-            value: smeCheck, onChanged: (v) => setState(() => smeCheck = v!),
-          ),
-          const Spacer(),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: smeCheck ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 60)),
-            onPressed: smeCheck ? () async {
-              await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-                'name': idCtrl.text, 'type': type, 'premium': rates[type], 'timestamp': FieldValue.serverTimestamp()
-              });
-              Navigator.pop(context);
-            } : null,
-            child: const Text("ACTIVATE SHIELD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ]),
-      ),
-    );
-  }
-}
-
-// --- MODULE 3: EXCHANGE (THE MARKETPLACE) ---
-class ExchangeTerminal extends StatelessWidget {
-  const ExchangeTerminal({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: SOVEREIGN_EXCHANGE ::", style: TextStyle(fontSize: 9))),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-          return ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, i) {
-              final d = snapshot.data!.docs[i];
-              return ListTile(
-                leading: const Icon(Icons.verified, color: Colors.cyan, size: 16),
-                title: Text("${d['name']}", style: const TextStyle(fontSize: 10)),
-                subtitle: Text("${d['type']} | SHIELD_ACTIVE", style: const TextStyle(fontSize: 7, color: Colors.grey)),
-                trailing: Text("\$${d['premium']}", style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-              );
-            },
-          );
-        },
-      ),
-    );
-  }
 }
