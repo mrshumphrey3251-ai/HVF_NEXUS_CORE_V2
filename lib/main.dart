@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS - AUDIT INTERLOCK V158.15
-// INSPECT FIRST | AUTHORIZE SECOND
+// HVF NEXUS - VERIFICATION LEDGER V158.16
+// EMPHASIZED TEXT VERIFICATION | AUDIT INTERLOCK
 // CAGE: 1AHA8 | AUTHORIZED: JEFFERY DONNELL HUMPHREY
 // =========================================================
 
@@ -20,11 +20,11 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
     ),
   );
-  runApp(const HVFNexusInterlock());
+  runApp(const HVFNexusVeritas());
 }
 
-class HVFNexusInterlock extends StatelessWidget {
-  const HVFNexusInterlock({super.key});
+class HVFNexusVeritas extends StatelessWidget {
+  const HVFNexusVeritas({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -51,7 +51,7 @@ class _AuditHubState extends State<AuditHub> {
         'audit_by': 'CEO_HUMPHREY',
         'audit_timestamp': FieldValue.serverTimestamp(),
       });
-      Navigator.pop(context); // Close the desk after signing
+      Navigator.pop(context);
     } catch (e) {
       debugPrint("AUTH_ERROR: $e");
     }
@@ -59,7 +59,6 @@ class _AuditHubState extends State<AuditHub> {
 
   void _openAuditDesk(String docId, Map<String, dynamic> data) {
     bool isSold = data['status'].toString().toUpperCase() == "SOLD";
-    
     showModalBottomSheet(
       context: context,
       backgroundColor: const Color(0xFF0A0A0A),
@@ -75,23 +74,23 @@ class _AuditHubState extends State<AuditHub> {
             const Divider(color: Colors.white10, height: 40),
             _auditField("CAGE_ID", "1AHA8"),
             _auditField("VALUATION", "\$${data['value']}"),
-            _auditField("LOCATION", "JOHNSTON_COUNTY_OK"),
-            _auditField("ADA_CODE", "100%_PASS"),
+            _auditField("SME_UNDERWRITING", "5%_APPLIED"),
+            _auditField("ADA_ACCESSIBILITY", "CERTIFIED"),
             const Spacer(),
             if (!isSold) 
               SizedBox(
                 width: double.infinity,
-                height: 50,
+                height: 55,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green.shade900),
+                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
                   onPressed: () => _authorizeAsset(docId),
-                  child: const Text("AUTHORIZE & UNDERWRITE", style: TextStyle(color: Colors.white, fontSize: 10, letterSpacing: 1)),
+                  child: const Text("EXECUTE VERIFICATION", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10)),
                 ),
               )
             else
-              const Center(child: Text("ASSET_LOCKED_IN_LEDGER", style: TextStyle(color: Colors.redAccent, fontSize: 10))),
+              const Center(child: Text("LEDGER_ENTRY_FINALIZED", style: TextStyle(color: Colors.greenAccent, fontSize: 10, letterSpacing: 1))),
             const SizedBox(height: 15),
-            Center(child: TextButton(onPressed: () => Navigator.pop(context), child: const Text("EXIT_WITHOUT_SIGNING", style: TextStyle(color: Colors.white24, fontSize: 8)))),
+            Center(child: TextButton(onPressed: () => Navigator.pop(context), child: const Text("EXIT_DEBRIEF", style: TextStyle(color: Colors.white24, fontSize: 8)))),
           ],
         ),
       ),
@@ -129,12 +128,12 @@ class _AuditHubState extends State<AuditHub> {
                 color: isSold ? const Color(0xFF1A0000) : const Color(0xFF111111),
                 child: ListTile(
                   onTap: () => _openAuditDesk(docs[index].id, data),
-                  leading: Icon(isSold ? Icons.verified : Icons.manage_search, 
+                  leading: Icon(isSold ? Icons.lock : Icons.manage_search, 
                                color: isSold ? Colors.greenAccent : Colors.white24),
                   title: Text(data['name'] ?? "ASSET", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
                   subtitle: Text(isSold ? "STATUS: VERIFIED" : "STATUS: PENDING_INSPECTION", 
-                            style: TextStyle(fontSize: 8, color: isSold ? Colors.greenAccent : Colors.white10)),
-                  trailing: isSold ? const Icon(Icons.lock, color: Colors.greenAccent, size: 16) : const Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white10),
+                            style: TextStyle(fontSize: 8, color: isSold ? Colors.greenAccent : Colors.white10, fontWeight: isSold ? FontWeight.bold : FontWeight.normal)),
+                  trailing: const Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white10),
                 ),
               );
             },
