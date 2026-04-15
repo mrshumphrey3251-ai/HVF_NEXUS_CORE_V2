@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V126.5 - THE ADVOCACY SUPREMACY BUILD
-// 1700 FINAL SEAL | INTEGRATED SSI & MILITARY BENEFITS
+// HVF NEXUS OS V127.0 - THE VETTING GATE
+// 0900 EXECUTION | PARTNER & PRODUCER FILTRATION
 // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
-// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO / SME)
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,33 +47,33 @@ class SovereignDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text("HVF_NEXUS_CORE_V2.5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 2)),
+        title: const Text("PRODUCER_VETTING_ACTIVE", style: TextStyle(fontSize: 8, color: Colors.orangeAccent)),
         centerTitle: true,
       ),
       body: Column(
         children: [
-          _buildSovereignHeader(),
+          _sovereignHeader(),
           const Spacer(),
-          const Icon(Icons.shield_rounded, size: 85, color: Color(0xFFC5A059)),
-          const Text("RESTORATION & SUPREMACY", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+          const Icon(Icons.verified_user_rounded, size: 80, color: Color(0xFFC5A059)),
+          const Text("THE VETTING GATE", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
           const Spacer(),
           _actionGrid(context),
           const Spacer(),
-          const Text("GOVERNMENT REGISTERED: CAGE 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+          const Text("SME CONTROL: WEEDING THE BAD FRUIT", style: TextStyle(fontSize: 7, color: Colors.cyan)),
           const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _buildSovereignHeader() => Container(
+  Widget _sovereignHeader() => Container(
     padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     color: const Color(0xFF111111),
     child: const Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text("WAPANUCKA_WX: 74°F", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
-        Text("SSI_MIL_ADV: ACTIVE", style: TextStyle(fontSize: 7, color: Colors.cyan, fontWeight: FontWeight.bold)),
+        Text("CAGE: 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+        Text("STATUS: GATE_LOCKED", style: TextStyle(fontSize: 7, color: Colors.white24)),
         Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
       ],
     ),
@@ -82,12 +82,10 @@ class SovereignDashboard extends StatelessWidget {
   Widget _actionGrid(BuildContext context) => Wrap(
     spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
     children: [
-      _btn(context, "BENEFITS_ADVOCACY", Icons.gavel, const BenefitsVault()),
-      _btn(context, "RESTORATION_VAULT", Icons.history_edu, const Placeholder()),
-      _btn(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const Placeholder()),
+      _btn(context, "PARTNER_APPLICATION", Icons.assignment_ind, const ApplicationPortal()),
+      _btn(context, "SME_VETTING_DESK", Icons.fact_check, const Placeholder()),
       _btn(context, "SOVEREIGN_EXCHANGE", Icons.currency_exchange, const Placeholder()),
-      _btn(context, "RESERVOIR_HUB", Icons.water, const Placeholder()),
-      _btn(context, "4PL_LOGISTICS", Icons.local_shipping, const Placeholder()),
+      _btn(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const Placeholder()),
     ],
   );
 
@@ -105,36 +103,48 @@ class SovereignDashboard extends StatelessWidget {
   );
 }
 
-// --- MODULE: BENEFITS ADVOCACY VAULT ---
-class BenefitsVault extends StatelessWidget {
-  const BenefitsVault({super.key});
+// --- MODULE: PARTNER APPLICATION PORTAL ---
+class ApplicationPortal extends StatefulWidget {
+  const ApplicationPortal({super.key});
+  @override
+  State<ApplicationPortal> createState() => _ApplicationPortalState();
+}
+
+class _ApplicationPortalState extends State<ApplicationPortal> {
+  final nameCtrl = TextEditingController();
+  final taxIdCtrl = TextEditingController();
+  bool certConfirmed = false;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: SSI & MILITARY BENEFITS ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: NEW_PARTNER_INTAKE ::", style: TextStyle(fontSize: 9))),
       body: Padding(
         padding: const EdgeInsets.all(25),
-        child: Column(children: [
-          _benefitCat("SSI/SSDI_CLAIMS", "42 ACTIVE / 12 PENDING", Colors.orangeAccent),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("SOVEREIGN COMPLIANCE FORM", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
+          const SizedBox(height: 20),
+          TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: "LEGAL_ENTITY_NAME")),
           const SizedBox(height: 15),
-          _benefitCat("VA_DISABILITY_RATINGS", "100% SUCCESS_TARGET", Colors.cyan),
-          const SizedBox(height: 15),
-          _benefitCat("VOCATIONAL_REHAB", "CH-31 ENROLLMENT: 28", Colors.greenAccent),
+          TextField(controller: taxIdCtrl, decoration: const InputDecoration(labelText: "TAX_ID_OR_CAGE")),
+          const SizedBox(height: 20),
+          CheckboxListTile(
+            title: const Text("I ATTEST TO SME STANDARDS", style: TextStyle(fontSize: 8)),
+            value: certConfirmed, onChanged: (v) => setState(() => certConfirmed = v!),
+          ),
           const Spacer(),
-          const Text("FEDERAL ADVOCACY ARCHITECTURE: HUMPHREY STANDARD", style: TextStyle(fontSize: 7, color: Colors.white10)),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: certConfirmed ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 60)),
+            onPressed: certConfirmed ? () {
+              // Logic to submit to 'pending_partners' collection
+              Navigator.pop(context);
+            } : null,
+            child: const Text("SUBMIT FOR CEO REVIEW", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
         ]),
       ),
     );
   }
-
-  Widget _benefitCat(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
-      Text(v, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-    ]),
-  );
 }
 
 class Placeholder extends StatelessWidget {
