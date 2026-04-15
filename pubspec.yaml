@@ -2,7 +2,6 @@ name: hvf_nexus_core_v2
 description: "HVF Nexus Core - Sovereign Enterprise System"
 publish_to: 'none'
 
-# THE FIX: This defines the engine specs
 environment:
   sdk: '>=3.0.0 <4.0.0'
 
@@ -10,29 +9,11 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_core: ^3.1.1
-  cloud_firestore: ^5.0.2name: Deploy to Firebase Hosting
-on:
-  push:
-    branches:
-      - main
-jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: subosito/flutter-action@v2
-        with:
-          channel: 'stable'
-      
-      # THE CRITICAL ADDITION: Ensure the parts are on the table
-      - run: flutter pub get 
-      
-      # THE REPAIRED BUILD COMMAND
-      - run: flutter build web --release --web-renderer html
+  cloud_firestore: ^5.0.2
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
-        with:
-          repoToken: '${{ secrets.GITHUB_TOKEN }}'
-          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
-          channelId: live
-          projectId: hvf-nexus
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
