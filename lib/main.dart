@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:html' as html; // Authorized for link launching
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -41,8 +42,8 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         color: const Color(0xFF111111),
         child: TextButton.icon(
           onPressed: () => setState(() => view = "GATE"),
-          icon: const Icon(Icons.logout, color: Colors.red, size: 24),
-          label: const Text("EXIT TO SOVEREIGN GATE", style: TextStyle(color: Colors.white, fontSize: 16)),
+          icon: const Icon(Icons.logout, color: Colors.red),
+          label: const Text("EXIT TO SOVEREIGN GATE", style: TextStyle(color: Colors.white)),
         ),
       ),
       body: _buildCurrentTheater(),
@@ -64,7 +65,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       const SizedBox(height: 50),
       _gateBtn("CEO OVERSIGHT", "CEO"),
       _gateBtn("PRODUCER DECK", "PRODUCER"),
-      _gateBtn("BUYER MARKET", "BUYER"), // NEW SECTOR ACTIVE
+      _gateBtn("BUYER MARKET", "BUYER"),
     ]));
   }
 
@@ -80,22 +81,27 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   Widget _buildProducerEntry() {
     final nameCtrl = TextEditingController();
     final dataCtrl = TextEditingController();
-    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
+    final mediaCtrl = TextEditingController();
+
+    return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
-      TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white, fontSize: 20), decoration: const InputDecoration(labelText: "ASSET NAME / LOT #", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
-      TextField(controller: dataCtrl, style: const TextStyle(color: Colors.greenAccent, fontSize: 28), decoration: InputDecoration(labelText: "VITAL DATA", labelStyle: const TextStyle(color: Color(0xFFC5A059)))),
+      const SizedBox(height: 20),
+      TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME / LOT #", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
+      TextField(controller: dataCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITAL DATA (WEIGHT/HRS)", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
+      TextField(controller: mediaCtrl, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "EVIDENCE LINK (URL)", labelStyle: TextStyle(color: Colors.cyanAccent))),
       const SizedBox(height: 40),
       ElevatedButton(
         style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 70)),
         onPressed: () async {
           await _db.collection('enterprise_ledger').add({
-            'name': nameCtrl.text, 'vital': dataCtrl.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
+            'name': nameCtrl.text, 'vital': dataCtrl.text, 'media': mediaCtrl.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
           });
-          nameCtrl.clear(); dataCtrl.clear();
+          nameCtrl.clear(); dataCtrl.clear(); mediaCtrl.clear();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL")));
         },
-        child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
+        child: const Text("UPLINK WITH EVIDENCE", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
       )
-    ]));
+    ])));
   }
 
   Widget _tab(String s) => ChoiceChip(label: Text(s), selected: sector == s, onSelected: (val) => setState(() => sector = s), selectedColor: const Color(0xFFC5A059));
@@ -114,7 +120,15 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               margin: const EdgeInsets.all(12),
               child: ListTile(
                 title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-                subtitle: Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                  if (doc['media'] != null && doc['media'] != "")
+                    TextButton.icon(
+                      icon: const Icon(Icons.play_circle_fill, color: Colors.cyanAccent),
+                      label: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent)),
+                      onPressed: () => html.window.open(doc['media'], 'new_tab'),
+                    ),
+                ]),
                 trailing: ElevatedButton(
                   style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
                   onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}),
