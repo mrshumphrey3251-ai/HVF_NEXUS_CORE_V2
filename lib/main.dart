@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V116.2 - THE MASTER CORE
-// RE-INTEGRATED: LIVESTOCK, FLEET, INSURANCE, & STEWARDSHIP
+// HVF NEXUS CORE V116.3 - THE INSTITUTIONAL BUILD
+// FOCUS: BULK UPLINK SIMULATION & MASS STEWARDSHIP PROJECTION
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -42,12 +42,7 @@ class HVFShell extends StatefulWidget {
 class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
-  String species = "CATTLE";
-  bool insuranceOptIn = false;
-
-  // SOVEREIGN PRICING & DIVIDENDS
-  final Map<String, double> regionalAvg = {"CATTLE": 1.85, "PIGS": 0.75, "CHICKENS": 1.50};
-  final Map<String, double> stewFee = {"CATTLE": 50.0, "PIGS": 30.0, "CHICKENS": 10.0};
+  bool bulkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -57,23 +52,24 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(":: HVF GLOBAL MIDDLEWARE ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-        leading: IconButton(icon: const Icon(Icons.logout, color: Colors.red), onPressed: () => setState(() => role = null)),
+        title: Text("HVF NEXUS: INSTITUTIONAL CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+        actions: [
+          IconButton(icon: Icon(Icons.logout, color: Colors.red, size: 16), onPressed: () => setState(() => role = null))
+        ],
       ),
-      body: _buildBody(),
+      body: _buildRouter(),
     );
   }
 
   Widget _buildGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.hub, color: Color(0xFFC5A059), size: 80),
-        const SizedBox(height: 20),
-        const Text("HVF NEXUS CORE", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 4)),
-        const SizedBox(height: 40),
+        Icon(Icons.business_center, color: Color(0xFFC5A059), size: 80),
+        SizedBox(height: 20),
+        Text("HVF NEXUS CORE V116", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 4)),
+        SizedBox(height: 40),
         _gateBtn("CEO COMMAND", "CEO"),
-        _gateBtn("PARTNER FARMER", "PRODUCER"),
-        _gateBtn("GLOBAL BUYER", "BUYER"),
+        _gateBtn("INSTITUTIONAL PARTNER", "PRODUCER"),
       ])),
     );
   }
@@ -81,7 +77,7 @@ class _HVFShellState extends State<HVFShell> {
   Widget _gateBtn(String l, String r) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 8),
     child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(280, 60)),
+      style: OutlinedButton.styleFrom(side: BorderSide(color: Color(0xFFC5A059)), minimumSize: Size(280, 60)),
       onPressed: () => setState(() => role = r), child: Text(l)),
   );
 
@@ -89,67 +85,51 @@ class _HVFShellState extends State<HVFShell> {
     final c = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(50), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("ENTITY VERIFICATION"),
-        TextField(controller: c, decoration: const InputDecoration(labelText: "NAME / ID")),
-        const SizedBox(height: 20),
-        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: const Text("INITIALIZE")),
+        Text("PARTNER AUTHENTICATION"),
+        TextField(controller: c, decoration: InputDecoration(labelText: "CORPORATE ENTITY ID")),
+        SizedBox(height: 30),
+        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: Text("INITIALIZE SYSTEM")),
       ])),
     );
   }
 
-  Widget _buildBody() {
-    if (role == "PRODUCER") return _buildProducerEntry();
-    if (role == "BUYER") return _buildMarket();
+  Widget _buildRouter() {
+    if (role == "PRODUCER") return _buildProducerHub();
     return _buildCEOOversight();
   }
 
-  Widget _buildProducerEntry() {
-    final n = TextEditingController(); final w = TextEditingController();
-    return StatefulBuilder(builder: (context, setInternalState) {
-      double weight = double.tryParse(w.text) ?? 0;
-      double fmv = weight * (regionalAvg[species] ?? 1.85) * 1.15;
-
-      return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
-        const Text("LIVESTOCK / FLEET UPLINK", style: TextStyle(color: Color(0xFFC5A059))),
-        const SizedBox(height: 20),
-        Row(mainAxisAlignment: MainAxisAlignment.center, children: ["CATTLE", "PIGS", "CHICKENS", "FLEET"].map((s) => 
-          Padding(padding: const EdgeInsets.symmetric(horizontal: 4), child: ChoiceChip(label: Text(s, style: const TextStyle(fontSize: 10)), selected: species == s, onSelected: (v) => setInternalState(() => species = s)))).toList()),
-        const SizedBox(height: 20),
-        TextField(controller: n, decoration: InputDecoration(labelText: species == "FLEET" ? "MODEL" : "ANIMAL ID")),
-        TextField(controller: w, decoration: InputDecoration(labelText: species == "FLEET" ? "HOURS" : "WEIGHT (LBS)"), onChanged: (v) => setInternalState((){})),
-        const SizedBox(height: 20),
-        if (weight > 0 && species != "FLEET") Container(padding: const EdgeInsets.all(10), color: Colors.white10, child: Text("EST. FMV: \$${fmv.toStringAsFixed(2)}\nDIVIDEND: \$${stewFee[species]}/MO", textAlign: TextAlign.center)),
-        const SizedBox(height: 30),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
-          onPressed: () async {
-            await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-              'name': n.text, 'vital': w.text, 'species': species, 'value': fmv, 'stew_fee': stewFee[species],
-              'status': 'AVAILABLE', 'source': userID, 'category': species == "FLEET" ? "FLEET" : "LIVESTOCK"
-            });
-            n.clear(); w.clear();
-          },
-          child: const Text("UPLINK TO GLOBAL RAILS", style: TextStyle(color: Colors.black)),
-        )
-      ])));
-    });
+  Widget _buildProducerHub() {
+    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+        Text(bulkMode ? "BULK CSV MODE" : "SINGLE ASSET MODE"),
+        Switch(value: bulkMode, onChanged: (v) => setState(() => bulkMode = v), activeColor: Color(0xFFC5A059)),
+      ]),
+      SizedBox(height: 40),
+      if (bulkMode) 
+        Column(children: [
+          Icon(Icons.upload_file, size: 100, color: Colors.cyan),
+          SizedBox(height: 20),
+          Text("UPLINK PARTNER LEDGER (.CSV / .XLSX)", textAlign: TextAlign.center),
+          SizedBox(height: 30),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan, minimumSize: Size(double.infinity, 60)),
+            onPressed: () => _simulateBulkUpload(),
+            child: Text("IMPORT INSTITUTIONAL VOLUME", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ])
+      else
+        Text("SINGLE ENTRY TOOLS ACTIVE", style: TextStyle(color: Colors.grey)),
+    ]));
   }
 
-  Widget _buildMarket() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
-          final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          return Card(color: const Color(0xFF111111), margin: const EdgeInsets.all(10), child: ListTile(
-            title: Text("${d['name']} (${d['species']})", style: const TextStyle(color: Color(0xFFC5A059))),
-            subtitle: Text("PRICE: \$${d['value']} | DIVIDEND: \$${d['stew_fee']}/MO"),
-            trailing: ElevatedButton(onPressed: () => snapshot.data!.docs[i].reference.update({'status': 'SECURED', 'buyer': userID}), child: const Text("SECURE")),
-          ));
-        });
-      },
-    );
+  void _simulateBulkUpload() async {
+    // Simulation logic for the tour
+    for (int i = 0; i < 5; i++) {
+      await FirebaseFirestore.instance.collection('enterprise_ledger').add({
+        'name': 'INSTITUTIONAL_LOT_${i+1}', 'value': 1200.0, 'species': 'CATTLE', 'status': 'AVAILABLE', 'source': userID, 'category': 'LIVESTOCK'
+      });
+    }
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("BATCH TOKENIZATION COMPLETE: 5 ASSETS LIVE")));
   }
 
   Widget _buildCEOOversight() {
@@ -157,15 +137,29 @@ class _HVFShellState extends State<HVFShell> {
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(itemCount: snapshot.data!.docs.length, itemBuilder: (context, i) {
-          final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-          return ListTile(
-            leading: Icon(Icons.cloud, color: d['status'] == 'SECURED' ? Colors.cyan : Colors.grey),
-            title: Text(d['name'] ?? "ASSET"),
-            subtitle: Text("SOURCE: ${d['source']} | STATUS: ${d['status']}"),
-            trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snapshot.data!.docs[i].reference.delete()),
-          );
-        });
+        double projectedDividend = snapshot.data!.docs.length * 50.0;
+        return Column(children: [
+          Container(
+            padding: EdgeInsets.all(20), width: double.infinity, color: Color(0xFF111111),
+            child: Column(children: [
+              Text("NATIONAL MANAGED VOLUME", style: TextStyle(fontSize: 10, color: Colors.grey)),
+              Text("${snapshot.data!.docs.length} HEAD", style: TextStyle(fontSize: 28, color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              SizedBox(height: 10),
+              Text("PROJECTED PARTNER DIVIDEND: \$${projectedDividend.toStringAsFixed(2)}/MO", style: TextStyle(fontSize: 10, color: Colors.cyan)),
+            ]),
+          ),
+          Expanded(child: ListView.builder(
+            itemCount: snapshot.data!.docs.length,
+            itemBuilder: (context, i) {
+              final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+              return ListTile(
+                leading: Icon(Icons.lan, color: Colors.cyan, size: 18),
+                title: Text(d['name'] ?? "ASSET"),
+                subtitle: Text("ENTITY: ${d['source']}"),
+              );
+            },
+          )),
+        ]);
       },
     );
   }
