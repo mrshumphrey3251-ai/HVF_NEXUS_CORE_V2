@@ -3,8 +3,8 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS - BOOTS ON THE GROUND V158.10
-// MANUAL SME AUDIT | ZERO-LATENCY COMMAND
+// HVF NEXUS - REVENUE ENGINE V158.11
+// SME UNDERWRITING CALCULATOR | 5% FEE TRACKING
 // CAGE: 1AHA8 | AUTHORIZED: JEFFERY DONNELL HUMPHREY
 // =========================================================
 
@@ -20,40 +20,40 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
     ),
   );
-  runApp(const HVFNexusManual());
+  runApp(const HVFNexusRevenue());
 }
 
-class HVFNexusManual extends StatelessWidget {
-  const HVFNexusManual({super.key});
+class HVFNexusRevenue extends StatelessWidget {
+  const HVFNexusRevenue({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Courier'),
-      home: const SMEAuditHub(),
+      home: const RevenueHub(),
     );
   }
 }
 
-class SMEAuditHub extends StatefulWidget {
-  const SMEAuditHub({super.key});
+class RevenueHub extends StatefulWidget {
+  const RevenueHub({super.key});
   @override
-  State<SMEAuditHub> createState() => _SMEAuditHubState();
+  State<RevenueHub> createState() => _RevenueHubState();
 }
 
-class _SMEAuditHubState extends State<SMEAuditHub> {
+class _RevenueHubState extends State<RevenueHub> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<void> _verifyAsset(String docId, String name) async {
+  Future<void> _verifyAsset(String docId, String name, dynamic val) async {
     try {
       await _db.collection('enterprise_ledger').doc(docId).update({
         'status': 'SOLD',
         'audit_by': 'CEO_HUMPHREY',
         'audit_timestamp': FieldValue.serverTimestamp(),
       });
-      _notify("SME_VERIFICATION_COMPLETE: $name");
+      _notify("REVENUE_LOCKED: $name");
     } catch (e) {
-      _notify("AUDIT_FAILED: CHECK_PERMISSIONS");
+      _notify("CMD_ERROR: SYSTEM_HALTED");
     }
   }
 
@@ -70,47 +70,80 @@ class _SMEAuditHubState extends State<SMEAuditHub> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF_MANUAL_AUDIT_CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+        title: const Text("HVF_REVENUE_COMMAND", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
         actions: const [Center(child: Text("CAGE: 1AHA8  ", style: TextStyle(color: Colors.cyan, fontSize: 8)))],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _db.collection('enterprise_ledger').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          
           final docs = snapshot.data!.docs;
+          double totalSmeFees = 0;
 
-          return ListView.builder(
-            padding: const EdgeInsets.all(15),
-            itemCount: docs.length,
-            itemBuilder: (context, index) {
-              var data = docs[index].data() as Map<String, dynamic>;
-              bool isSold = data['status'].toString().toUpperCase() == "SOLD";
-              
-              return Card(
-                color: isSold ? const Color(0xFF1A0000) : const Color(0xFF111111),
-                shape: RoundedRectangleBorder(
-                  side: BorderSide(color: isSold ? Colors.greenAccent : Colors.white10),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: ListTile(
-                  leading: Icon(isSold ? Icons.fact_check : Icons.pending_actions, 
-                               color: isSold ? Colors.greenAccent : Colors.white30),
-                  title: Text(data['name'] ?? "UNNAMED_ASSET", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                  subtitle: Text(isSold ? "SME_VERIFIED: CEO" : "AWAITING_MANUAL_AUDIT", 
-                            style: TextStyle(fontSize: 8, color: isSold ? Colors.greenAccent : Colors.white24)),
-                  trailing: isSold 
-                    ? const Icon(Icons.verified, color: Colors.greenAccent, size: 20)
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF222222)),
-                        onPressed: () => _verifyAsset(docs[index].id, data['name'] ?? "ASSET"),
-                        child: const Text("AUDIT", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
+          // CALCULATE 5% UNDERWRITING FEE ON ALL SOLD ASSETS
+          for (var doc in docs) {
+            var d = doc.data() as Map<String, dynamic>;
+            if (d['status'].toString().toUpperCase() == "SOLD") {
+              int val = d['value'] ?? 0;
+              totalSmeFees += (val * 0.05);
+            }
+          }
+
+          return Column(
+            children: [
+              _revenuePanel(totalSmeFees),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(15),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    var data = docs[index].data() as Map<String, dynamic>;
+                    bool isSold = data['status'].toString().toUpperCase() == "SOLD";
+                    int val = data['value'] ?? 0;
+                    
+                    return Card(
+                      color: isSold ? const Color(0xFF1A0000) : const Color(0xFF111111),
+                      child: ListTile(
+                        leading: Icon(isSold ? Icons.payments : Icons.inventory_2, 
+                                     color: isSold ? Colors.greenAccent : Colors.white10),
+                        title: Text(data['name'] ?? "UNNAMED_ASSET", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                        subtitle: Text("VALUE: \$$val | FEE: \$${(val * 0.05).toStringAsFixed(2)}", 
+                                  style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+                        trailing: isSold 
+                          ? const Icon(Icons.check_circle, color: Colors.greenAccent, size: 20)
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF222222)),
+                              onPressed: () => _verifyAsset(docs[index].id, data['name'] ?? "ASSET", val),
+                              child: const Text("AUDIT", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
+                            ),
                       ),
+                    );
+                  },
                 ),
-              );
-            },
+              ),
+            ],
           );
         },
       ),
     );
   }
+
+  Widget _revenuePanel(double fees) => Container(
+    padding: const EdgeInsets.all(25),
+    width: double.infinity,
+    decoration: const BoxDecoration(
+      color: Color(0xFF0D0D0D),
+      border: Border(bottom: BorderSide(color: Color(0xFFC5A059), width: 0.5)),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text("SME_UNDERWRITING_TOTAL (5%)", style: TextStyle(fontSize: 8, color: Colors.white38)),
+        const SizedBox(height: 5),
+        Text("\$${fees.toStringAsFixed(2)}", 
+             style: const TextStyle(fontSize: 22, color: Colors.greenAccent, fontWeight: FontWeight.bold, letterSpacing: 2)),
+      ],
+    ),
+  );
 }
