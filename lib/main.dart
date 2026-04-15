@@ -1,13 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:url_launcher/url_launcher.dart'; // Modern, stable link handling
-
-// =========================================================
-// HVF NEXUS CORE - FUTURE-PROOF V1.5.3
-// SECURITY: PIN (CEO: 1978 | STAFF: 2026)
-// NO DART:HTML - COMPILER COMPLIANT
-// =========================================================
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
