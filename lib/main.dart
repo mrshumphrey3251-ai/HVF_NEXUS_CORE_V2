@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V119.5 - SPRINT B: THE REVENUE ENGINE
-// FOCUS: AUTOMATED PREMIUM ROUTING & CARRIER RESERVE LOGIC
+// HVF NEXUS CORE V119.6 - SPRINT C: THE OPERATIONAL FORTRESS
+// FOCUS: SME BIO-SECURITY LOCK & SOVEREIGN AUDIT TRAIL
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
@@ -29,7 +29,7 @@ class HVFNexus extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF050505),
+        scaffoldBackgroundColor: const Color(0xFF020202),
         fontFamily: 'Courier',
         colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
       ),
@@ -38,91 +38,88 @@ class HVFNexus extends StatelessWidget {
   }
 }
 
-// --- SOVEREIGN ENTRY GATE ---
+// --- ENTRY GATE ---
 class SovereignGate extends StatelessWidget {
   const SovereignGate({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF0A0A0A), Color(0xFF000000)])
-        ),
+      body: Center(
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Icon(Icons.shield_outlined, size: 70, color: Color(0xFFC5A059)),
-          const SizedBox(height: 15),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(letterSpacing: 4, fontSize: 14, fontWeight: FontWeight.bold)),
-          const Text("N E X U S   O S", style: TextStyle(letterSpacing: 8, fontSize: 8, color: Colors.grey)),
-          const SizedBox(height: 80),
-          _actionBtn(context, "EXECUTIVE_WAR_ROOM", const CEOWarRoom(), true),
-          _actionBtn(context, "PARTNER_UPLINK", const ProducerUplink(), false),
+          const Icon(Icons.security, size: 80, color: Color(0xFFC5A059)),
+          const SizedBox(height: 10),
+          const Text("HVF NEXUS OS", style: TextStyle(letterSpacing: 10, fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 60),
+          _nav(context, "CEO_COMMAND", const CEOWarRoom()),
+          _nav(context, "PARTNER_UPLINK", const ProducerUplink()),
         ]),
       ),
     );
   }
-
-  Widget _actionBtn(BuildContext context, String label, Widget target, bool isCEO) => Padding(
+  Widget _nav(BuildContext context, String l, Widget t) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: OutlinedButton(
-      style: OutlinedButton.styleFrom(
-        side: BorderSide(color: isCEO ? const Color(0xFFC5A059) : Colors.white10),
-        minimumSize: const Size(300, 60),
-      ),
-      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
-      child: Text(label, style: TextStyle(color: isCEO ? const Color(0xFFC5A059) : Colors.grey, letterSpacing: 2, fontSize: 9)),
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(280, 60)),
+      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
+      child: Text(l, style: const TextStyle(color: Color(0xFFC5A059), letterSpacing: 2)),
     ),
   );
 }
 
-// --- CEO COMMAND: THE REVENUE MONITOR ---
+// --- CEO COMMAND: THE AUDIT FORTRESS ---
 class CEOWarRoom extends StatelessWidget {
   const CEOWarRoom({super.key});
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: GLOBAL_RESERVE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: SOVEREIGN_AUDIT_LOG ::", style: TextStyle(fontSize: 10))),
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+        stream: FirebaseFirestore.instance.collection('enterprise_ledger').orderBy('timestamp', descending: true).snapshots(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Colors.cyan));
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
           
-          double totalReserve = 0;
-          for (var doc in snapshot.data!.docs) {
-            final data = doc.data() as Map<String, dynamic>;
-            totalReserve += (data['premium'] ?? 0.0);
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(30),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _metric("CARRIER_RESERVE_TOTAL", "\$${totalReserve.toStringAsFixed(2)}", const Color(0xFFC5A059)),
-              const SizedBox(height: 15),
-              _metric("ACTIVE_UNDERWRITTEN_UNITS", "${snapshot.data!.docs.length} NODES", Colors.cyan),
-              const Divider(height: 40, color: Colors.white10),
-              const Text("REVENUE_STREAM: RECURRING_MONTHLY", style: TextStyle(fontSize: 8, color: Colors.greenAccent)),
-              const Spacer(),
-              const Center(child: Icon(Icons.account_balance_outlined, color: Colors.white10, size: 80)),
-            ]),
-          );
+          return Column(children: [
+            Container(
+              padding: const EdgeInsets.all(25),
+              color: const Color(0xFF0A0A0A),
+              child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  const Text("GRID_INTEGRITY", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+                  Text("${snapshot.data!.docs.length} SECURED", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                ]),
+                const Icon(Icons.verified, color: Colors.greenAccent, size: 30),
+              ]),
+            ),
+            Expanded(
+              child: ListView.builder(
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, i) {
+                  final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+                  return Container(
+                    padding: const EdgeInsets.all(15),
+                    decoration: const BoxDecoration(border: Border(bottom: BorderSide(color: Colors.white10))),
+                    child: Row(children: [
+                      const Icon(Icons.shield, color: Colors.cyan, size: 14),
+                      const SizedBox(width: 15),
+                      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text(d['name'] ?? "UNKNOWN", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                        Text("TYPE: ${d['type']} | PREMIUM: \$${d['premium']}", style: const TextStyle(fontSize: 7, color: Colors.grey)),
+                      ]),
+                      const Spacer(),
+                      const Text("CERTIFIED", style: TextStyle(color: Colors.green, fontSize: 8)),
+                    ]),
+                  );
+                },
+              ),
+            ),
+          ]);
         },
       ),
     );
   }
-
-  Widget _metric(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    decoration: BoxDecoration(color: const Color(0xFF0A0A0A), border: Border(left: BorderSide(color: c, width: 2))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-    ]),
-  );
 }
 
-// --- PARTNER PORTAL: PREMIUM ROUTING ---
+// --- PARTNER: THE FORTRESS RAILS ---
 class ProducerUplink extends StatefulWidget {
   const ProducerUplink({super.key});
   @override
@@ -130,56 +127,41 @@ class ProducerUplink extends StatefulWidget {
 }
 
 class _ProducerUplinkState extends State<ProducerUplink> {
-  String selectedType = "CATTLE";
-  bool certified = false;
-  final idController = TextEditingController();
-
-  // THE REVENUE LOGIC
-  final Map<String, double> premiumRates = {
-    "CATTLE": 10.0,
-    "PIGS": 5.0,
-    "CHICKENS": 2.0,
-    "FLEET_UNIT": 25.0,
-  };
+  String type = "CATTLE";
+  bool healthy = false;
+  bool maintained = false;
+  final idCtrl = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: CARRIER_UPLINK_RAILS ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: SECURE_INITIALIZATION ::", style: TextStyle(fontSize: 10))),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(25),
         child: Column(children: [
           DropdownButtonFormField<String>(
-            value: selectedType,
-            items: premiumRates.keys.map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 12)))).toList(),
-            onChanged: (v) => setState(() => selectedType = v!),
-            decoration: const InputDecoration(labelText: "ASSET_CLASS"),
+            value: type,
+            items: ["CATTLE", "PIGS", "TRACTOR", "SEMI-TRUCK"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            onChanged: (v) => setState(() => type = v!),
+            decoration: const InputDecoration(labelText: "ASSET_CATEGORY"),
           ),
           const SizedBox(height: 20),
-          Text("REQUIRED_MONTHLY_PREMIUM: \$${premiumRates[selectedType]}", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+          TextField(controller: idCtrl, decoration: const InputDecoration(labelText: "SERIAL_NUMBER / TAG_ID")),
           const SizedBox(height: 30),
-          TextField(controller: idController, decoration: const InputDecoration(labelText: "ASSET_ID")),
-          const SizedBox(height: 50),
-          CheckboxListTile(
-            activeColor: const Color(0xFFC5A059),
-            title: const Text("ATTEST TO CARRIER STANDARDS", style: TextStyle(fontSize: 9)),
-            value: certified, 
-            onChanged: (v) => setState(() => certified = v!),
-          ),
-          const SizedBox(height: 50),
+          const Text("BIO-SECURITY & MAINTENANCE ATTESTATION", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
+          CheckboxListTile(title: const Text("NO DISEASE / DEFECTS", style: TextStyle(fontSize: 9)), value: healthy, onChanged: (v) => setState(() => healthy = v!)),
+          CheckboxListTile(title: const Text("SME PROTOCOLS MET", style: TextStyle(fontSize: 9)), value: maintained, onChanged: (v) => setState(() => maintained = v!)),
+          const SizedBox(height: 40),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: certified ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 65)),
-            onPressed: certified ? () async {
+            style: ElevatedButton.styleFrom(backgroundColor: (healthy && maintained) ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 60)),
+            onPressed: (healthy && maintained) ? () async {
               await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-                'name': idController.text,
-                'type': selectedType,
-                'premium': premiumRates[selectedType],
-                'certified': true,
-                'timestamp': FieldValue.serverTimestamp()
+                'name': idCtrl.text, 'type': type, 'premium': type == "CATTLE" ? 10.0 : 25.0,
+                'status': 'SECURED', 'timestamp': FieldValue.serverTimestamp()
               });
               Navigator.pop(context);
             } : null,
-            child: const Text("INITIALIZE REVENUE FLOW", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            child: const Text("EXECUTE SECURE UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
