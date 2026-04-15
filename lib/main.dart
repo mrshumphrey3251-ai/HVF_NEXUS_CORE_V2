@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V117.1 - THE SALE-READY MVP
-// FINAL LOCK: INSTITUTIONAL HUB, GLOBAL EXCHANGE, & DIVIDEND LEDGER
+// HVF NEXUS CORE V117.3 - THE INTEGRATED MASTER CORE
+// RE-INTEGRATED: LIVESTOCK, FLEET, BULK MODE, & RETURN NAVIGATION
+// TARGET: INSTITUTIONAL SCALE (10,000+ HEAD)
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
@@ -27,7 +28,12 @@ class HVFApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
+      theme: ThemeData(
+        brightness: Brightness.dark, 
+        scaffoldBackgroundColor: Colors.black, 
+        fontFamily: 'Courier',
+        primaryColor: const Color(0xFFC5A059),
+      ),
       home: const HVFShell(),
     );
   }
@@ -43,6 +49,12 @@ class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
   int _selectedIndex = 0;
+  
+  // Operational States
+  String species = "CATTLE";
+  bool bulkMode = false;
+  final Map<String, double> regionalAvg = {"CATTLE": 1.85, "PIGS": 0.75, "CHICKENS": 1.50};
+  final Map<String, double> stewFee = {"CATTLE": 50.0, "PIGS": 30.0, "CHICKENS": 10.0};
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +64,16 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(":: HVF NEXUS CORE ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 4)),
-        actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red, size: 18), onPressed: () => setState(() { role = null; userID = null; }))],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059), size: 18),
+          onPressed: () => setState(() { role = null; userID = null; _selectedIndex = 0; }),
+        ),
+        title: Text(":: HVF $role PORTAL ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 4)),
       ),
-      body: IndexedStack(index: _selectedIndex, children: [_buildHub(), _buildExchange(), _buildLedger()]),
+      body: IndexedStack(
+        index: _selectedIndex, 
+        children: [_buildHub(), _buildExchange(), _buildLedger()]
+      ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
@@ -64,7 +82,7 @@ class _HVFShellState extends State<HVFShell> {
         backgroundColor: const Color(0xFF0D0D0D),
         items: const [
           BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'HUB'),
-          BottomNavigationBarItem(icon: Icon(Icons.api), label: 'EXCHANGE'),
+          BottomNavigationBarItem(icon: Icon(Icons.add_business), label: 'UPLINK'),
           BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'LEDGER'),
         ],
       ),
@@ -82,36 +100,79 @@ class _HVFShellState extends State<HVFShell> {
           const SizedBox(height: 15),
           _card("PROJECTED PARTNER DIVIDEND", "\$${(count * 50).toStringAsFixed(2)}/MO", const Color(0xFFC5A059)),
           const Spacer(),
-          const Icon(Icons.verified_user, size: 60, color: Colors.white10),
-          const Text("SME SYSTEM STANDARDS ACTIVE", style: TextStyle(fontSize: 8, color: Colors.grey)),
+          const Icon(Icons.verified_user, size: 40, color: Colors.white10),
+          const Text("100% OPERATIONAL CAPACITY", style: TextStyle(fontSize: 8, color: Colors.grey)),
         ]));
       },
     );
   }
 
-  // --- TAB 2: GLOBAL EXCHANGE ---
+  // --- TAB 2: UPLINK / EXCHANGE (INTEGRATED) ---
   Widget _buildExchange() {
+    final nameCtrl = TextEditingController();
+    final vitalCtrl = TextEditingController();
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(children: [
+        // Bulk Toggle for 10,000 Head Scale
+        Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+          const Text("INSTITUTIONAL BULK MODE", style: TextStyle(fontSize: 10)),
+          Switch(value: bulkMode, onChanged: (v) => setState(() => bulkMode = v), activeColor: const Color(0xFFC5A059)),
+        ]),
+        const SizedBox(height: 20),
+        if (bulkMode) _buildBulkUI() else ...[
+          // Manual Entry Restored
+          Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: ["CATTLE", "PIGS", "CHICKENS", "FLEET"].map((s) => 
+            ChoiceChip(label: Text(s, style: const TextStyle(fontSize: 8)), selected: species == s, onSelected: (v) => setState(() => species = s))).toList()),
+          TextField(controller: nameCtrl, decoration: InputDecoration(labelText: species == "FLEET" ? "MODEL" : "ASSET ID")),
+          TextField(controller: vitalCtrl, decoration: InputDecoration(labelText: species == "FLEET" ? "HOURS" : "WEIGHT"), keyboardType: TextInputType.number),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
+            onPressed: () async {
+              double val = double.tryParse(vitalCtrl.text) ?? 0;
+              await FirebaseFirestore.instance.collection('enterprise_ledger').add({
+                'name': nameCtrl.text, 'vital': vitalCtrl.text, 'species': species, 
+                'value': val * (regionalAvg[species] ?? 1.0), 'stew_fee': stewFee[species] ?? 0.0,
+                'status': 'AVAILABLE', 'source': userID, 'category': species == "FLEET" ? "FLEET" : "LIVESTOCK"
+              });
+              nameCtrl.clear(); vitalCtrl.clear();
+            },
+            child: const Text("UPLINK TO GLOBAL RAILS", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ],
+      ]),
+    );
+  }
+
+  Widget _buildBulkUI() => Container(
+    height: 150, width: double.infinity,
+    decoration: BoxDecoration(border: Border.all(color: Colors.cyan, width: 1), borderRadius: BorderRadius.circular(5)),
+    child: const Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Icon(Icons.upload_file, color: Colors.cyan),
+      SizedBox(height: 10),
+      Text("READY FOR INSTITUTIONAL CSV", style: TextStyle(fontSize: 10, color: Colors.cyan)),
+    ]),
+  );
+
+  // --- TAB 3: LEDGER ---
+  Widget _buildLedger() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView(children: snapshot.data!.docs.map((d) {
-          final data = d.data() as Map<String, dynamic>;
-          return ListTile(
-            leading: const Icon(Icons.token, color: Color(0xFFC5A059)),
-            title: Text(data['name'] ?? "ASSET"),
-            subtitle: Text("VALUE: \$${data['value']} | DIVIDEND: \$${data['stew_fee']}/MO"),
-            trailing: const Icon(Icons.arrow_forward_ios, size: 12),
-          );
-        }).toList());
+        return ListView(children: snapshot.data!.docs.map((d) => ListTile(
+          leading: Icon(Icons.hub, color: d['status'] == 'AVAILABLE' ? Colors.grey : Colors.cyan, size: 16),
+          title: Text(d['name'] ?? "UNIT"),
+          subtitle: Text("SOURCE: ${d['source']} | CATEGORY: ${d['category']}"),
+          trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red, size: 14), onPressed: () => d.reference.delete()),
+        )).toList());
       },
     );
   }
 
-  // --- TAB 3: PARTNER LEDGER ---
-  Widget _buildLedger() => const Center(child: Text("FARMER-DIRECT PAYMENTS ACTIVE", style: TextStyle(color: Colors.grey, fontSize: 10)));
-
-  // --- UI UTILITIES ---
+  // --- UTILS ---
   Widget _card(String t, String v, Color c) => Container(
     padding: const EdgeInsets.all(20), width: double.infinity,
     decoration: BoxDecoration(color: const Color(0xFF111111), border: Border(left: BorderSide(color: c, width: 3))),
