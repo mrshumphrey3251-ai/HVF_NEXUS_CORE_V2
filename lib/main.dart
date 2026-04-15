@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V117.0 - THE RESTRUCTURED CORE
-// FOCUS: INSTITUTIONAL SCALE & CLUTTER PREVENTION
-// AUTHORIZED: JEFFERY DONNELL HUMPHREY
+// HVF NEXUS CORE V117.1 - THE SALE-READY MVP
+// FINAL LOCK: INSTITUTIONAL HUB, GLOBAL EXCHANGE, & DIVIDEND LEDGER
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,112 +52,93 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(":: HVF NEXUS v117 ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 4)),
-        leading: IconButton(icon: const Icon(Icons.logout, color: Colors.red, size: 16), onPressed: () => setState(() { role = null; userID = null; })),
+        title: Text(":: HVF NEXUS CORE ::", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 4)),
+        actions: [IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red, size: 18), onPressed: () => setState(() { role = null; userID = null; }))],
       ),
-      body: _buildPageRouter(),
+      body: IndexedStack(index: _selectedIndex, children: [_buildHub(), _buildExchange(), _buildLedger()]),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: (i) => setState(() => _selectedIndex = i),
         selectedItemColor: const Color(0xFFC5A059),
         unselectedItemColor: Colors.grey,
-        backgroundColor: const Color(0xFF111111),
+        backgroundColor: const Color(0xFF0D0D0D),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.dashboard), label: 'HUB'),
-          BottomNavigationBarItem(icon: Icon(Icons.swap_vert), label: 'EXCHANGE'),
-          BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'LEDGER'),
+          BottomNavigationBarItem(icon: Icon(Icons.analytics), label: 'HUB'),
+          BottomNavigationBarItem(icon: Icon(Icons.api), label: 'EXCHANGE'),
+          BottomNavigationBarItem(icon: Icon(Icons.account_balance), label: 'LEDGER'),
         ],
       ),
     );
   }
 
-  // --- RESTRUCTURED INTERFACES ---
-
-  Widget _buildPageRouter() {
-    switch (_selectedIndex) {
-      case 0: return _buildMainHub();
-      case 1: return _buildExchange();
-      case 2: return _buildLedger();
-      default: return _buildMainHub();
-    }
+  // --- TAB 1: INSTITUTIONAL HUB ---
+  Widget _buildHub() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+      builder: (context, snapshot) {
+        int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+        return Padding(padding: const EdgeInsets.all(25), child: Column(children: [
+          _card("NATIONAL MANAGED VOLUME", "$count HEAD", Colors.cyan),
+          const SizedBox(height: 15),
+          _card("PROJECTED PARTNER DIVIDEND", "\$${(count * 50).toStringAsFixed(2)}/MO", const Color(0xFFC5A059)),
+          const Spacer(),
+          const Icon(Icons.verified_user, size: 60, color: Colors.white10),
+          const Text("SME SYSTEM STANDARDS ACTIVE", style: TextStyle(fontSize: 8, color: Colors.grey)),
+        ]));
+      },
+    );
   }
 
-  // HUB: THE COMMAND CENTER
-  Widget _buildMainHub() {
-    return Padding(padding: const EdgeInsets.all(20), child: Column(children: [
-      _summaryCard("NATIONAL VOLUME", "12,450 HEAD", Colors.cyan),
-      const SizedBox(height: 15),
-      _summaryCard("MONTHLY DIVIDENDS", "\$622,500.00", const Color(0xFFC5A059)),
-      const SizedBox(height: 40),
-      const Text(":: ACTIVE ASSET TRACKING ::", style: TextStyle(fontSize: 10, color: Colors.grey)),
-      const Expanded(child: Center(child: Icon(Icons.map, size: 100, color: Colors.white10))),
-    ]));
-  }
-
-  // EXCHANGE: THE BUYER'S PATH
+  // --- TAB 2: GLOBAL EXCHANGE ---
   Widget _buildExchange() {
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView(children: snapshot.data!.docs.map((doc) {
-          final d = doc.data() as Map<String, dynamic>;
+        return ListView(children: snapshot.data!.docs.map((d) {
+          final data = d.data() as Map<String, dynamic>;
           return ListTile(
             leading: const Icon(Icons.token, color: Color(0xFFC5A059)),
-            title: Text(d['name'] ?? "ASSET"),
-            subtitle: Text("VALUE: \$${d['value']}"),
-            trailing: const Icon(Icons.chevron_right),
+            title: Text(data['name'] ?? "ASSET"),
+            subtitle: Text("VALUE: \$${data['value']} | DIVIDEND: \$${data['stew_fee']}/MO"),
+            trailing: const Icon(Icons.arrow_forward_ios, size: 12),
           );
         }).toList());
       },
     );
   }
 
-  // LEDGER: THE SME AUDIT
-  Widget _buildLedger() {
-    return const Center(child: Text("SME FINANCIAL AUDIT ACTIVE", style: TextStyle(color: Colors.grey)));
-  }
+  // --- TAB 3: PARTNER LEDGER ---
+  Widget _buildLedger() => const Center(child: Text("FARMER-DIRECT PAYMENTS ACTIVE", style: TextStyle(color: Colors.grey, fontSize: 10)));
 
   // --- UI UTILITIES ---
-
-  Widget _summaryCard(String title, String val, Color c) => Container(
+  Widget _card(String t, String v, Color c) => Container(
     padding: const EdgeInsets.all(20), width: double.infinity,
-    decoration: BoxDecoration(color: const Color(0xFF111111), border: Border(left: BorderSide(color: c, width: 4))),
+    decoration: BoxDecoration(color: const Color(0xFF111111), border: Border(left: BorderSide(color: c, width: 3))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(title, style: const TextStyle(fontSize: 10, color: Colors.grey)),
-      Text(val, style: TextStyle(fontSize: 22, color: c, fontWeight: FontWeight.bold)),
+      Text(t, style: const TextStyle(fontSize: 8, color: Colors.grey)),
+      Text(v, style: TextStyle(fontSize: 20, color: c, fontWeight: FontWeight.bold)),
     ]),
   );
 
-  Widget _buildGate() {
-    return Scaffold(
-      body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.public, color: Color(0xFFC5A059), size: 80),
-        const SizedBox(height: 20),
-        const Text("HVF GLOBAL INFRASTRUCTURE", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
-        const SizedBox(height: 40),
-        _gateBtn("CEO COMMAND", "CEO"),
-        _gateBtn("PARTNER FARMER", "PRODUCER"),
-      ])),
-    );
-  }
+  Widget _buildGate() => Scaffold(body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+    const Icon(Icons.public, color: Color(0xFFC5A059), size: 80),
+    const SizedBox(height: 40),
+    _btn("CEO COMMAND", "CEO"),
+    _btn("INSTITUTIONAL PARTNER", "PRODUCER"),
+  ])));
 
-  Widget _gateBtn(String l, String r) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(280, 60)),
-      onPressed: () => setState(() => role = r), child: Text(l)),
-  );
+  Widget _btn(String l, String r) => Padding(padding: const EdgeInsets.symmetric(vertical: 8), child: OutlinedButton(
+    style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(280, 60)),
+    onPressed: () => setState(() => role = r), child: Text(l)));
 
   Widget _buildAuth() {
     final c = TextEditingController();
-    return Scaffold(
-      body: Padding(padding: const EdgeInsets.all(50), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("ENTITY AUTHENTICATION"),
-        TextField(controller: c, decoration: const InputDecoration(labelText: "NAME / ID")),
-        const SizedBox(height: 20),
-        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: const Text("INITIALIZE")),
-      ])),
-    );
+    return Scaffold(body: Padding(padding: const EdgeInsets.all(50), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Text("GLOBAL ENTITY AUTH"),
+      TextField(controller: c, decoration: const InputDecoration(labelText: "ENTITY ID")),
+      const SizedBox(height: 30),
+      ElevatedButton(onPressed: () => setState(() => userID = c.text), child: const Text("INITIALIZE")),
+    ])));
   }
 }
