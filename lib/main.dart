@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'dart:html' as html;
 
 // =========================================================
-// HVF NEXUS CORE - SECURE GATE V1.5.1
-// AUTHORIZED BY: CEO JEFFERY DONNELL HUMPHREY
-// PIN PROTOCOL: CEO(1978), PRODUCER(2026), BUYER(0000)
+// HVF NEXUS CORE - CONSOLIDATED MASTER V1.5.2
+// SECURITY: PIN CHALLENGE (CEO: 1978 | STAFF: 2026)
+// FEATURES: EVIDENCE LINKS | LIVE MARKET | MULTI-SECTOR
 // =========================================================
 
 void main() async {
@@ -34,19 +35,19 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   String sector = "LIVESTOCK";
   final _db = FirebaseFirestore.instance;
 
-  // TACTICAL PIN CHALLENGE
+  // SECURITY CHALLENGE LOGIC
   void _challengePin(String targetView, String correctPin) {
     TextEditingController pinCtrl = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF111111),
-        title: Text("ENTER $targetView PIN", style: const TextStyle(color: Color(0xFFC5A059))),
+        title: Text("AUTHORIZATION REQUIRED: $targetView", style: const TextStyle(color: Color(0xFFC5A059))),
         content: TextField(
           controller: pinCtrl,
           obscureText: true,
           keyboardType: TextInputType.number,
-          style: const TextStyle(color: Colors.white, fontSize: 24, letterSpacing: 10),
+          style: const TextStyle(color: Colors.white, fontSize: 30, letterSpacing: 10),
           decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059)))),
         ),
         actions: [
@@ -57,10 +58,10 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 setState(() => view = targetView);
                 Navigator.pop(context);
               } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ACCESS DENIED: INVALID CREDENTIALS")));
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ACCESS DENIED")));
               }
             },
-            child: const Text("AUTHORIZE", style: TextStyle(color: Colors.green)),
+            child: const Text("ACCESS", style: TextStyle(color: Colors.green)),
           ),
         ],
       ),
@@ -80,15 +81,15 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         color: const Color(0xFF111111),
         child: TextButton.icon(
           onPressed: () => setState(() => view = "GATE"),
-          icon: const Icon(Icons.lock_reset, color: Colors.red),
-          label: const Text("LOCK & EXIT", style: TextStyle(color: Colors.white)),
+          icon: const Icon(Icons.lock_outline, color: Colors.red),
+          label: const Text("LOCK & EXIT", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         ),
       ),
-      body: _buildTheater(),
+      body: _buildCurrentTheater(),
     );
   }
 
-  Widget _buildTheater() {
+  Widget _buildCurrentTheater() {
     switch (view) {
       case "PRODUCER": return _buildProducerEntry();
       case "BUYER": return _buildBuyerMarket();
@@ -100,10 +101,10 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   Widget _buildGate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Icon(Icons.security, color: Color(0xFFC5A059), size: 100),
-      const SizedBox(height: 50),
-      _gateBtn("CEO OVERSIGHT", () => _challengePin("CEO", "1978")), 
+      const SizedBox(height: 40),
+      _gateBtn("CEO OVERSIGHT", () => _challengePin("CEO", "1978")),
       _gateBtn("PRODUCER DECK", () => _challengePin("PRODUCER", "2026")),
-      _gateBtn("BUYER MARKET", () => setState(() => view = "BUYER")), // Buyer is currently open for public claiming
+      _gateBtn("BUYER MARKET", () => setState(() => view = "BUYER")),
     ]));
   }
 
@@ -116,7 +117,82 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     ),
   );
 
-  // ... (Producer, Buyer, and CEO methods from V1.5.0 remain the same)
-  // Note: Ensure the rest of the methods (_buildProducerEntry, _buildBuyerMarket, _buildCEODashboard) 
-  // are included in your final file to maintain functionality.
-}
+  Widget _buildProducerEntry() {
+    final nameCtrl = TextEditingController();
+    final dataCtrl = TextEditingController();
+    final mediaCtrl = TextEditingController();
+
+    return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
+      const SizedBox(height: 20),
+      TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME / LOT #", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
+      TextField(controller: dataCtrl, style: const TextStyle(color: Colors.greenAccent, fontSize: 22), decoration: const InputDecoration(labelText: "VITAL DATA", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
+      TextField(controller: mediaCtrl, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "EVIDENCE LINK (URL)", labelStyle: TextStyle(color: Colors.cyanAccent))),
+      const SizedBox(height: 40),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 70)),
+        onPressed: () async {
+          if(nameCtrl.text.isEmpty) return;
+          await _db.collection('enterprise_ledger').add({
+            'name': nameCtrl.text, 'vital': dataCtrl.text, 'media': mediaCtrl.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
+          });
+          nameCtrl.clear(); dataCtrl.clear(); mediaCtrl.clear();
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("DATA UPLINKED")));
+        },
+        child: const Text("AUTHORIZE UPLINK", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold)),
+      )
+    ])));
+  }
+
+  Widget _tab(String s) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: ChoiceChip(label: Text(s), selected: sector == s, onSelected: (val) => setState(() => sector = s), selectedColor: const Color(0xFFC5A059)),
+  );
+
+  Widget _buildBuyerMarket() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView.builder(
+          itemCount: snap.data!.docs.length,
+          itemBuilder: (context, i) {
+            final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
+            return Card(
+              color: const Color(0xFF1A1A1A),
+              margin: const EdgeInsets.all(12),
+              child: ListTile(
+                title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                  if (doc['media'] != null && doc['media'] != "")
+                    TextButton.icon(icon: const Icon(Icons.play_circle_fill, color: Colors.cyanAccent), label: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent)), onPressed: () => html.window.open(doc['media'], 'new_tab')),
+                ]),
+                trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE")),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  Widget _buildCEODashboard() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('enterprise_ledger').orderBy('timestamp', descending: true).snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView.builder(
+          itemCount: snap.data!.docs.length,
+          itemBuilder: (context, i) {
+            final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
+            return ListTile(
+              title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white)),
+              subtitle: Text("STATUS: ${doc['status']}", style: TextStyle(color: doc['status'] == 'CLAIMED' ? Colors.green : Colors.orange)),
+              trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snap.data!.docs[i].reference.delete()),
+            );
+          },
+        );
+      },
+    );
+  }
