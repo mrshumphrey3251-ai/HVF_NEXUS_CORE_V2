@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+// =========================================================
+// HVF NEXUS - ALIGNED CORE V158.2
+// MAPPED TO LIVE DATABASE: enterprise_ledger
+// CAGE: 1AHA8 | AUTHORIZED BY: JEFFERY DONNELL HUMPHREY
+// =========================================================
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -44,22 +50,39 @@ class _SovereignCommandCenterState extends State<SovereignCommandCenter> {
       appBar: AppBar(
         title: const Text("HVF_NEXUS_ACTUAL", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
         backgroundColor: Colors.black,
+        actions: const [Center(child: Text("CAGE: 1AHA8  ", style: TextStyle(fontSize: 8, color: Colors.cyan)))],
       ),
-      // THE FAIL-SAFE STREAM
-      body: StreamBuilder<DocumentSnapshot>(
-        stream: _db.collection('treasury').doc('storm_chest').snapshots(),
+      // PULLING FROM YOUR ACTUAL COLLECTION: enterprise_ledger
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _db.collection('enterprise_ledger').snapshots(),
         builder: (context, snapshot) {
-          // If connection is waiting or data is missing, show "Zero" instead of Grey
-          double currentBalance = 0.0;
-          if (snapshot.hasData && snapshot.data!.exists) {
-            Map<String, dynamic> data = snapshot.data!.data() as Map<String, dynamic>;
-            currentBalance = (data['balance'] ?? 0.0).toDouble();
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
           }
-          
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text("NO_DATA_FOUND_IN_LEDGER", style: TextStyle(fontSize: 8)));
+          }
+
+          final docs = snapshot.data!.docs;
+
           return Column(
             children: [
-              _header(currentBalance),
-              Expanded(child: _marketView()),
+              _summaryBar(docs.length),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(15),
+                  itemCount: docs.length,
+                  itemBuilder: (context, index) {
+                    var data = docs[index].data() as Map<String, dynamic>;
+                    return _assetCard(
+                      data['name'] ?? "UNKNOWN_ASSET",
+                      data['value']?.toString() ?? "0",
+                      data['status'] ?? "UNKNOWN",
+                    );
+                  },
+                ),
+              ),
             ],
           );
         },
@@ -67,38 +90,29 @@ class _SovereignCommandCenterState extends State<SovereignCommandCenter> {
     );
   }
 
-  Widget _header(double balance) => Container(
+  Widget _summaryBar(int count) => Container(
     padding: const EdgeInsets.all(20),
     color: const Color(0xFF0D0D0D),
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        const Text("CAGE: 1AHA8", style: TextStyle(fontSize: 8, color: Colors.cyan)),
-        Text("CHEST: \$${balance.toStringAsFixed(2)}", 
-          style: const TextStyle(fontSize: 10, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+        const Text("LEDGER_STATUS", style: TextStyle(fontSize: 8, color: Colors.white38)),
+        Text("ASSETS: $count", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.greenAccent)),
       ],
     ),
   );
 
-  Widget _marketView() => ListView(
-    padding: const EdgeInsets.all(20),
-    children: [
-      _tradeCard("LOT_A: 50_HEAD_ANGUS", 75000),
-      _tradeCard("LOT_B: 4PL_FLEET_UNIT", 120000),
-      const Padding(
-        padding: EdgeInsets.all(20),
-        child: Text(":: OPERATIONAL_READY ::", 
-          textAlign: TextAlign.center, style: TextStyle(fontSize: 8, color: Colors.white10)),
-      )
-    ],
-  );
-
-  Widget _tradeCard(String l, double v) => Card(
+  Widget _assetCard(String name, String value, String status) => Card(
     color: const Color(0xFF111111),
     margin: const EdgeInsets.only(bottom: 10),
     child: ListTile(
-      title: Text(l, style: const TextStyle(fontSize: 9)),
-      trailing: const Icon(Icons.arrow_forward_ios, size: 12, color: Color(0xFFC5A059)),
+      title: Text(name, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+      subtitle: Text("VALUE: \$$value", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+      trailing: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
+        child: Text(status, style: const TextStyle(fontSize: 7, color: Colors.white24)),
+      ),
     ),
   );
 }
