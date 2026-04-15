@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS - INDUSTRIAL MVP V156.0 
-// MISSION: FAMILY SURVIVAL | BASELINE FUNCTIONAL
+// HVF NEXUS - PRODUCTION CORE V158.0 
+// THE "PERFECT" SPRINT | PERMANENT DATA PERSISTENCE
 // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5
-// AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO)
+// AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO / SME)
 // =========================================================
 
 void main() async {
@@ -20,99 +21,110 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
     ),
   );
-  runApp(const HVFMVP());
+  runApp(const HVFNexusSovereign());
 }
 
-class HVFMVP extends StatelessWidget {
-  const HVFMVP({super.key});
+class HVFNexusSovereign extends StatelessWidget {
+  const HVFNexusSovereign({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Courier'),
-      home: const BaselineCommand(),
+      home: const SovereignCommandCenter(),
     );
   }
 }
 
-class BaselineCommand extends StatefulWidget {
-  const BaselineCommand({super.key});
+class SovereignCommandCenter extends StatefulWidget {
+  const SovereignCommandCenter({super.key});
   @override
-  State<BaselineCommand> createState() => _BaselineCommandState();
+  State<SovereignCommandCenter> createState() => _SovereignCommandCenterState();
 }
 
-class _BaselineCommandState extends State<BaselineCommand> {
-  double _balance = 0.00;
-  int _inventory = 450;
-  List<String> _logs = ["SYSTEM_READY: CAGE_1AHA8"];
+class _SovereignCommandCenterState extends State<SovereignCommandCenter> {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  void _processSale(String item, double price) {
-    setState(() {
-      _inventory -= 50;
-      _balance += (price * 0.05); // Your 5% SME Fee
-      _logs.insert(0, "SOLD: $item | REVENUE_LOCK: \$${(price * 0.05).toStringAsFixed(2)}");
-    });
+  // --- THE MASTER TRANSACTION ENGINE ---
+  Future<void> _executeSovereignTrade(String lotId, double value) async {
+    try {
+      // 1. Log the Federal Contract
+      await _db.collection('contracts').add({
+        'cage_code': '1AHA8',
+        'lot_id': lotId,
+        'value': value,
+        'sme_fee': value * 0.05,
+        'timestamp': FieldValue.serverTimestamp(),
+        'status': 'AUTHORIZED',
+      });
+      
+      // 2. Update the Storm Chest Treasury
+      await _db.collection('treasury').doc('storm_chest').update({
+        'balance': FieldValue.increment(value * 0.05),
+      });
+
+      _notify("TRADE_EXECUTED: CONTRACT_STORED_IN_CLOUD");
+    } catch (e) {
+      _notify("CMD_ERROR: CHECK_DATABASE_PERMISSIONS");
+    }
+  }
+
+  void _notify(String m) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(m, style: const TextStyle(color: Color(0xFFC5A059)))));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0D0D0D),
-        title: const Text("HVF_NEXUS_BASELINE", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
-        actions: [Center(child: Text("FEE_EARNED: \$${_balance.toStringAsFixed(2)}  ", style: const TextStyle(color: Colors.greenAccent, fontSize: 10)))],
+        title: const Text("HVF_NEXUS_ACTUAL", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
+        backgroundColor: Colors.black,
       ),
-      body: Column(
-        children: [
-          // THE OVERSEER VIEW (Simplified)
-          Container(
-            padding: const EdgeInsets.all(20),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _stat("INV_COUNT", "$_inventory"),
-                _stat("GRID", "482KW"),
-                _stat("SME", "ACTIVE"),
-              ],
-            ),
-          ),
-          const Divider(color: Colors.white10),
-          // THE EXCHANGE (Simplified)
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(15),
-              children: [
-                _saleCard("LOT_A: 50 HEAD", "\$75,000", () => _processSale("LOT_A", 75000)),
-                _saleCard("LOT_B: EQUIPMENT", "\$120,000", () => _processSale("LOT_B", 120000)),
-              ],
-            ),
-          ),
-          // THE AUDIT TRAIL
-          Container(
-            height: 100, width: double.infinity, color: const Color(0xFF050505),
-            padding: const EdgeInsets.all(10),
-            child: ListView.builder(
-              itemCount: _logs.length,
-              itemBuilder: (context, i) => Text("> ${_logs[i]}", style: const TextStyle(fontSize: 8, color: Colors.white24)),
-            ),
-          ),
-        ],
+      body: StreamBuilder<DocumentSnapshot>(
+        stream: _db.collection('treasury').doc('storm_chest').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          
+          var chestData = snapshot.data!;
+          return Column(
+            children: [
+              _header(chestData['balance'] ?? 0.0),
+              Expanded(child: _marketView()),
+            ],
+          );
+        },
       ),
     );
   }
 
-  Widget _stat(String l, String v) => Column(children: [
-    Text(l, style: const TextStyle(fontSize: 8, color: Colors.white38)),
-    Text(v, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.cyan)),
-  ]);
+  Widget _header(double balance) => Container(
+    padding: const EdgeInsets.all(20),
+    color: const Color(0xFF0D0D0D),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text("CAGE: 1AHA8", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+        Text("CHEST: \$${balance.toStringAsFixed(2)}", style: const TextStyle(fontSize: 10, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+      ],
+    ),
+  );
 
-  Widget _saleCard(String t, String p, VoidCallback a) => Card(
+  Widget _marketView() => ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      _tradeCard("LOT_A: 50_HEAD_ANGUS", 75000),
+      _tradeCard("LOT_B: 4PL_FLEET_UNIT", 120000),
+    ],
+  );
+
+  Widget _tradeCard(String l, double v) => Card(
     color: const Color(0xFF111111),
     child: ListTile(
-      title: Text(t, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-      subtitle: Text("VALUE: $p", style: const TextStyle(fontSize: 9, color: Colors.greenAccent)),
-      trailing: ElevatedButton(onPressed: a, child: const Text("EXECUTE")),
+      title: Text(l, style: const TextStyle(fontSize: 9)),
+      trailing: ElevatedButton(
+        onPressed: () => _executeSovereignTrade(l, v),
+        child: const Text("EXECUTE", style: TextStyle(fontSize: 8)),
+      ),
     ),
   );
 }
