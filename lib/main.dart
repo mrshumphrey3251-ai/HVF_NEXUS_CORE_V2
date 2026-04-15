@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V126.2 - UTILITY SOVEREIGNTY BIND
-// 1100 EXECUTION | LIVE DATA INTEGRATION
+// HVF NEXUS OS V126.3 - THE RESTORATION VAULT
+// 1300 EXECUTION | HUMAN CAPITAL & ADVOCACY
 // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
@@ -51,7 +51,7 @@ class SovereignDashboard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text("CAGE: 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-            Text("GRID_TELEMETRY: LIVE", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
+            Text("ADV_PROTOCOL: ACTIVE", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
             Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
           ],
         ),
@@ -60,7 +60,7 @@ class SovereignDashboard extends StatelessWidget {
         children: [
           _buildWeatherOverlay(),
           const Spacer(),
-          const Icon(Icons.shield_rounded, size: 80, color: Color(0xFFC5A059)),
+          const Center(child: Icon(Icons.shield_rounded, size: 80, color: Color(0xFFC5A059))),
           const Text("HVF NEXUS SUPREMACY", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
           const Spacer(),
           _actionGrid(context),
@@ -78,9 +78,9 @@ class SovereignDashboard extends StatelessWidget {
     child: const Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Icon(Icons.radar, color: Colors.greenAccent, size: 10),
+        Icon(Icons.military_tech, color: Colors.cyan, size: 10),
         SizedBox(width: 5),
-        Text("WAPANUCKA NODE: 74°F | WIND 9MPH | SEVERE_ALERT: NONE", style: TextStyle(fontSize: 7, color: Colors.white70)),
+        Text("RESTORATION MODE: 200-UNIT GRID MONITORING", style: TextStyle(fontSize: 7, color: Colors.white70)),
       ],
     ),
   );
@@ -88,11 +88,11 @@ class SovereignDashboard extends StatelessWidget {
   Widget _actionGrid(BuildContext context) => Wrap(
     spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
     children: [
-      _btn(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const Placeholder()),
-      _btn(context, "RESERVOIR_HUB", Icons.water, const ReservoirHub()),
-      _btn(context, "HELIO_GRID", Icons.solar_power, const HelioGridCommand()),
-      _btn(context, "VA_ADVOCACY", Icons.history_edu, const Placeholder()),
-      _btn(context, "SOVEREIGN_EXCHANGE", Icons.currency_exchange, const Placeholder()),
+      _btn(context, "RESTORATION_VAULT", Icons.history_edu, const RestorationVault()),
+      _btn(context, "SME_CERT_TRACKER", Icons.assignment_turned_in, const CertTracker()),
+      _btn(context, "RESERVOIR_HUB", Icons.water, const Placeholder()),
+      _btn(context, "HELIO_GRID", Icons.solar_power, const Placeholder()),
+      _btn(context, "EXCHANGE", Icons.currency_exchange, const Placeholder()),
       _btn(context, "4PL_LOGISTICS", Icons.local_shipping, const Placeholder()),
     ],
   );
@@ -111,70 +111,60 @@ class SovereignDashboard extends StatelessWidget {
   );
 }
 
-// --- MODULE: RESERVOIR HUB ---
-class ReservoirHub extends StatelessWidget {
-  const ReservoirHub({super.key});
+// --- MODULE: RESTORATION VAULT ---
+class RestorationVault extends StatelessWidget {
+  const RestorationVault({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: 25-ACRE_RESERVOIR_CONTROL ::", style: TextStyle(fontSize: 9))),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
-        child: Column(children: [
-          _metric("CURRENT_DEPTH", "22.4 FT", Colors.blueAccent),
-          const SizedBox(height: 10),
-          _metric("PUMP_VOLUME", "1,250 GPM", Colors.cyan),
-          const Spacer(),
-          const Text("WATER SOVEREIGNTY: ESTABLISHED", style: TextStyle(fontSize: 7, color: Colors.white24)),
-        ]),
+      appBar: AppBar(title: const Text(":: VETERAN_ADVOCACY_VAULT ::", style: TextStyle(fontSize: 9))),
+      body: ListView(
+        padding: const EdgeInsets.all(25),
+        children: [
+          _vaultItem("DD-214_REPOSITORY", "ENCRYPTED / SECURE", Colors.cyan),
+          _vaultItem("VA_CLAIM_STATUS", "PENDING_UPLINK", Colors.orangeAccent),
+          _vaultItem("MED_RECORD_SYNC", "NIST-COMPLIANT", Colors.greenAccent),
+        ],
       ),
     );
   }
 
-  Widget _metric(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
+  Widget _vaultItem(String l, String v, Color c) => Container(
+    margin: const EdgeInsets.only(bottom: 10),
+    padding: const EdgeInsets.all(20),
     decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(l, style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
+      Text(v, style: TextStyle(fontSize: 8, color: c)),
     ]),
   );
 }
 
-// --- MODULE: HELIOGRID COMMAND ---
-class HelioGridCommand extends StatelessWidget {
-  const HelioGridCommand({super.key});
+// --- MODULE: CERT TRACKER ---
+class CertTracker extends StatelessWidget {
+  const CertTracker({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: HELIOGRID_SOLAR_OS ::", style: TextStyle(fontSize: 9))),
-      body: Padding(
-        padding: const EdgeInsets.all(30),
+      appBar: AppBar(title: const Text(":: SME_CERTIFICATION_LOG ::", style: TextStyle(fontSize: 9))),
+      body: const Padding(
+        padding: EdgeInsets.all(30),
         child: Column(children: [
-          _metric("SOLAR_OUTPUT", "482.5 kW", Colors.orangeAccent),
-          const SizedBox(height: 10),
-          _metric("BATT_STORAGE", "94.2%", Colors.greenAccent),
-          const Spacer(),
-          const Text("ENERGY SOVEREIGNTY: ACTIVE", style: TextStyle(fontSize: 7, color: Colors.white24)),
+          Text("CURRENT_OPERATOR_STATUS", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
+          Divider(color: Colors.white10),
+          SizedBox(height: 20),
+          Text("NCCER_SAFETY: 100% VERIFIED", style: TextStyle(fontSize: 9, color: Colors.greenAccent)),
+          Text("NCCO_CRANE_OP: 85% CERTIFIED", style: TextStyle(fontSize: 9, color: Colors.cyan)),
         ]),
       ),
     );
   }
-
-  Widget _metric(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-    ]),
-  );
 }
 
 class Placeholder extends StatelessWidget {
   const Placeholder({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("SYNCING_1100_PILLAR...")));
+    return const Scaffold(body: Center(child: Text("UPLINK_ESTABLISHED")));
   }
 }
