@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V127.0 - THE VETTING GATE
-// 0900 EXECUTION | PARTNER & PRODUCER FILTRATION
-// CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
+// HVF NEXUS OS V128.0 - THE RESTORATION PATHWAY
+// INCLUSIVE VETTING | AUTOMATED GUIDANCE FOR GROWING ASSETS
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
@@ -47,19 +46,19 @@ class SovereignDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text("PRODUCER_VETTING_ACTIVE", style: TextStyle(fontSize: 8, color: Colors.orangeAccent)),
+        title: const Text("RESTORATION_PATHWAY: ACTIVE", style: TextStyle(fontSize: 8, color: Colors.cyan)),
         centerTitle: true,
       ),
       body: Column(
         children: [
           _sovereignHeader(),
           const Spacer(),
-          const Icon(Icons.verified_user_rounded, size: 80, color: Color(0xFFC5A059)),
-          const Text("THE VETTING GATE", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+          const Icon(Icons.trending_up_rounded, size: 80, color: Color(0xFFC5A059)),
+          const Text("INTAKE & GUIDANCE", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
           const Spacer(),
           _actionGrid(context),
           const Spacer(),
-          const Text("SME CONTROL: WEEDING THE BAD FRUIT", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+          const Text("HVF MISSION: WE GUIDE THE GROWTH", style: TextStyle(fontSize: 7, color: Colors.white24)),
           const SizedBox(height: 20),
         ],
       ),
@@ -73,7 +72,7 @@ class SovereignDashboard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text("CAGE: 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-        Text("STATUS: GATE_LOCKED", style: TextStyle(fontSize: 7, color: Colors.white24)),
+        Text("MISSION: RESTORATION", style: TextStyle(fontSize: 7, color: Colors.white24)),
         Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
       ],
     ),
@@ -82,10 +81,9 @@ class SovereignDashboard extends StatelessWidget {
   Widget _actionGrid(BuildContext context) => Wrap(
     spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
     children: [
-      _btn(context, "PARTNER_APPLICATION", Icons.assignment_ind, const ApplicationPortal()),
-      _btn(context, "SME_VETTING_DESK", Icons.fact_check, const Placeholder()),
+      _btn(context, "START_APPLICATION", Icons.assignment_turned_in, const RestorationPortal()),
+      _btn(context, "GUIDANCE_RESOURCES", Icons.map, const Placeholder()),
       _btn(context, "SOVEREIGN_EXCHANGE", Icons.currency_exchange, const Placeholder()),
-      _btn(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const Placeholder()),
     ],
   );
 
@@ -103,43 +101,58 @@ class SovereignDashboard extends StatelessWidget {
   );
 }
 
-// --- MODULE: PARTNER APPLICATION PORTAL ---
-class ApplicationPortal extends StatefulWidget {
-  const ApplicationPortal({super.key});
+// --- THE RESTORATION PORTAL ---
+class RestorationPortal extends StatefulWidget {
+  const RestorationPortal({super.key});
   @override
-  State<ApplicationPortal> createState() => _ApplicationPortalState();
+  State<RestorationPortal> createState() => _RestorationPortalState();
 }
 
-class _ApplicationPortalState extends State<ApplicationPortal> {
+class _RestorationPortalState extends State<RestorationPortal> {
   final nameCtrl = TextEditingController();
-  final taxIdCtrl = TextEditingController();
-  bool certConfirmed = false;
+  final idCtrl = TextEditingController();
+  String cert = "NONE";
+  bool isFarmer = false;
+
+  // Logic to determine if they need guidance
+  bool get needsPath => cert == "NONE" && !isFarmer;
+  bool get canSubmit => nameCtrl.text.isNotEmpty && idCtrl.text.isNotEmpty;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: NEW_PARTNER_INTAKE ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: ENTER_THE_PATHWAY ::", style: TextStyle(fontSize: 9))),
       body: Padding(
         padding: const EdgeInsets.all(25),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text("SOVEREIGN COMPLIANCE FORM", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
-          const SizedBox(height: 20),
-          TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: "LEGAL_ENTITY_NAME")),
+          TextField(controller: nameCtrl, decoration: const InputDecoration(labelText: "NAME / FARM_ENTITY"), onChanged: (_) => setState(() {})),
+          const SizedBox(height: 10),
+          TextField(controller: idCtrl, decoration: const InputDecoration(labelText: "TAX_ID / FARM_REG_NUMBER"), onChanged: (_) => setState(() {})),
           const SizedBox(height: 15),
-          TextField(controller: taxIdCtrl, decoration: const InputDecoration(labelText: "TAX_ID_OR_CAGE")),
-          const SizedBox(height: 20),
-          CheckboxListTile(
-            title: const Text("I ATTEST TO SME STANDARDS", style: TextStyle(fontSize: 8)),
-            value: certConfirmed, onChanged: (v) => setState(() => certConfirmed = v!),
+          SwitchListTile(
+            title: const Text("I AM OPERATING AS A FARMER", style: TextStyle(fontSize: 8)),
+            value: isFarmer, onChanged: (v) => setState(() => isFarmer = v),
+          ),
+          const Text("PRIMARY CERTIFICATION (IF ANY)", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+          DropdownButton<String>(
+            value: cert, isExpanded: true,
+            items: ["NONE", "NCCER", "NCCO", "AGRICULTURE_SME"].map((e) => DropdownMenuItem(value: e, child: Text(e, style: const TextStyle(fontSize: 10)))).toList(),
+            onChanged: (v) => setState(() => cert = v!),
           ),
           const Spacer(),
+          if (needsPath && nameCtrl.text.isNotEmpty) 
+            Container(
+              padding: const EdgeInsets.all(15), color: Colors.cyan.withOpacity(0.1),
+              child: const Text("PATHWAY DETECTED: You will be routed to HVF Certification Guidance upon submission.", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+            ),
+          const SizedBox(height: 10),
           ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: certConfirmed ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 60)),
-            onPressed: certConfirmed ? () {
-              // Logic to submit to 'pending_partners' collection
+            style: ElevatedButton.styleFrom(backgroundColor: canSubmit ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 60)),
+            onPressed: canSubmit ? () {
+              // Submit and trigger guidance if needed
               Navigator.pop(context);
             } : null,
-            child: const Text("SUBMIT FOR CEO REVIEW", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            child: Text(needsPath ? "BEGIN RESTORATION PATH" : "SUBMIT SOVEREIGN APPLICATION", style: const TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
@@ -151,6 +164,6 @@ class Placeholder extends StatelessWidget {
   const Placeholder({super.key});
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: Center(child: Text("UPLINK_STABLE")));
+    return const Scaffold(body: Center(child: Text("GUIDANCE_MOD_SYNCING...")));
   }
 }
