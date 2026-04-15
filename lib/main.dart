@@ -1,9 +1,11 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V122.0 - THE MODULAR SOVEREIGN CORE
-// 100% STABILITY BUILD | AUTHORIZED: JEFFERY DONNELL HUMPHREY
-// UEI: S1M4ENLHTDH5 | PATENT: TPP99424 | SME: NCCER/NCCO
+// HVF NEXUS OS V122.1 - FINAL STABILITY PROTOCOL
+// SOVEREIGN ENTITY: HUMPHREY VIRTUAL FARMS LLC
+// UEI: S1M4ENLHTDH5 | PATENT: TPP99424
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -37,71 +39,53 @@ class HVFNexusOS extends StatelessWidget {
   }
 }
 
-// --- THE MASTER COMMAND CHASSIS ---
 class SovereignDashboard extends StatelessWidget {
   const SovereignDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(40),
-        child: Container(
-          color: const Color(0xFF0A0A0A),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          alignment: Alignment.center,
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
-              Text("HVF_NEXUS_CORE_V2.0", style: TextStyle(fontSize: 7, color: Colors.white24, letterSpacing: 2)),
-              Text("PATENT: TPP99424", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-            ],
-          ),
-        ),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFF0A0A0A),
+        elevation: 0,
+        title: const Text("UEI: S1M4ENLHTDH5 | PATENT: TPP99424", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
+        centerTitle: true,
       ),
       body: Column(
         children: [
           const Spacer(),
-          // THE HUMPHREY CREST
-          const Center(
-            child: Icon(Icons.shield_rounded, size: 110, color: Color(0xFFC5A059)),
-          ),
+          const Icon(Icons.shield_rounded, size: 90, color: Color(0xFFC5A059)),
           const SizedBox(height: 15),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 5)),
-          const Text("SOVEREIGN INFRASTRUCTURE OS", style: TextStyle(fontSize: 9, color: Colors.grey, letterSpacing: 6)),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+          const Text("NEXUS CORE OPERATING SYSTEM", style: TextStyle(fontSize: 8, color: Colors.grey, letterSpacing: 6)),
           const Spacer(),
-          // MODULAR ACTION GRID
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 25),
+            padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Wrap(
-              spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
+              spacing: 10, runSpacing: 10, alignment: WrapAlignment.center,
               children: [
-                _actionTile(context, "EXECUTIVE_WAR_ROOM", Icons.analytics),
-                _actionTile(context, "WAPANUCKA_NODE", Icons.hub),
-                _actionTile(context, "HELIO_GRID", Icons.solar_power),
-                _actionTile(context, "RESTORATION", Icons.healing),
-                _actionTile(context, "COMMODITY_EXCHANGE", Icons.currency_exchange),
-                _actionTile(context, "HOUSING_GRID", Icons.home_work),
+                _buildTile(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const WarRoom()),
+                _buildTile(context, "WAPANUCKA_NODE", Icons.hub, const PlaceholderScreen()),
+                _buildTile(context, "HELIO_GRID", Icons.solar_power, const PlaceholderScreen()),
+                _buildTile(context, "RESTORATION", Icons.healing, const PlaceholderScreen()),
+                _buildTile(context, "COMMODITY_EXCHANGE", Icons.currency_exchange, const PlaceholderScreen()),
+                _buildTile(context, "HOUSING_GRID", Icons.home_work, const PlaceholderScreen()),
               ],
             ),
           ),
           const Spacer(),
-          const Text("SME AUTHORITY: JEFFERY DONNELL HUMPHREY", style: TextStyle(fontSize: 8, color: Colors.cyan, letterSpacing: 1)),
+          const Text("SME AUTHORITY: JEFFERY DONNELL HUMPHREY", style: TextStyle(fontSize: 8, color: Colors.cyan)),
           const SizedBox(height: 30),
         ],
       ),
     );
   }
 
-  Widget _actionTile(BuildContext context, String title, IconData icon) {
+  Widget _buildTile(BuildContext context, String title, IconData icon, Widget target) {
     return GestureDetector(
-      onTap: () {
-        // Modular Routing Logic
-        print("COMMAND: Accessing $title");
-      },
+      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => target)),
       child: Container(
-        width: 155, height: 95,
+        width: 150, height: 90,
         decoration: BoxDecoration(
           color: const Color(0xFF0D0D0D),
           border: Border.all(color: const Color(0xFFC5A059), width: 0.5),
@@ -109,12 +93,34 @@ class SovereignDashboard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon, color: const Color(0xFFC5A059), size: 22),
-            const SizedBox(height: 10),
-            Text(title, style: const TextStyle(fontSize: 7, fontWeight: FontWeight.bold, letterSpacing: 1)),
+            Icon(icon, color: const Color(0xFFC5A059), size: 20),
+            const SizedBox(height: 8),
+            Text(title, style: const TextStyle(fontSize: 6, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
+    );
+  }
+}
+
+class WarRoom extends StatelessWidget {
+  const WarRoom({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: EXECUTIVE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("GRID_STATUS: OPERATIONAL", style: TextStyle(color: Colors.green))),
+    );
+  }
+}
+
+class PlaceholderScreen extends StatelessWidget {
+  const PlaceholderScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: MODULE_INITIALIZING ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("DATA_TUNNEL_ESTABLISHING...", style: TextStyle(color: Colors.white24))),
     );
   }
 }
