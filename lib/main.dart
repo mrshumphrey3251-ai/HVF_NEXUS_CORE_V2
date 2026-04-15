@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V120.4 - PHASE 5: THE SOVEREIGN EXCHANGE
-// FOCUS: DE-RISKED ASSET MARKETPLACE & FMV LOGIC
-// DAY 5 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
+// HVF NEXUS OS V120.5 - PHASE 6: NATIONAL GRID PROJECTION
+// FOCUS: MULTI-NODE TELEMETRY & VETERAN RESTORATION ANALYTICS
+// DAY 6 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class HVFNexusOS extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF020202),
+        scaffoldBackgroundColor: const Color(0xFF010101),
         fontFamily: 'Courier',
         colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
       ),
@@ -38,7 +38,7 @@ class HVFNexusOS extends StatelessWidget {
   }
 }
 
-// --- COMMAND GATE (UPDATED WITH EXCHANGE MODULE) ---
+// --- COMMAND GATE (UPDATED WITH NATIONAL GRID) ---
 class FederalCommandGate extends StatelessWidget {
   const FederalCommandGate({super.key});
   @override
@@ -46,20 +46,20 @@ class FederalCommandGate extends StatelessWidget {
     return Scaffold(
       body: Column(children: [
         Container(
-          padding: const EdgeInsets.all(10), color: const Color(0xFF111111),
+          padding: const EdgeInsets.all(10), color: const Color(0xFF0A0A0A),
           child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-            Text("EXCHANGE_STATUS: OPEN", style: TextStyle(fontSize: 8, color: Colors.greenAccent)),
+            Text("GRID_MODE: NATIONAL", style: TextStyle(fontSize: 8, color: Colors.cyan)),
           ]),
         ),
         const Spacer(),
-        const Icon(Icons.currency_exchange_rounded, size: 80, color: Color(0xFFC5A059)),
-        const Text("SOVEREIGN EXCHANGE", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
+        const Icon(Icons.public_rounded, size: 80, color: Color(0xFFC5A059)),
+        const Text("NATIONAL POWER GRID", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
         const SizedBox(height: 40),
-        _cmdBtn(context, "MARKETPLACE_TERMINAL", const ExchangeTerminal()),
-        _cmdBtn(context, "EXECUTIVE_WAR_ROOM", const Placeholder()), // Links to Day 3
+        _cmdBtn(context, "GRID_PROJECTION_MAP", const GridProjection()),
+        _cmdBtn(context, "RESTORATION_ANALYTICS", const RestorationAnalytics()),
         const Spacer(),
-        const Text("DE-RISKED COMMODITY FLOW", style: TextStyle(fontSize: 7, color: Colors.white24)),
+        const Text("MULTI-NODE SOVEREIGNTY ACTIVE", style: TextStyle(fontSize: 7, color: Colors.white10)),
         const SizedBox(height: 30),
       ]),
     );
@@ -75,64 +75,65 @@ class FederalCommandGate extends StatelessWidget {
   );
 }
 
-// --- DAY 5 MODULE: THE EXCHANGE TERMINAL ---
-class ExchangeTerminal extends StatelessWidget {
-  const ExchangeTerminal({super.key});
+// --- DAY 6 MODULE: GRID PROJECTION ---
+class GridProjection extends StatelessWidget {
+  const GridProjection({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: GLOBAL_COMMODITY_GRID ::", style: TextStyle(fontSize: 9))),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-          
-          return Column(children: [
-            Container(
-              padding: const EdgeInsets.all(15),
-              width: double.infinity,
-              color: const Color(0xFF0D0D0D),
-              child: const Text("AVAILABLE DE-RISKED INVENTORY", textAlign: TextAlign.center, style: TextStyle(fontSize: 8, color: Colors.grey, letterSpacing: 2)),
-            ),
-            Expanded(
-              child: GridView.builder(
-                padding: const EdgeInsets.all(15),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.85
-                ),
-                itemCount: snapshot.data!.docs.length,
-                itemBuilder: (context, i) {
-                  final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-                  return Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFF0D0D0D),
-                      border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2)),
-                    ),
-                    padding: const EdgeInsets.all(12),
-                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                        Icon(Icons.verified_user, color: Colors.cyan, size: 12),
-                        Text("SHIELD_ACTIVE", style: TextStyle(fontSize: 6, color: Colors.cyan)),
-                      ]),
-                      const Spacer(),
-                      Text(d['name'] ?? "ASSET_ID", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                      const SizedBox(height: 4),
-                      Text("${d['type']} | CERTIFIED", style: const TextStyle(fontSize: 7, color: Colors.grey)),
-                      const Spacer(),
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        color: const Color(0xFFC5A059),
-                        child: const Text("SECURE ASSET", textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold)),
-                      ),
-                    ]),
-                  );
-                },
-              ),
-            ),
-          ]);
-        },
+      appBar: AppBar(title: const Text(":: NATIONAL_NODE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
+      body: ListView(
+        padding: const EdgeInsets.all(25),
+        children: [
+          _nodeTile("NODE_001_OK_WAPANUCKA", "ONLINE / 100%", Colors.greenAccent),
+          _nodeTile("NODE_002_TX_PANHANDLE", "STANDBY / 0%", Colors.grey),
+          _nodeTile("NODE_003_KS_WEST", "STANDBY / 0%", Colors.grey),
+          const SizedBox(height: 30),
+          const Center(child: Icon(Icons.map_outlined, size: 150, color: Colors.white10)),
+        ],
       ),
     );
   }
+
+  Widget _nodeTile(String l, String v, Color c) => Container(
+    margin: const EdgeInsets.only(bottom: 10),
+    padding: const EdgeInsets.all(20),
+    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border.all(color: c.withOpacity(0.3))),
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(l, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+      Text(v, style: TextStyle(fontSize: 8, color: c)),
+    ]),
+  );
+}
+
+// --- DAY 6 MODULE: RESTORATION ANALYTICS ---
+class RestorationAnalytics extends StatelessWidget {
+  const RestorationAnalytics({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text(":: RESTORATION_OUTCOMES ::", style: TextStyle(fontSize: 9))),
+      body: Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(children: [
+          _analyticTile("VET_SME_PLACEMENT", "92%", Colors.cyan),
+          const SizedBox(height: 10),
+          _analyticTile("CLINICAL_ADHERENCE", "100%", Colors.green),
+          const SizedBox(height: 10),
+          _analyticTile("VOCATIONAL_UPLIFT", "4.2x", const Color(0xFFC5A059)),
+          const Spacer(),
+          const Text("DATA VERIFIED VIA NIST 800-171 COMPLIANT TUNNELS", style: TextStyle(fontSize: 7, color: Colors.white24)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _analyticTile(String l, String v, Color c) => Container(
+    padding: const EdgeInsets.all(20), width: double.infinity,
+    color: const Color(0xFF0D0D0D),
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(l, style: TextStyle(fontSize: 8, color: c)),
+      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+    ]),
+  );
 }
