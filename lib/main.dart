@@ -3,8 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS OS - HARD-WIRED REALITY V145.0
-// ZERO DEAD-ENDS | DYNAMIC DATA CONTROLLERS
+// HVF NEXUS OS - INSTITUTIONAL LEDGER V146.0
+// BULK LOT BIDDING | CONTRACTUAL UNDERWRITING
+// CAGE: 1AHA8 | UEI: S1M4ENLHTDH5
 // AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO / SME)
 // =========================================================
 
@@ -42,31 +43,23 @@ class SovereignCockpit extends StatefulWidget {
 }
 
 class _SovereignCockpitState extends State<SovereignCockpit> {
-  int _viewIndex = 0;
+  int _viewIndex = 1; // Default to BUYER for this phase
+  double _stormChestBalance = 2400000.00;
 
-  // LIVE DATA STATES
-  String _gridStatus = "482 KW";
-  String _waterLevel = "22.4 FT";
-  String _assetStatus = "AVAILABLE";
-  double _uploadProgress = 0.0;
-
-  // --- HARD-WIRED LOGIC ---
-  void _executeHardPoll() {
+  // --- OPTION C: INSTITUTIONAL EXECUTION ---
+  Future<void> _executeBulkPurchase(String lotId, double totalValue) async {
+    // This executes the Humphrey Standard for bulk acquisition
     setState(() {
-      _gridStatus = "489 KW (PEAK)";
-      _waterLevel = "22.6 FT (INFLOW)";
+      _stormChestBalance += (totalValue * 0.05); // 5% SME Underwriting Fee
     });
+    _notify("BULK_PURCHASE_COMPLETE: LOT_$lotId | CONTRACT_GENERATED_CAGE_1AHA8");
   }
 
-  void _executeLivePurchase() {
-    setState(() => _assetStatus = "SOLD / MANIFESTING");
-  }
-
-  void _simulateMediaUpload() async {
-    for (int i = 0; i <= 10; i++) {
-      await Future.delayed(const Duration(milliseconds: 200));
-      setState(() => _uploadProgress = i / 10);
-    }
+  void _notify(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      backgroundColor: const Color(0xFF0D0D0D),
+      content: Text(msg, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
+    ));
   }
 
   @override
@@ -75,7 +68,11 @@ class _SovereignCockpitState extends State<SovereignCockpit> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF_COMMAND_ACTUAL", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
+        title: const Text("HVF_INSTITUTIONAL_LEDGER", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
+        actions: [
+          Center(child: Text("CHEST: \$${_stormChestBalance.toStringAsFixed(2)}  ", 
+          style: const TextStyle(fontSize: 8, color: Colors.greenAccent, fontWeight: FontWeight.bold))),
+        ],
       ),
       body: Row(
         children: [
@@ -86,7 +83,7 @@ class _SovereignCockpitState extends State<SovereignCockpit> {
             labelType: NavigationRailLabelType.all,
             destinations: const [
               NavigationRailDestination(icon: Icon(Icons.security), label: Text("OVERSEER")),
-              NavigationRailDestination(icon: Icon(Icons.shopping_cart), label: Text("BUYER")),
+              NavigationRailDestination(icon: Icon(Icons.business_center), label: Text("LEDGER")),
               NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("PRODUCER")),
             ],
           ),
@@ -99,47 +96,56 @@ class _SovereignCockpitState extends State<SovereignCockpit> {
 
   Widget _buildActiveView() {
     if (_viewIndex == 0) return _overseer();
-    if (_viewIndex == 1) return _buyer();
+    if (_viewIndex == 1) return _institutionalLedger();
     return _producer();
   }
 
-  // 1. OVERSEER: ACTUAL TELEMETRY
+  // 1. OVERSEER (RETAINED GROUND)
   Widget _overseer() => _layout("EXECUTIVE_WAR_ROOM", [
-    _liveTile("HELIO_GRID_OUTPUT", _gridStatus, Icons.bolt, _executeHardPoll, "REFRESH"),
-    _liveTile("RESERVOIR_HYDRAULICS", _waterLevel, Icons.waves, _executeHardPoll, "POLL"),
+    _dataTile("HELIOGRID_STAT", "482 KW", Icons.bolt),
+    _dataTile("RESERVOIR_DEPTH", "22.4 FT", Icons.waves),
   ]);
 
-  // 2. BUYER: ACTUAL TRANSACTION
-  Widget _buyer() => _layout("INSTITUTIONAL_EXCHANGE", [
-    _liveTile("LOT_772: ANGUS_BULL", _assetStatus, Icons.currency_exchange, _executeLivePurchase, "BUY_NOW"),
+  // 2. INSTITUTIONAL LEDGER (THE NEW POWER)
+  Widget _institutionalLedger() => _layout("BULK_ASSET_ACQUISITION", [
+    _bulkLotCard("LOT_882: 50_ANGUS_MIX", "VALUE: \$75,000", 75000),
+    _bulkLotCard("LOT_441: 5_CAT_EXCAVATORS", "VALUE: \$420,000", 420000),
+    _bulkLotCard("LOT_109: VINEYARD_EQUIP_PKG", "VALUE: \$12,500", 12500),
   ]);
 
-  // 3. PRODUCER: ACTUAL MEDIA HANDLER
+  // 3. PRODUCER (RETAINED GROUND)
   Widget _producer() => _layout("PROOF_OF_LIFE_VAULT", [
-    const Text("SME VIDEO UPLOAD", style: TextStyle(fontSize: 9, color: Colors.cyan)),
-    const SizedBox(height: 10),
-    LinearProgressIndicator(value: _uploadProgress, color: const Color(0xFFC5A059), backgroundColor: Colors.white10),
+    const Text("SME VIDEO UPLOAD ACTIVE", style: TextStyle(fontSize: 9, color: Colors.cyan)),
     const SizedBox(height: 20),
-    ElevatedButton(onPressed: _simulateMediaUpload, child: const Text("START_UPLOAD")),
+    ElevatedButton(onPressed: () => _notify("INITIALIZING_SME_CAMERA..."), child: const Text("START_UPLOAD")),
   ]);
 
   Widget _layout(String title, List<Widget> children) => Padding(
     padding: const EdgeInsets.all(30),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(title, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+      Text(title, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
       const Divider(color: Colors.white10),
       const SizedBox(height: 20),
-      ...children,
+      Expanded(child: ListView(children: children)),
     ]),
   );
 
-  Widget _liveTile(String l, String v, IconData i, VoidCallback a, String b) => Card(
+  Widget _bulkLotCard(String title, String val, double price) => Card(
     color: const Color(0xFF0D0D0D),
+    margin: const EdgeInsets.only(bottom: 15),
     child: ListTile(
-      leading: Icon(i, color: const Color(0xFFC5A059)),
-      title: Text(l, style: const TextStyle(fontSize: 8)),
-      subtitle: Text(v, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.cyan)),
-      trailing: ElevatedButton(onPressed: a, child: Text(b, style: const TextStyle(fontSize: 7))),
+      title: Text(title, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+      subtitle: Text(val, style: const TextStyle(fontSize: 10, color: Colors.greenAccent)),
+      trailing: ElevatedButton(
+        onPressed: () => _executeBulkPurchase(title.split(":")[0], price),
+        child: const Text("ACQUIRE_LOT", style: TextStyle(fontSize: 7)),
+      ),
     ),
+  );
+
+  Widget _dataTile(String l, String v, IconData i) => ListTile(
+    leading: Icon(i, color: const Color(0xFFC5A059)),
+    title: Text(l, style: const TextStyle(fontSize: 8)),
+    trailing: Text(v, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
   );
 }
