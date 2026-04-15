@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V126.4 - THE NATIONAL COMMAND
-// 1500 EXECUTION | LOGISTICS & SCALE
+// HVF NEXUS OS V126.5 - THE ADVOCACY SUPREMACY BUILD
+// 1700 FINAL SEAL | INTEGRATED SSI & MILITARY BENEFITS
 // CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
-// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO / SME)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,40 +47,34 @@ class SovereignDashboard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
-        title: const Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("CAGE: 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-            Text("LOGISTICS_MODE: NATIONAL", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
-            Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
-          ],
-        ),
+        title: const Text("HVF_NEXUS_CORE_V2.5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 2)),
+        centerTitle: true,
       ),
       body: Column(
         children: [
-          _buildWeatherOverlay(),
+          _buildSovereignHeader(),
           const Spacer(),
-          const Center(child: Icon(Icons.public_rounded, size: 80, color: Color(0xFFC5A059))),
-          const Text("HVF NATIONAL GRID", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
+          const Icon(Icons.shield_rounded, size: 85, color: Color(0xFFC5A059)),
+          const Text("RESTORATION & SUPREMACY", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 4)),
           const Spacer(),
           _actionGrid(context),
           const Spacer(),
-          const Text("MULTI-NODE SOVEREIGNTY: ACTIVE", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+          const Text("GOVERNMENT REGISTERED: CAGE 1AHA8", style: TextStyle(fontSize: 7, color: Colors.cyan)),
           const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _buildWeatherOverlay() => Container(
-    padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 20),
+  Widget _buildSovereignHeader() => Container(
+    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 20),
     color: const Color(0xFF111111),
     child: const Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Icon(Icons.local_shipping, color: Colors.cyan, size: 10),
-        SizedBox(width: 5),
-        Text("FLEET_STATUS: 12 SEMIS ACTIVE | NCCO_OPS: CLEAR", style: TextStyle(fontSize: 7, color: Colors.white70)),
+        Text("WAPANUCKA_WX: 74°F", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
+        Text("SSI_MIL_ADV: ACTIVE", style: TextStyle(fontSize: 7, color: Colors.cyan, fontWeight: FontWeight.bold)),
+        Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 7, color: Color(0xFFC5A059))),
       ],
     ),
   );
@@ -88,19 +82,19 @@ class SovereignDashboard extends StatelessWidget {
   Widget _actionGrid(BuildContext context) => Wrap(
     spacing: 12, runSpacing: 12, alignment: WrapAlignment.center,
     children: [
-      _btn(context, "4PL_LOGISTICS", Icons.local_shipping, const LogisticsCommand()),
-      _btn(context, "NATIONAL_NODES", Icons.map_outlined, const NodeMap()),
+      _btn(context, "BENEFITS_ADVOCACY", Icons.gavel, const BenefitsVault()),
       _btn(context, "RESTORATION_VAULT", Icons.history_edu, const Placeholder()),
+      _btn(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const Placeholder()),
+      _btn(context, "SOVEREIGN_EXCHANGE", Icons.currency_exchange, const Placeholder()),
       _btn(context, "RESERVOIR_HUB", Icons.water, const Placeholder()),
-      _btn(context, "HELIO_GRID", Icons.solar_power, const Placeholder()),
-      _btn(context, "EXCHANGE", Icons.currency_exchange, const Placeholder()),
+      _btn(context, "4PL_LOGISTICS", Icons.local_shipping, const Placeholder()),
     ],
   );
 
   Widget _btn(BuildContext context, String l, IconData i, Widget t) => GestureDetector(
     onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
     child: Container(
-      width: 150, height: 90,
+      width: 155, height: 95,
       decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border.all(color: const Color(0xFFC5A059), width: 0.5)),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(i, color: const Color(0xFFC5A059), size: 24),
@@ -111,64 +105,34 @@ class SovereignDashboard extends StatelessWidget {
   );
 }
 
-// --- MODULE: LOGISTICS COMMAND ---
-class LogisticsCommand extends StatelessWidget {
-  const LogisticsCommand({super.key});
+// --- MODULE: BENEFITS ADVOCACY VAULT ---
+class BenefitsVault extends StatelessWidget {
+  const BenefitsVault({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: 4PL_FLEET_LOGISTICS ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: SSI & MILITARY BENEFITS ::", style: TextStyle(fontSize: 9))),
       body: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.all(25),
         child: Column(children: [
-          _manifestItem("ACTIVE_LOADS", "4 UNITS", Colors.cyan),
-          const SizedBox(height: 10),
-          _manifestItem("SEMI_FLEET_STATUS", "8 ONLINE", Colors.greenAccent),
-          const SizedBox(height: 10),
-          _manifestItem("CRANE_AVAILABILITY", "2 UNITS", Color(0xFFC5A059)),
+          _benefitCat("SSI/SSDI_CLAIMS", "42 ACTIVE / 12 PENDING", Colors.orangeAccent),
+          const SizedBox(height: 15),
+          _benefitCat("VA_DISABILITY_RATINGS", "100% SUCCESS_TARGET", Colors.cyan),
+          const SizedBox(height: 15),
+          _benefitCat("VOCATIONAL_REHAB", "CH-31 ENROLLMENT: 28", Colors.greenAccent),
+          const Spacer(),
+          const Text("FEDERAL ADVOCACY ARCHITECTURE: HUMPHREY STANDARD", style: TextStyle(fontSize: 7, color: Colors.white10)),
         ]),
       ),
     );
   }
 
-  Widget _manifestItem(String l, String v, Color c) => Container(
-    margin: const EdgeInsets.only(bottom: 10),
-    padding: const EdgeInsets.all(20),
+  Widget _benefitCat(String l, String v, Color c) => Container(
+    padding: const EdgeInsets.all(20), width: double.infinity,
     decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(l, style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
-      Text(v, style: TextStyle(fontSize: 10, color: c, fontWeight: FontWeight.bold)),
-    ]),
-  );
-}
-
-// --- MODULE: NATIONAL NODE MAP ---
-class NodeMap extends StatelessWidget {
-  const NodeMap({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: 50-STATE_GRID_PROJECTION ::", style: TextStyle(fontSize: 9))),
-      body: ListView(
-        padding: const EdgeInsets.all(25),
-        children: [
-          _node("NODE_001_OK_WAPANUCKA", "OPERATIONAL / 100%", Colors.greenAccent),
-          _node("NODE_002_TX_PANHANDLE", "DEVELOPMENT / 20%", Colors.orangeAccent),
-          _node("NODE_003_KS_CENTRAL", "PLANNED", Colors.white24),
-          const SizedBox(height: 40),
-          const Center(child: Icon(Icons.public, size: 100, color: Colors.white10)),
-        ],
-      ),
-    );
-  }
-
-  Widget _node(String l, String v, Color c) => Container(
-    margin: const EdgeInsets.only(bottom: 10),
-    padding: const EdgeInsets.all(15),
-    color: const Color(0xFF0D0D0D),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(l, style: const TextStyle(fontSize: 8)),
-      Text(v, style: TextStyle(fontSize: 7, color: c)),
+    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
+      Text(v, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
     ]),
   );
 }
