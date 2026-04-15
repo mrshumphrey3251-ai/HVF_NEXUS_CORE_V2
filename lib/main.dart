@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:html' as html;
+import 'package:url_launcher/url_launcher.dart'; // Modern, stable link handling
 
 // =========================================================
-// HVF NEXUS CORE - CONSOLIDATED MASTER V1.5.2
-// SECURITY: PIN CHALLENGE (CEO: 1978 | STAFF: 2026)
-// FEATURES: EVIDENCE LINKS | LIVE MARKET | MULTI-SECTOR
+// HVF NEXUS CORE - FUTURE-PROOF V1.5.3
+// SECURITY: PIN (CEO: 1978 | STAFF: 2026)
+// NO DART:HTML - COMPILER COMPLIANT
 // =========================================================
 
 void main() async {
@@ -35,14 +35,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   String sector = "LIVESTOCK";
   final _db = FirebaseFirestore.instance;
 
-  // SECURITY CHALLENGE LOGIC
   void _challengePin(String targetView, String correctPin) {
     TextEditingController pinCtrl = TextEditingController();
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: const Color(0xFF111111),
-        title: Text("AUTHORIZATION REQUIRED: $targetView", style: const TextStyle(color: Color(0xFFC5A059))),
+        title: Text("AUTHORIZE: $targetView", style: const TextStyle(color: Color(0xFFC5A059))),
         content: TextField(
           controller: pinCtrl,
           obscureText: true,
@@ -66,6 +65,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         ],
       ),
     );
+  }
+
+  Future<void> _launchMedia(String url) async {
+    final Uri uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      throw Exception('Could not launch $url');
+    }
   }
 
   @override
@@ -166,7 +172,11 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
                   if (doc['media'] != null && doc['media'] != "")
-                    TextButton.icon(icon: const Icon(Icons.play_circle_fill, color: Colors.cyanAccent), label: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent)), onPressed: () => html.window.open(doc['media'], 'new_tab')),
+                    TextButton.icon(
+                      icon: const Icon(Icons.play_circle_fill, color: Colors.cyanAccent),
+                      label: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent)),
+                      onPressed: () => _launchMedia(doc['media']),
+                    ),
                 ]),
                 trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE")),
               ),
@@ -196,3 +206,4 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       },
     );
   }
+}
