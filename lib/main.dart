@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V120.1 - PHASE 2: WAPANUCKA TELEMETRY
-// FOCUS: HELIOGRID SOLAR & RESERVOIR INFRASTRUCTURE
-// DAY 2 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
+// HVF NEXUS OS V120.2 - PHASE 3: THE UNDERWRITER SHIELD
+// FOCUS: CARRIER REVENUE & STORM CHEST LIQUIDITY
+// DAY 3 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,7 +29,7 @@ class HVFNexusOS extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF020202),
+        scaffoldBackgroundColor: const Color(0xFF010101),
         fontFamily: 'Courier',
         colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
       ),
@@ -38,7 +38,7 @@ class HVFNexusOS extends StatelessWidget {
   }
 }
 
-// --- UPDATED COMMAND GATE ---
+// --- COMMAND GATE (UPDATED WITH FINANCIAL MODULE) ---
 class FederalCommandGate extends StatelessWidget {
   const FederalCommandGate({super.key});
   @override
@@ -46,22 +46,20 @@ class FederalCommandGate extends StatelessWidget {
     return Scaffold(
       body: Column(children: [
         Container(
-          padding: const EdgeInsets.all(10),
-          color: const Color(0xFF111111),
+          padding: const EdgeInsets.all(10), color: const Color(0xFF111111),
           child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-            Text("PATENT: TPP99424", style: TextStyle(fontSize: 8, color: Colors.white24)),
+            Text("SAM.GOV: ACTIVE", style: TextStyle(fontSize: 8, color: Colors.cyan)),
           ]),
         ),
         const Spacer(),
-        const Icon(Icons.hub_outlined, size: 80, color: Color(0xFFC5A059)),
-        const Text("HVF NEXUS OS", style: TextStyle(fontSize: 18, letterSpacing: 8, fontWeight: FontWeight.bold)),
+        const Icon(Icons.account_balance_rounded, size: 80, color: Color(0xFFC5A059)),
+        const Text("HVF REVENUE ENGINE", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
         const SizedBox(height: 40),
-        _cmdBtn(context, "HELIO_GRID_TELEMETRY", const HelioGridScreen()),
-        _cmdBtn(context, "RESERVOIR_INFRA_MONITOR", const ReservoirScreen()),
-        _cmdBtn(context, "RESIDENTIAL_GRID_200", const ResidentialGrid()),
+        _cmdBtn(context, "EXECUTIVE_WAR_ROOM", const CEOWarRoom()),
+        _cmdBtn(context, "UNDERWRITER_UPLINK", const AssetUplink()),
         const Spacer(),
-        const Text("SME AUTHORITY: JEFFERY D. HUMPHREY", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+        const Text("CARRIER STATUS: PRIMARY", style: TextStyle(fontSize: 7, color: Colors.greenAccent)),
         const SizedBox(height: 30),
       ]),
     );
@@ -77,88 +75,90 @@ class FederalCommandGate extends StatelessWidget {
   );
 }
 
-// --- DAY 2 MODULE: HELIOGRID ---
-class HelioGridScreen extends StatelessWidget {
-  const HelioGridScreen({super.key});
+// --- DAY 3 MODULE: THE STORM CHEST ---
+class CEOWarRoom extends StatelessWidget {
+  const CEOWarRoom({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: HELIOGRID_SOLAR_V1 ::", style: TextStyle(fontSize: 9))),
-      body: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Column(children: [
-          _telemBox("CURRENT_OUTPUT", "482.5 kW", Colors.greenAccent),
-          const SizedBox(height: 10),
-          _telemBox("STORAGE_CAPACITY", "94%", Colors.cyan),
-          const SizedBox(height: 10),
-          _telemBox("GRID_STATUS", "OPTIMAL", Colors.white),
-          const Spacer(),
-          const Text("PROPRIETARY SOLAR INFRASTRUCTURE TRACKING", style: TextStyle(fontSize: 7, color: Colors.white10)),
-        ]),
+      appBar: AppBar(title: const Text(":: STORM_CHEST_LIQUIDITY ::", style: TextStyle(fontSize: 9))),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          
+          double reserve = 0;
+          for (var doc in snapshot.data!.docs) {
+            final d = doc.data() as Map<String, dynamic>;
+            reserve += (d['premium'] ?? 0.0);
+          }
+
+          return Padding(
+            padding: const EdgeInsets.all(30),
+            child: Column(children: [
+              _finBox("HVF_CARRIER_RESERVE", "\$${reserve.toStringAsFixed(2)}", const Color(0xFFC5A059)),
+              const SizedBox(height: 10),
+              _finBox("TOTAL_UNDERWRITTEN", "${snapshot.data!.docs.length} UNITS", Colors.cyan),
+              const Spacer(),
+              const Text("NON-EXHAUSTIVE ASSET PROTECTION FUND", style: TextStyle(fontSize: 7, color: Colors.white24)),
+            ]),
+          );
+        },
       ),
     );
   }
 
-  Widget _telemBox(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    color: const Color(0xFF0D0D0D),
+  Widget _finBox(String l, String v, Color c) => Container(
+    padding: const EdgeInsets.all(25), width: double.infinity,
+    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 3))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+      Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
+      Text(v, style: const TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
     ]),
   );
 }
 
-// --- DAY 2 MODULE: RESERVOIR ---
-class ReservoirScreen extends StatelessWidget {
-  const ReservoirScreen({super.key});
+// --- DAY 3 MODULE: PREMIUM UPLINK ---
+class AssetUplink extends StatefulWidget {
+  const AssetUplink({super.key});
+  @override
+  State<AssetUplink> createState() => _AssetUplinkState();
+}
+
+class _AssetUplinkState extends State<AssetUplink> {
+  String type = "CATTLE";
+  final Map<String, double> rates = {"CATTLE": 10.0, "PIGS": 5.0, "FLEET": 25.0};
+  final idCtrl = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: RESERVOIR_INFRA ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: INITIALIZE_CARRIER_FLOW ::", style: TextStyle(fontSize: 9))),
       body: Padding(
-        padding: const EdgeInsets.all(25),
+        padding: const EdgeInsets.all(30),
         child: Column(children: [
-          _telemBox("WATER_LEVEL", "22.4 FT", Colors.blueAccent),
-          const SizedBox(height: 10),
-          _telemBox("PUMP_STATUS", "ACTIVE", Colors.green),
+          DropdownButtonFormField<String>(
+            value: type,
+            items: rates.keys.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            onChanged: (v) => setState(() => type = v!),
+            decoration: const InputDecoration(labelText: "ASSET_CLASS"),
+          ),
+          const SizedBox(height: 20),
+          Text("CARRIER_PREMIUM: \$${rates[type]} / MO", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+          const SizedBox(height: 20),
+          TextField(controller: idCtrl, decoration: const InputDecoration(labelText: "ASSET_ID")),
           const Spacer(),
-          const Icon(Icons.water, size: 100, color: Colors.white10),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+            onPressed: () async {
+              await FirebaseFirestore.instance.collection('enterprise_ledger').add({
+                'name': idCtrl.text, 'type': type, 'premium': rates[type], 'timestamp': FieldValue.serverTimestamp()
+              });
+              Navigator.pop(context);
+            },
+            child: const Text("EXECUTE UNDERWRITER SHIELD", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
         ]),
-      ),
-    );
-  }
-
-  Widget _telemBox(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    color: const Color(0xFF0D0D0D),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-    ]),
-  );
-}
-
-// --- DAY 2 MODULE: RESIDENTIAL ---
-class ResidentialGrid extends StatelessWidget {
-  const ResidentialGrid({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: 200_UNIT_RESIDENTIAL ::", style: TextStyle(fontSize: 9))),
-      body: ListView.builder(
-        padding: const EdgeInsets.all(20),
-        itemCount: 200,
-        itemBuilder: (context, i) => Container(
-          margin: const EdgeInsets.only(bottom: 5),
-          padding: const EdgeInsets.all(10),
-          color: const Color(0xFF0D0D0D),
-          child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text("UNIT_${i + 1}", style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-            const Text("ADA_COMPLIANT", style: TextStyle(fontSize: 7, color: Colors.grey)),
-            const Icon(Icons.circle, color: Colors.green, size: 8),
-          ]),
-        ),
       ),
     );
   }
