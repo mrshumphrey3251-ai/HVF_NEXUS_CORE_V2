@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V116.4 - THE WEALTH PATH
-// FOCUS: PROJECTED APPRECIATION & DISCIPLINED GROWTH TRACKING
+// HVF NEXUS CORE V116.5 - THE FLUID CORE
+// FOCUS: REMOVING STATIC DEAD ENDS & DECENTRALIZING GLOBAL GROWTH
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -51,22 +51,23 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text(":: HVF WEALTH ENGINE ::", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 2)),
-        actions: [IconButton(icon: Icon(Icons.trending_up, color: Colors.cyan, size: 18), onPressed: () {})],
+        title: Text(":: HVF GLOBAL NEXUS ::", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 2)),
+        actions: [IconButton(icon: Icon(Icons.refresh, color: Colors.cyan, size: 18), onPressed: () => setState(() {}))],
       ),
       body: _buildRouter(),
+      bottomNavigationBar: _buildActionRail(),
     );
   }
 
   Widget _buildGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.account_balance, color: Color(0xFFC5A059), size: 80),
+        Icon(Icons.all_inclusive, color: Color(0xFFC5A059), size: 80),
         SizedBox(height: 20),
-        Text("HVF NEXUS: THE WEALTH PATH", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
+        Text("HVF NEXUS: THE FLUID CORE", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
         SizedBox(height: 40),
         _gateBtn("CEO COMMAND", "CEO"),
-        _gateBtn("PARTNER PRODUCER", "PRODUCER"),
+        _gateBtn("PARTNER PROVIDER", "PRODUCER"),
         _gateBtn("DISCIPLINED BUYER", "BUYER"),
       ])),
     );
@@ -83,51 +84,29 @@ class _HVFShellState extends State<HVFShell> {
     final c = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(50), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text("INITIALIZE PORTFOLIO"),
-        TextField(controller: c, decoration: InputDecoration(labelText: "ENTITY / USER ID")),
+        Text("VERIFY GLOBAL ENTITY"),
+        TextField(controller: c, decoration: InputDecoration(labelText: "ID / NAME")),
         SizedBox(height: 30),
-        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: Text("OPEN EXCHANGE")),
+        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: Text("INITIALIZE PATH")),
       ])),
     );
   }
 
   Widget _buildRouter() {
-    if (role == "BUYER") return _buildWealthTracker();
-    return Center(child: Text("$role INTERFACE ACTIVE"));
+    if (role == "PRODUCER") return _buildProducerFlow();
+    if (role == "BUYER") return _buildBuyerFlow();
+    return _buildCEOFlow();
   }
 
-  Widget _buildWealthTracker() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('buyer', isEqualTo: userID).snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        return Column(children: [
-          Container(
-            padding: EdgeInsets.all(25), width: double.infinity, color: Color(0xFF111111),
-            child: Column(children: [
-              Text("PROJECTED ASSET VALUE AT MATURITY", style: TextStyle(fontSize: 10, color: Colors.grey)),
-              Text("\$${(snapshot.data!.docs.length * 2800.0).toStringAsFixed(2)}", style: TextStyle(fontSize: 28, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-              Text("BASED ON DISCIPLINED STEWARDSHIP", style: TextStyle(fontSize: 8, color: Colors.grey)),
-            ]),
-          ),
-          Expanded(child: ListView.builder(
-            itemCount: snapshot.data!.docs.length,
-            itemBuilder: (context, i) {
-              final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-              return Card(
-                color: Color(0xFF1A1A1A),
-                margin: EdgeInsets.all(10),
-                child: ListTile(
-                  leading: Icon(Icons.circle, color: Colors.greenAccent, size: 12),
-                  title: Text(d['name'] ?? "ASSET"),
-                  subtitle: Text("CURRENT FMV: \$${d['value']}\nEST. MATURITY: \$2,800.00"),
-                  trailing: Icon(Icons.auto_graph, color: Colors.cyan),
-                ),
-              );
-            },
-          )),
-        ]);
-      },
+  // ACTION RAIL: ENSURES NO DEAD ENDS
+  Widget _buildActionRail() {
+    return Container(
+      height: 60,
+      color: Color(0xFF111111),
+      child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+        _railBtn(Icons.add_box, "UPLINK"),
+        _railBtn(Icons.swap_horiz, "EXCHANGE"),
+        _railBtn(Icons.account_balance_wallet, "DIVIDENDS"),
+      ]),
     );
   }
-}
