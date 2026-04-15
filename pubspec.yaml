@@ -1,21 +1,26 @@
-name: hvf_nexus
-description: Humphrey Virtual Farms Nexus Core
-version: 1.0.0+1
+name: Deploy to Firebase Hosting
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+      
+      # THE CRITICAL ADDITION: Ensure the parts are on the table
+      - run: flutter pub get 
+      
+      # THE REPAIRED BUILD COMMAND
+      - run: flutter build web --release --web-renderer html
 
-environment:
-  sdk: ">=3.0.0 <4.0.0"
-
-dependencies:
-  flutter:
-    sdk: flutter
-  firebase_core: ^3.1.1
-  cloud_firestore: ^5.0.2
-  cupertino_icons: ^1.0.8
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
-
-flutter:
-  uses-material-design: true
+      - uses: FirebaseExtended/action-hosting-deploy@v0
+        with:
+          repoToken: '${{ secrets.GITHUB_TOKEN }}'
+          firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT }}'
+          channelId: live
+          projectId: hvf-nexus
