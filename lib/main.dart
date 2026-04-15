@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/services.dart';
 
 // =========================================================
-// HVF NEXUS - FULL INTERIOR ASSEMBLY V1.1.0
-// THE COMPLETED MARKETABLE VEHICLE
+// HVF NEXUS - ROLLING CHASSIS V1.2.0
+// FULL DEPLOYMENT READY | MOBILE OPTIMIZED
 // CAGE: 1AHA8 | AUTHORIZED: JEFFERY DONNELL HUMPHREY
 // =========================================================
 
@@ -20,11 +21,11 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
     ),
   );
-  runApp(const HVFFullBuild());
+  runApp(const HVFRollingBuild());
 }
 
-class HVFFullBuild extends StatelessWidget {
-  const HVFFullBuild({super.key});
+class HVFRollingBuild extends StatelessWidget {
+  const HVFRollingBuild({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -33,42 +34,44 @@ class HVFFullBuild extends StatelessWidget {
         brightness: Brightness.dark,
         fontFamily: 'Courier',
         primaryColor: const Color(0xFFC5A059),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFC5A059), brightness: Brightness.dark),
       ),
       home: const IgnitionScreen(),
     );
   }
 }
 
-// --- THE "IGNITION" (LOGIN/START SCREEN) ---
+// --- THE IGNITION (NOW WITH SYSTEM HAPTICS) ---
 class IgnitionScreen extends StatelessWidget {
   const IgnitionScreen({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
         decoration: const BoxDecoration(
-          gradient: RadialGradient(colors: [Color(0xFF1A1A1A), Colors.black], radius: 1.5),
+          gradient: LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF0D0D0D), Colors.black]),
         ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.shield, size: 80, color: Color(0xFFC5A059)),
-              const SizedBox(height: 20),
-              const Text("HVF_NEXUS_v1.1", style: TextStyle(letterSpacing: 8, fontSize: 18, fontWeight: FontWeight.bold)),
-              const Text("SOVEREIGN ASSET COMMAND", style: TextStyle(color: Colors.white24, fontSize: 10)),
-              const SizedBox(height: 50),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC5A059),
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-                ),
-                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const MainDashboard())),
-                child: const Text("INITIALIZE SYSTEMS", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.shield_outlined, size: 100, color: Color(0xFFC5A059)),
+            const SizedBox(height: 30),
+            const Text("HVF_NEXUS_v1.2", style: TextStyle(letterSpacing: 10, fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text("S1M4ENLHTDH5 | 1AHA8", style: TextStyle(color: Colors.white10, fontSize: 9)),
+            const SizedBox(height: 60),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFC5A059),
+                padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 20),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0)), // Industrial look
               ),
-            ],
-          ),
+              onPressed: () {
+                HapticFeedback.heavyImpact(); // The "Crank" of the engine
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const MainDashboard()));
+              },
+              child: const Text("ENGAGE SYSTEMS", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+          ],
         ),
       ),
     );
@@ -84,147 +87,127 @@ class MainDashboard extends StatefulWidget {
 class _MainDashboardState extends State<MainDashboard> {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  // --- THE SEATBELT ALARM (VALIDATION CHECK) ---
-  Future<void> _processVerification(String docId, Map<String, dynamic> data) async {
-    // If valuation is missing, trigger the "Alarm"
-    if (data['value'] == null || data['value'] == 0) {
-      _triggerAlarm("SAFETY_FAIL: ASSET_VALUATION_REQUIRED");
-      return;
-    }
+  // --- THE WHEELS: MOBILE RESPONSIVE LIST ---
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: const Text("ASSET_COMMAND_CENTER", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+        actions: const [Icon(Icons.wifi, color: Colors.greenAccent, size: 14), Text(" LIVE  ", style: TextStyle(fontSize: 8))],
+      ),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          return StreamBuilder<QuerySnapshot>(
+            stream: _db.collection('enterprise_ledger').snapshots(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
+              final docs = snapshot.data!.docs;
+              
+              double totalFees = 0;
+              for (var d in docs) {
+                if ((d.data() as Map)['status'] == 'SOLD') {
+                  totalFees += ((d.data() as Map)['value'] ?? 0) * 0.05;
+                }
+              }
 
-    await _db.collection('enterprise_ledger').doc(docId).update({
-      'status': 'SOLD',
-      'audit_by': 'CEO_HUMPHREY',
-      'audit_timestamp': FieldValue.serverTimestamp(),
-    });
-    Navigator.pop(context);
+              return Column(
+                children: [
+                  _buildStatusHeader(totalFees),
+                  Expanded(
+                    child: ListView.builder(
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                      itemCount: docs.length,
+                      itemBuilder: (context, index) {
+                        var data = docs[index].data() as Map<String, dynamic>;
+                        bool isSold = data['status'] == 'SOLD';
+                        return _buildAssetCard(docs[index].id, data, isSold);
+                      },
+                    ),
+                  ),
+                ],
+              );
+            },
+          );
+        }
+      ),
+    );
   }
 
-  void _triggerAlarm(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: Colors.redAccent,
-      behavior: SnackBarBehavior.floating,
-      content: Text(message, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
-    ));
-  }
+  Widget _buildStatusHeader(double fees) => Container(
+    padding: const EdgeInsets.all(25),
+    decoration: BoxDecoration(
+      color: const Color(0xFF0A0A0A),
+      border: Border(bottom: BorderSide(color: Colors.white.withOpacity(0.05))),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          const Text("TOTAL_SME_YIELD", style: TextStyle(color: Colors.white30, fontSize: 8)),
+          Text("\$${fees.toStringAsFixed(2)}", style: const TextStyle(color: Colors.greenAccent, fontSize: 26, fontWeight: FontWeight.bold)),
+        ]),
+        const Icon(Icons.account_balance_wallet_outlined, color: Color(0xFFC5A059), size: 30),
+      ],
+    ),
+  );
 
-  void _openDetailSheet(String docId, Map<String, dynamic> data) {
-    bool isSold = data['status'].toString().toUpperCase() == "SOLD";
+  Widget _buildAssetCard(String id, Map<String, dynamic> data, bool isSold) => GestureDetector(
+    onTap: () => _openAuditDesk(id, data),
+    child: Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isSold ? const Color(0xFF1A0505) : const Color(0xFF111111),
+        border: Border.all(color: isSold ? Colors.greenAccent.withOpacity(0.2) : Colors.white10),
+      ),
+      child: Row(
+        children: [
+          Icon(isSold ? Icons.verified_user : Icons.radio_button_checked, color: isSold ? Colors.greenAccent : Colors.cyan, size: 18),
+          const SizedBox(width: 20),
+          Expanded(child: Text(data['name'] ?? "UNKNOWN_ASSET", style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold))),
+          Text("\$${data['value']}", style: const TextStyle(color: Colors.white24, fontSize: 10)),
+        ],
+      ),
+    ),
+  );
+
+  void _openAuditDesk(String docId, Map<String, dynamic> data) {
+    bool isSold = data['status'] == 'SOLD';
     showModalBottomSheet(
       context: context,
-      backgroundColor: const Color(0xFF111111),
+      backgroundColor: const Color(0xFF0D0D0D),
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(25))),
-      builder: (context) => Padding(
-        padding: const EdgeInsets.all(30),
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        padding: const EdgeInsets.all(35),
         child: Column(
-          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(data['name']?.toUpperCase() ?? "UNIT_INSPECTION", 
-                style: const TextStyle(fontSize: 20, color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+            Text(data['name']?.toUpperCase() ?? "INSPECTION", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
             const Divider(color: Colors.white10, height: 40),
-            _infoRow("CAGE", "1AHA8"),
-            _infoRow("UEI", "S1M4ENLHTDH5"),
-            _infoRow("ADA_ACCESS", "VERIFIED"),
-            _infoRow("VALUATION", "\$${data['value']}"),
-            const SizedBox(height: 40),
+            _row("CAGE_CODE", "1AHA8"),
+            _row("ADA_READY", "YES"),
+            _row("SME_COMMISSION", "5%"),
+            const Spacer(),
             if (!isSold)
-              SizedBox(
-                width: double.infinity,
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
-                  onPressed: () => _processVerification(docId, data),
-                  child: const Text("EXECUTE VERIFICATION", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-                ),
-              )
+              SizedBox(width: double.infinity, height: 60, child: ElevatedButton(
+                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
+                onPressed: () async {
+                  HapticFeedback.vibrate();
+                  await _db.collection('enterprise_ledger').doc(docId).update({'status': 'SOLD'});
+                  Navigator.pop(context);
+                },
+                child: const Text("AUTHORIZE ASSET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+              ))
             else
-              const Center(child: Text("ENTRY_LOCKED_IN_LEDGER", style: TextStyle(color: Colors.greenAccent, fontSize: 10))),
-            const SizedBox(height: 20),
+              const Center(child: Text("TRANSACTION_FINALIZED", style: TextStyle(color: Colors.greenAccent, fontSize: 10))),
           ],
         ),
       ),
     );
   }
 
-  Widget _infoRow(String l, String v) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 10),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(l, style: const TextStyle(color: Colors.white30, fontSize: 10)),
-      Text(v, style: const TextStyle(color: Colors.cyan, fontWeight: FontWeight.bold, fontSize: 11)),
-    ]),
-  );
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text("HVF_SYSTEMS_MONITOR", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-        centerTitle: true,
-      ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _db.collection('enterprise_ledger').snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-          final docs = snapshot.data!.docs;
-          double rev = 0;
-          for (var d in docs) {
-            if ((d.data() as Map)['status'] == 'SOLD') rev += ((d.data() as Map)['value'] ?? 0) * 0.05;
-          }
-
-          return Column(
-            children: [
-              _buildUpperDash(rev),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(20),
-                  itemCount: docs.length,
-                  itemBuilder: (context, index) {
-                    var data = docs[index].data() as Map<String, dynamic>;
-                    bool isSold = data['status'] == 'SOLD';
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 15),
-                      decoration: BoxDecoration(
-                        color: isSold ? const Color(0xFF1A0A0A) : const Color(0xFF111111),
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: isSold ? Colors.greenAccent.withOpacity(0.3) : Colors.white10),
-                      ),
-                      child: ListTile(
-                        onTap: () => _openDetailSheet(docs[index].id, data),
-                        leading: Icon(isSold ? Icons.lock : Icons.radar, color: isSold ? Colors.greenAccent : Colors.cyan, size: 20),
-                        title: Text(data['name'] ?? "UNIT", style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        subtitle: Text(isSold ? "STATUS: VERIFIED" : "STATUS: SCANNING", 
-                                  style: TextStyle(fontSize: 9, color: isSold ? Colors.greenAccent : Colors.white24)),
-                        trailing: const Icon(Icons.chevron_right, color: Colors.white10),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildUpperDash(double rev) => Container(
-    padding: const EdgeInsets.all(30),
-    decoration: const BoxDecoration(
-      color: Color(0xFF0D0D0D),
-      border: Border(bottom: BorderSide(color: Color(0xFFC5A059), width: 0.5)),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text("TOTAL_REVENUE_FEE", style: TextStyle(fontSize: 8, color: Colors.white30)),
-          Text("\$${rev.toStringAsFixed(2)}", style: const TextStyle(fontSize: 24, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-        ]),
-        const Icon(Icons.analytics_outlined, color: Colors.white10, size: 40),
-      ],
-    ),
-  );
+  Widget _row(String l, String v) => Padding(padding: const EdgeInsets.symmetric(vertical: 10), child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [Text(l, style: const TextStyle(color: Colors.white24, fontSize: 10)), Text(v, style: const TextStyle(color: Colors.cyan, fontSize: 10))]));
 }
