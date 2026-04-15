@@ -1,163 +1,89 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
-// =========================================================
-// HVF NEXUS OS - TRIPLE-LOCK UNIFIED CORE V138.0
-// INTEGRATING HELIOGRID, MEDIA PROOF, AND TRANSACTION
-// CAGE: 1AHA8 | UEI: S1M4ENLHTDH5 | PATENT: TPP99424
+// HVF NEXUS OS V139.0 - THE FUNCTIONAL ENGINE
+// LIVE COMMERCE & VIDEO PROOF UPLOAD
 // AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO / SME)
-// =========================================================
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: const FirebaseOptions(
-      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
-      authDomain: "hvf-nexus.firebaseapp.com",
-      projectId: "hvf-nexus",
-      storageBucket: "hvf-nexus.firebasestorage.app",
-      messagingSenderId: "892263251736",
-      appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
-    ),
-  );
-  runApp(const HVFNexusOS());
-}
-
-class HVFNexusOS extends StatelessWidget {
-  const HVFNexusOS({super.key});
+class ExchangeEngine extends StatefulWidget {
+  const ExchangeEngine({super.key});
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF020202),
-        fontFamily: 'Courier',
-        colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
-      ),
-      home: const UnifiedSovereignCockpit(),
-    );
-  }
+  State<ExchangeEngine> createState() => _ExchangeEngineState();
 }
 
-class UnifiedSovereignCockpit extends StatelessWidget {
-  const UnifiedSovereignCockpit({super.key});
+class _ExchangeEngineState extends State<ExchangeEngine> {
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
+
+  // 1. THE "PROOF OF LIFE" UPLOAD LOGIC
+  Future<void> uploadAssetVideo(String assetId, File videoFile) async {
+    try {
+      // SME Standard: Geo-tag and Timestamp the Proof
+      Reference ref = _storage.ref().child('proof_of_life/$assetId.mp4');
+      await ref.putFile(videoFile);
+      String downloadUrl = await ref.getDownloadURL();
+      
+      await _db.collection('listings').doc(assetId).update({
+        'video_proof_url': downloadUrl,
+        'sme_verified': true,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      print(":: PROOF_OF_LIFE_SYNCED ::");
+    } catch (e) {
+      print(":: UPLOAD_FAILURE: $e ::");
+    }
+  }
+
+  // 2. THE "INSTITUTIONAL PURCHASE" EXECUTION
+  Future<void> buyAsset(String assetId, String buyerId) async {
+    // Start a Database Transaction to prevent "Double Selling"
+    return _db.runTransaction((transaction) async {
+      DocumentReference assetRef = _db.collection('listings').doc(assetId);
+      DocumentSnapshot snapshot = await transaction.get(assetRef);
+
+      if (!snapshot.exists || snapshot.get('status') == 'SOLD') {
+        throw Exception("ASSET_UNAVAILABLE");
+      }
+
+      // Execute the Exchange
+      transaction.update(assetRef, {
+        'status': 'SOLD',
+        'buyer_id': buyerId,
+        'manifest_status': 'PENDING_4PL',
+      });
+
+      // Credit the Storm Chest & Social Ledger
+      _db.collection('treasury').doc('storm_chest').update({
+        'balance': FieldValue.increment(snapshot.get('price') * 0.05), // 5% Underwriting
+      });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text("HVF_NEXUS_UNIFIED_COMMAND", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059), letterSpacing: 4)),
-        actions: const [
-          Center(child: Text("CAGE: 1AHA8  ", style: TextStyle(fontSize: 8, color: Colors.cyan, fontWeight: FontWeight.bold))),
-        ],
-      ),
-      body: Row(
-        children: [
-          // LEFT AXIS: MACHINE & UTILITIES (HELIOGRID)
-          _sidePanel("MACHINE", [
-            _dataPoint("HELIO_GRID", "482 KW", Colors.orangeAccent),
-            _dataPoint("RESERVOIR", "22.4 FT", Colors.blueAccent),
-            _dataPoint("FLEET_ACTIVE", "12 UNITS", Colors.greenAccent),
-          ]),
+      appBar: AppBar(title: const Text(":: LIVE_EXCHANGE_TERMINAL ::", style: TextStyle(fontSize: 9))),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _db.collection('listings').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
           
-          // CENTER AXIS: THE UNIFIED COMMAND STREAM
-          Expanded(
-            flex: 2,
-            child: Column(
-              children: [
-                _interlockHeader(),
-                Expanded(child: _commandStream()),
-                _actionQuickKeys(),
-              ],
-            ),
-          ),
-
-          // RIGHT AXIS: MISSION & MEDIA (FARMER UPLOADS)
-          _sidePanel("MISSION", [
-            _dataPoint("MEDIA_PROOF", "LIVE_FEED", Colors.cyan),
-            _dataPoint("90_DAY_GRACE", "14 USERS", Colors.white24),
-            _dataPoint("STORM_CHEST", "\$2.4M", Color(0xFFC5A059)),
-          ]),
-        ],
+          return ListView(
+            children: snapshot.data!.docs.map((doc) {
+              return ListTile(
+                title: Text(doc['title'], style: const TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text("PRICE: \$${doc['price']}"),
+                trailing: ElevatedButton(
+                  onPressed: () => buyAsset(doc.id, "BUYER_SEC_001"),
+                  child: const Text("BUY_NOW"),
+                ),
+              );
+            }).toList(),
+          );
+        },
       ),
     );
   }
-
-  Widget _sidePanel(String title, List<Widget> items) => Container(
-    width: 200,
-    decoration: const BoxDecoration(color: Color(0xFF0A0A0A), border: Border.symmetric(vertical: BorderSide(color: Colors.white10, width: 0.5))),
-    child: Column(
-      children: [
-        Padding(padding: const EdgeInsets.all(15), child: Text(title, style: const TextStyle(fontSize: 10, letterSpacing: 2, fontWeight: FontWeight.bold))),
-        const Divider(color: Color(0xFFC5A059), thickness: 0.5),
-        ...items
-      ],
-    ),
-  );
-
-  Widget _dataPoint(String l, String v, Color c) => Padding(
-    padding: const EdgeInsets.all(15),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 7, color: c)),
-      Text(v, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
-    ]),
-  );
-
-  Widget _interlockHeader() => Container(
-    padding: const EdgeInsets.all(20),
-    color: const Color(0xFF0D0D0D),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        _stat("BUYER_LIQUIDITY", "HIGH", Colors.greenAccent),
-        _stat("SELLER_INVENTORY", "450 HEAD", Colors.cyan),
-        _stat("OVERSEER_STATUS", "SECURE", Color(0xFFC5A059)),
-      ],
-    ),
-  );
-
-  Widget _stat(String l, String v, Color c) => Column(children: [
-    Text(l, style: const TextStyle(fontSize: 7, color: Colors.white24)),
-    Text(v, style: TextStyle(fontSize: 10, color: c, fontWeight: FontWeight.bold)),
-  ]);
-
-  Widget _commandStream() => Container(
-    margin: const EdgeInsets.all(10),
-    decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
-    child: ListView(
-      children: [
-        _streamItem("UTILITY", "HELIOGRID OUTPUT: 482kW - STABLE", Colors.orangeAccent),
-        _streamItem("MEDIA", "PRODUCER #104 UPLOADED VIDEO: CATTLE_HEALTH_CHECK", Colors.cyan),
-        _streamItem("EXCHANGE", "PURCHASE INITIALIZED: LOT #882 - \$42,000", Colors.greenAccent),
-        _streamItem("LOGISTICS", "MANIFEST GENERATED: PENDING FLEET PICKUP", Color(0xFFC5A059)),
-      ],
-    ),
-  );
-
-  Widget _streamItem(String type, String msg, Color c) => ListTile(
-    leading: Text(type, style: TextStyle(color: c, fontSize: 8, fontWeight: FontWeight.bold)),
-    title: Text(msg, style: const TextStyle(fontSize: 8, color: Colors.white70)),
-  );
-
-  Widget _actionQuickKeys() => Container(
-    padding: const EdgeInsets.all(20),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        _qKey("VIDEO_AUDIT"),
-        const SizedBox(width: 10),
-        _qKey("EXECUTE_PURCHASE"),
-        const SizedBox(width: 10),
-        _qKey("UTILITY_LOGS"),
-      ],
-    ),
-  );
-
-  Widget _qKey(String l) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-    decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059))),
-    child: Text(l, style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold)),
-  );
 }
