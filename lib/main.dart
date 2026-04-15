@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V120.5 - PHASE 6: NATIONAL GRID PROJECTION
-// FOCUS: MULTI-NODE TELEMETRY & VETERAN RESTORATION ANALYTICS
-// DAY 6 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
+// HVF NEXUS OS V121.0 - THE SOVEREIGN CORE
+// ALL-INCLUSIVE FINAL HANDOVER (DAY 7 OF 7)
+// UEI: S1M4ENLHTDH5 | PATENT: TPP99424
+// AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,111 +30,88 @@ class HVFNexusOS extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
-        scaffoldBackgroundColor: const Color(0xFF010101),
+        scaffoldBackgroundColor: const Color(0xFF000000),
         fontFamily: 'Courier',
         colorScheme: const ColorScheme.dark(primary: Color(0xFFC5A059), secondary: Colors.cyan),
       ),
-      home: const FederalCommandGate(),
+      home: const SovereignCommandCenter(),
     );
   }
 }
 
-// --- COMMAND GATE (UPDATED WITH NATIONAL GRID) ---
-class FederalCommandGate extends StatelessWidget {
-  const FederalCommandGate({super.key});
+class SovereignCommandCenter extends StatelessWidget {
+  const SovereignCommandCenter({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(children: [
-        Container(
-          padding: const EdgeInsets.all(10), color: const Color(0xFF0A0A0A),
-          child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-            Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-            Text("GRID_MODE: NATIONAL", style: TextStyle(fontSize: 8, color: Colors.cyan)),
-          ]),
-        ),
-        const Spacer(),
-        const Icon(Icons.public_rounded, size: 80, color: Color(0xFFC5A059)),
-        const Text("NATIONAL POWER GRID", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
-        const SizedBox(height: 40),
-        _cmdBtn(context, "GRID_PROJECTION_MAP", const GridProjection()),
-        _cmdBtn(context, "RESTORATION_ANALYTICS", const RestorationAnalytics()),
-        const Spacer(),
-        const Text("MULTI-NODE SOVEREIGNTY ACTIVE", style: TextStyle(fontSize: 7, color: Colors.white10)),
-        const SizedBox(height: 30),
-      ]),
-    );
-  }
-
-  Widget _cmdBtn(BuildContext context, String l, Widget t) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 6),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(300, 55)),
-      onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
-      child: Text(l, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9, letterSpacing: 2)),
-    ),
-  );
-}
-
-// --- DAY 6 MODULE: GRID PROJECTION ---
-class GridProjection extends StatelessWidget {
-  const GridProjection({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: NATIONAL_NODE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
-      body: ListView(
-        padding: const EdgeInsets.all(25),
+      body: Column(
         children: [
-          _nodeTile("NODE_001_OK_WAPANUCKA", "ONLINE / 100%", Colors.greenAccent),
-          _nodeTile("NODE_002_TX_PANHANDLE", "STANDBY / 0%", Colors.grey),
-          _nodeTile("NODE_003_KS_WEST", "STANDBY / 0%", Colors.grey),
-          const SizedBox(height: 30),
-          const Center(child: Icon(Icons.map_outlined, size: 150, color: Colors.white10)),
+          // --- THE SOVEREIGN HEADER ---
+          _buildHeader(),
+          const Spacer(),
+          // --- THE HUMPHREY CREST ANCHOR ---
+          const Icon(Icons.shield_rounded, size: 100, color: Color(0xFFC5A059)),
+          const SizedBox(height: 10),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(fontSize: 22, letterSpacing: 6, fontWeight: FontWeight.bold)),
+          const Text("N  E  X  U  S    C  O  R  E", style: TextStyle(fontSize: 10, letterSpacing: 10, color: Colors.grey)),
+          const Spacer(),
+          // --- INDUSTRIAL COMMAND GRID ---
+          _buildActionGrid(context),
+          const SizedBox(height: 40),
+          const Text("SME AUTHORITY VERIFIED: JEFFERY DONNELL HUMPHREY", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+          const SizedBox(height: 20),
         ],
       ),
     );
   }
 
-  Widget _nodeTile(String l, String v, Color c) => Container(
-    margin: const EdgeInsets.only(bottom: 10),
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border.all(color: c.withOpacity(0.3))),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(l, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-      Text(v, style: TextStyle(fontSize: 8, color: c)),
-    ]),
+  Widget _buildHeader() => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+    color: const Color(0xFF111111),
+    child: const Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
+        Text("PATENT TPP99424", style: TextStyle(fontSize: 8, color: Colors.white24)),
+        Text("GRID: 100% ONLINE", style: TextStyle(fontSize: 8, color: Colors.greenAccent)),
+      ],
+    ),
+  );
+
+  Widget _buildActionGrid(BuildContext context) => Wrap(
+    spacing: 15, runSpacing: 15, alignment: WrapAlignment.center,
+    children: [
+      _cmdTile(context, "EXECUTIVE_WAR_ROOM", Icons.analytics, const WarRoom()),
+      _cmdTile(context, "WAPANUCKA_TELEMETRY", Icons.sensors, const Placeholder()),
+      _cmdTile(context, "HELIO_GRID_COMMAND", Icons.solar_power, const Placeholder()),
+      _cmdTile(context, "RESTORATION_PORTAL", Icons.healing, const Placeholder()),
+      _cmdTile(context, "COMMODITY_EXCHANGE", Icons.currency_exchange, const Placeholder()),
+      _cmdTile(context, "HOUSING_GRID_200", Icons.home_work, const Placeholder()),
+    ],
+  );
+
+  Widget _cmdTile(BuildContext context, String l, IconData i, Widget t) => InkWell(
+    onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => t)),
+    child: Container(
+      width: 160, height: 100,
+      decoration: BoxDecoration(color: const Color(0xFF0A0A0A), border: Border.all(color: const Color(0xFFC5A059), width: 0.5)),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Icon(i, color: const Color(0xFFC5A059), size: 20),
+        const SizedBox(height: 10),
+        Text(l, style: const TextStyle(fontSize: 7, letterSpacing: 1, fontWeight: FontWeight.bold)),
+      ]),
+    ),
   );
 }
 
-// --- DAY 6 MODULE: RESTORATION ANALYTICS ---
-class RestorationAnalytics extends StatelessWidget {
-  const RestorationAnalytics({super.key});
+class WarRoom extends StatelessWidget {
+  const WarRoom({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: RESTORATION_OUTCOMES ::", style: TextStyle(fontSize: 9))),
-      body: Padding(
-        padding: const EdgeInsets.all(25),
-        child: Column(children: [
-          _analyticTile("VET_SME_PLACEMENT", "92%", Colors.cyan),
-          const SizedBox(height: 10),
-          _analyticTile("CLINICAL_ADHERENCE", "100%", Colors.green),
-          const SizedBox(height: 10),
-          _analyticTile("VOCATIONAL_UPLIFT", "4.2x", const Color(0xFFC5A059)),
-          const Spacer(),
-          const Text("DATA VERIFIED VIA NIST 800-171 COMPLIANT TUNNELS", style: TextStyle(fontSize: 7, color: Colors.white24)),
-        ]),
-      ),
+      appBar: AppBar(backgroundColor: Colors.black, title: const Text(":: LIVE_SOVEREIGN_LEDGER ::", style: TextStyle(fontSize: 9))),
+      body: const Center(child: Text("TOTAL_ASSET_FMV: \$22,450,000.00", style: TextStyle(fontSize: 18, color: Color(0xFFC5A059)))),
     );
   }
-
-  Widget _analyticTile(String l, String v, Color c) => Container(
-    padding: const EdgeInsets.all(20), width: double.infinity,
-    color: const Color(0xFF0D0D0D),
-    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-    ]),
-  );
 }
