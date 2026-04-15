@@ -34,7 +34,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS :: $view", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 2)),
+        title: Text("HVF NEXUS :: $view", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       bottomNavigationBar: view == "GATE" ? null : BottomAppBar(
@@ -42,7 +42,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         child: TextButton.icon(
           onPressed: () => setState(() => view = "GATE"),
           icon: const Icon(Icons.logout, color: Colors.red, size: 24),
-          label: const Text("EXIT TO SOVEREIGN GATE", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+          label: const Text("EXIT TO SOVEREIGN GATE", style: TextStyle(color: Colors.white, fontSize: 16)),
         ),
       ),
       body: _buildCurrentTheater(),
@@ -50,9 +50,12 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   }
 
   Widget _buildCurrentTheater() {
-    if (view == "GATE") return _buildGate();
-    if (view == "PRODUCER") return _buildProducerEntry();
-    return _buildCEODashboard();
+    switch (view) {
+      case "PRODUCER": return _buildProducerEntry();
+      case "BUYER": return _buildBuyerMarket();
+      case "CEO": return _buildCEODashboard();
+      default: return _buildGate();
+    }
   }
 
   Widget _buildGate() {
@@ -61,56 +64,69 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       const SizedBox(height: 50),
       _gateBtn("CEO OVERSIGHT", "CEO"),
       _gateBtn("PRODUCER DECK", "PRODUCER"),
+      _gateBtn("BUYER MARKET", "BUYER"), // NEW SECTOR ACTIVE
     ]));
   }
 
   Widget _gateBtn(String l, String v) => Padding(
-    padding: const EdgeInsets.all(12),
+    padding: const EdgeInsets.all(10),
     child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 3), minimumSize: const Size(320, 75)),
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 3), minimumSize: const Size(300, 70)),
       onPressed: () => setState(() => view = v),
-      child: Text(l, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.bold)),
+      child: Text(l, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
     ),
   );
 
   Widget _buildProducerEntry() {
     final nameCtrl = TextEditingController();
     final dataCtrl = TextEditingController();
-
-    return Padding(padding: const EdgeInsets.all(30), child: SingleChildScrollView(child: Column(children: [
+    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
       Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
+      TextField(controller: nameCtrl, style: const TextStyle(color: Colors.white, fontSize: 20), decoration: const InputDecoration(labelText: "ASSET NAME / LOT #", labelStyle: TextStyle(color: Color(0xFFC5A059)))),
+      TextField(controller: dataCtrl, style: const TextStyle(color: Colors.greenAccent, fontSize: 28), decoration: InputDecoration(labelText: "VITAL DATA", labelStyle: const TextStyle(color: Color(0xFFC5A059)))),
       const SizedBox(height: 40),
-      TextField(
-        controller: nameCtrl, 
-        style: const TextStyle(color: Colors.white, fontSize: 22),
-        decoration: const InputDecoration(labelText: "ASSET NAME / LOT #", labelStyle: TextStyle(color: Color(0xFFC5A059), fontSize: 18), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)))
-      ),
-      const SizedBox(height: 20),
-      TextField(
-        controller: dataCtrl, 
-        style: const TextStyle(color: Colors.greenAccent, fontSize: 32, fontWeight: FontWeight.bold),
-        decoration: InputDecoration(labelText: sector == "LIVESTOCK" ? "WEIGHT (LBS)" : (sector == "CROPS" ? "ACREAGE" : "SERVICE HOURS"), labelStyle: const TextStyle(color: Color(0xFFC5A059), fontSize: 18), enabledBorder: const UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)))
-      ),
-      const SizedBox(height: 50),
       ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 80)),
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 70)),
         onPressed: () async {
-          if(nameCtrl.text.isEmpty || dataCtrl.text.isEmpty) return;
           await _db.collection('enterprise_ledger').add({
-            'name': nameCtrl.text, 'vital': dataCtrl.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'ACTIVE'
+            'name': nameCtrl.text, 'vital': dataCtrl.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
           });
           nameCtrl.clear(); dataCtrl.clear();
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UPLINK SUCCESSFUL", style: TextStyle(fontSize: 18))));
         },
-        child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontSize: 22, fontWeight: FontWeight.bold)),
+        child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold)),
       )
-    ])));
+    ]));
   }
 
-  Widget _tab(String s) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 6),
-    child: ChoiceChip(label: Text(s, style: const TextStyle(fontSize: 16)), selected: sector == s, onSelected: (val) => setState(() => sector = s), selectedColor: const Color(0xFFC5A059)),
-  );
+  Widget _tab(String s) => ChoiceChip(label: Text(s), selected: sector == s, onSelected: (val) => setState(() => sector = s), selectedColor: const Color(0xFFC5A059));
+
+  Widget _buildBuyerMarket() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView.builder(
+          itemCount: snap.data!.docs.length,
+          itemBuilder: (context, i) {
+            final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
+            return Card(
+              color: const Color(0xFF1A1A1A),
+              margin: const EdgeInsets.all(12),
+              child: ListTile(
+                title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+                subtitle: Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                trailing: ElevatedButton(
+                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                  onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}),
+                  child: const Text("SECURE"),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   Widget _buildCEODashboard() {
     return StreamBuilder<QuerySnapshot>(
@@ -121,16 +137,10 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           itemCount: snap.data!.docs.length,
           itemBuilder: (context, i) {
             final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-            return Card(
-              color: const Color(0xFF1A1A1A),
-              margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 15),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(15),
-                leading: const Icon(Icons.analytics, color: Color(0xFFC5A059), size: 35),
-                title: Text(doc['name'] ?? "UNKNOWN", style: const TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
-                subtitle: Text("${doc['sector']} | VITAL: ${doc['vital']}", style: const TextStyle(color: Colors.greenAccent, fontSize: 18)),
-                trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red, size: 30), onPressed: () => snap.data!.docs[i].reference.delete()),
-              ),
+            return ListTile(
+              title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontSize: 18)),
+              subtitle: Text("STATUS: ${doc['status']}", style: TextStyle(color: doc['status'] == 'CLAIMED' ? Colors.green : Colors.orange)),
+              trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snap.data!.docs[i].reference.delete()),
             );
           },
         );
