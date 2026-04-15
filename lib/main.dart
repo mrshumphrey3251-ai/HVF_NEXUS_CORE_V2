@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS OS V120.3 - PHASE 4: THE RESTORATION PROTOCOL
-// FOCUS: CLINICAL-VOCATIONAL NEXUS & VETERAN ADVOCACY
-// DAY 4 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
+// HVF NEXUS OS V120.4 - PHASE 5: THE SOVEREIGN EXCHANGE
+// FOCUS: DE-RISKED ASSET MARKETPLACE & FMV LOGIC
+// DAY 5 OF 7 | AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +38,7 @@ class HVFNexusOS extends StatelessWidget {
   }
 }
 
-// --- COMMAND GATE (UPDATED WITH RESTORATION MODULES) ---
+// --- COMMAND GATE (UPDATED WITH EXCHANGE MODULE) ---
 class FederalCommandGate extends StatelessWidget {
   const FederalCommandGate({super.key});
   @override
@@ -49,18 +49,17 @@ class FederalCommandGate extends StatelessWidget {
           padding: const EdgeInsets.all(10), color: const Color(0xFF111111),
           child: const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
             Text("UEI: S1M4ENLHTDH5", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-            Text("RESTORE_MODE: ACTIVE", style: TextStyle(fontSize: 8, color: Colors.cyan)),
+            Text("EXCHANGE_STATUS: OPEN", style: TextStyle(fontSize: 8, color: Colors.greenAccent)),
           ]),
         ),
         const Spacer(),
-        const Icon(Icons.healing_rounded, size: 80, color: Color(0xFFC5A059)),
-        const Text("RESTORATION PROTOCOL", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
+        const Icon(Icons.currency_exchange_rounded, size: 80, color: Color(0xFFC5A059)),
+        const Text("SOVEREIGN EXCHANGE", style: TextStyle(fontSize: 18, letterSpacing: 6, fontWeight: FontWeight.bold)),
         const SizedBox(height: 40),
-        _cmdBtn(context, "VOCATIONAL_TRACKER", const RestorationTracker()),
-        _cmdBtn(context, "CLINICAL_GATEWAY", const ClinicalGate()),
-        _cmdBtn(context, "ADVOCACY_ADMIN_LOCKER", const AdvocacyLocker()),
+        _cmdBtn(context, "MARKETPLACE_TERMINAL", const ExchangeTerminal()),
+        _cmdBtn(context, "EXECUTIVE_WAR_ROOM", const Placeholder()), // Links to Day 3
         const Spacer(),
-        const Text("VETERAN ADVOCACY: ENABLED", style: TextStyle(fontSize: 7, color: Colors.cyan)),
+        const Text("DE-RISKED COMMODITY FLOW", style: TextStyle(fontSize: 7, color: Colors.white24)),
         const SizedBox(height: 30),
       ]),
     );
@@ -76,71 +75,63 @@ class FederalCommandGate extends StatelessWidget {
   );
 }
 
-// --- DAY 4 MODULE: RESTORATION TRACKER ---
-class RestorationTracker extends StatelessWidget {
-  const RestorationTracker({super.key});
+// --- DAY 5 MODULE: THE EXCHANGE TERMINAL ---
+class ExchangeTerminal extends StatelessWidget {
+  const ExchangeTerminal({super.key});
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: VOCATIONAL_STATUS ::", style: TextStyle(fontSize: 9))),
-      body: ListView(
-        padding: const EdgeInsets.all(25),
-        children: [
-          _restorationTile("AGRICULTURAL_SME_CORE", "85% COMPLETE", Colors.green),
-          _restorationTile("NCCER_SAFETY_MODULE", "100% CERTIFIED", Color(0xFFC5A059)),
-          _restorationTile("HEAVY_EQUIP_OPERATIONS", "60% IN_PROGRESS", Colors.cyan),
-          _restorationTile("SOVEREIGN_LAND_MGNT", "25% INITIALIZED", Colors.grey),
-        ],
-      ),
-    );
-  }
-
-  Widget _restorationTile(String l, String v, Color c) => Container(
-    margin: const EdgeInsets.only(bottom: 15),
-    padding: const EdgeInsets.all(20),
-    decoration: BoxDecoration(color: const Color(0xFF0D0D0D), border: Border(left: BorderSide(color: c, width: 2))),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
-      Text(v, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-    ]),
-  );
-}
-
-// --- DAY 4 MODULE: CLINICAL GATEWAY (HIPAA SECURE INTERFACE) ---
-class ClinicalGate extends StatelessWidget {
-  const ClinicalGate({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: CLINICAL_GATEWAY ::", style: TextStyle(fontSize: 9))),
-      body: const Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(Icons.lock_person_rounded, size: 60, color: Colors.white10),
-          SizedBox(height: 20),
-          Text("ENCRYPTED CLINICAL DATA TUNNEL", style: TextStyle(fontSize: 10, color: Colors.white24)),
-          Text("HIPAA COMPLIANCE: VERIFIED", style: TextStyle(fontSize: 8, color: Colors.cyan)),
-        ]),
-      ),
-    );
-  }
-}
-
-// --- DAY 4 MODULE: ADVOCACY LOCKER ---
-class AdvocacyLocker extends StatelessWidget {
-  const AdvocacyLocker({super.key});
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text(":: ADVOCACY_LOCKER ::", style: TextStyle(fontSize: 9))),
-      body: const Padding(
-        padding: const EdgeInsets.all(25),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("VETERAN_ID_REPOSITORY: ACTIVE", style: TextStyle(fontSize: 10, color: Color(0xFFC5A059))),
-          Divider(color: Colors.white10),
-          SizedBox(height: 20),
-          Text("DOC_STATUS: DD-214 VERIFIED", style: TextStyle(fontSize: 8, color: Colors.green)),
-          Text("BENEFIT_UPLINK: PENDING_REVIEW", style: TextStyle(fontSize: 8, color: Colors.grey)),
-        ]),
+      appBar: AppBar(title: const Text(":: GLOBAL_COMMODITY_GRID ::", style: TextStyle(fontSize: 9))),
+      body: StreamBuilder<QuerySnapshot>(
+        stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
+          
+          return Column(children: [
+            Container(
+              padding: const EdgeInsets.all(15),
+              width: double.infinity,
+              color: const Color(0xFF0D0D0D),
+              child: const Text("AVAILABLE DE-RISKED INVENTORY", textAlign: TextAlign.center, style: TextStyle(fontSize: 8, color: Colors.grey, letterSpacing: 2)),
+            ),
+            Expanded(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(15),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.85
+                ),
+                itemCount: snapshot.data!.docs.length,
+                itemBuilder: (context, i) {
+                  final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0D0D0D),
+                      border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2)),
+                    ),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      const Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        Icon(Icons.verified_user, color: Colors.cyan, size: 12),
+                        Text("SHIELD_ACTIVE", style: TextStyle(fontSize: 6, color: Colors.cyan)),
+                      ]),
+                      const Spacer(),
+                      Text(d['name'] ?? "ASSET_ID", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text("${d['type']} | CERTIFIED", style: const TextStyle(fontSize: 7, color: Colors.grey)),
+                      const Spacer(),
+                      Container(
+                        width: double.infinity,
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        color: const Color(0xFFC5A059),
+                        child: const Text("SECURE ASSET", textAlign: TextAlign.center, style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold)),
+                      ),
+                    ]),
+                  );
+                },
+              ),
+            ),
+          ]);
+        },
       ),
     );
   }
