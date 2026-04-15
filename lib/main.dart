@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V118.5 - SOVEREIGN UNDERWRITER & COMPILER RECOVERY
-// TARGET: ZERO-FAILURE ENTRYPOINT FOR INSTITUTIONAL SCALE
+// HVF NEXUS CORE V118.6 - THE BUYER MARKETPLACE
+// FOCUS: STEP 4 - OPENING THE EXCHANGE TO THE DISCIPLINED BUYER
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -28,70 +28,74 @@ class HVFApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark, scaffoldBackgroundColor: Colors.black, fontFamily: 'Courier'),
-      home: const UnderwriterPortal(),
+      home: const BuyerMarketplace(),
     );
   }
 }
 
-class UnderwriterPortal extends StatefulWidget {
-  const UnderwriterPortal({super.key});
+class BuyerMarketplace extends StatefulWidget {
+  const BuyerMarketplace({super.key});
   @override
-  State<UnderwriterPortal> createState() => _UnderwriterPortalState();
+  State<BuyerMarketplace> createState() => _BuyerMarketplaceState();
 }
 
-class _UnderwriterPortalState extends State<UnderwriterPortal> {
-  final Map<String, double> insPremium = {
-    "CATTLE": 10.0, 
-    "PIGS": 5.0, 
-    "CHICKENS": 2.0, 
-    "FLEET": 25.0
-  };
-
+class _BuyerMarketplaceState extends State<BuyerMarketplace> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.black,
-        title: const Text(":: HVF GLOBAL RESERVE ::", style: TextStyle(color: Colors.cyan, fontSize: 10)),
-        actions: const [Icon(Icons.shield, color: Colors.cyan, size: 16), SizedBox(width: 15)],
+        backgroundColor: const Color(0xFF0A0A0A),
+        title: const Text(":: HVF GLOBAL EXCHANGE ::", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 2)),
+        actions: const [Icon(Icons.shopping_cart_outlined, color: Color(0xFFC5A059), size: 16), SizedBox(width: 15)],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
         builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Colors.cyan));
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) return const Center(child: Text("AWAITING SUPPLY DATA...", style: TextStyle(color: Colors.grey, fontSize: 10)));
+          if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
           
-          double totalReserve = 0;
-          for (var doc in snapshot.data!.docs) {
-            final data = doc.data() as Map<String, dynamic>;
-            totalReserve += insPremium[data['type']] ?? 0.0;
-          }
-
           return Column(children: [
             Container(
-              padding: const EdgeInsets.all(25),
+              padding: const EdgeInsets.all(15),
               width: double.infinity,
               color: const Color(0xFF111111),
-              child: Column(children: [
-                const Text("MONTHLY UNDERWRITING INFLOW", style: TextStyle(fontSize: 8, color: Colors.grey)),
-                Text("\$${totalReserve.toStringAsFixed(2)}", style: const TextStyle(fontSize: 28, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
-                const Text("SOVEREIGN PROTECTION ACTIVE", style: TextStyle(fontSize: 7, color: Colors.cyan)),
-              ]),
+              child: const Text("AVAILABLE DE-RISKED INVENTORY", textAlign: TextAlign.center, style: TextStyle(fontSize: 8, color: Colors.grey, letterSpacing: 2)),
             ),
             Expanded(
-              child: ListView.builder(
+              child: GridView.builder(
+                padding: const EdgeInsets.all(15),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2, crossAxisSpacing: 10, mainAxisSpacing: 10, childAspectRatio: 0.85
+                ),
                 itemCount: snapshot.data!.docs.length,
                 itemBuilder: (context, i) {
                   final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-                  return Card(
-                    color: const Color(0xFF0D0D0D),
-                    margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 5),
-                    child: ListTile(
-                      leading: const Icon(Icons.verified_user, color: Colors.cyan, size: 18),
-                      title: Text(d['name'] ?? "ASSET", style: const TextStyle(fontSize: 12)),
-                      subtitle: Text("CATEGORY: ${d['type'] ?? 'UNSPECIFIED'} | PREMIUM: \$${insPremium[d['type']] ?? 0.0}", style: const TextStyle(fontSize: 8)),
-                      trailing: const Text("SECURED", style: TextStyle(color: Colors.green, fontSize: 8, fontWeight: FontWeight.bold)),
+                  return Container(
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF0D0D0D),
+                      border: Border.all(color: Colors.white10),
                     ),
+                    padding: const EdgeInsets.all(12),
+                    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+                        Icon(d['category'] == "FLEET" ? Icons.settings : Icons.pets, color: const Color(0xFFC5A059), size: 14),
+                        const Icon(Icons.verified_user, color: Colors.cyan, size: 12),
+                      ]),
+                      const Spacer(),
+                      Text(d['name'] ?? "ASSET", style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text("${d['type']} | ${d['vital']} ${d['category'] == 'FLEET' ? 'HRS' : 'LBS'}", style: const TextStyle(fontSize: 7, color: Colors.grey)),
+                      const Spacer(),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFFC5A059),
+                          minimumSize: const Size(double.infinity, 30),
+                          padding: EdgeInsets.zero,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))
+                        ),
+                        onPressed: () => _showAssetDetails(d),
+                        child: const Text("SECURE ASSET", style: TextStyle(color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold)),
+                      ),
+                    ]),
                   );
                 },
               ),
@@ -101,4 +105,36 @@ class _UnderwriterPortalState extends State<UnderwriterPortal> {
       ),
     );
   }
+
+  void _showAssetDetails(Map<String, dynamic> data) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: const Color(0xFF0D0D0D),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(25),
+        child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text("ASSET_ID: ${data['name']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 14)),
+          const Divider(color: Colors.white10),
+          const SizedBox(height: 10),
+          _detailRow("SME_CERTIFICATION", "100% VERIFIED", Colors.green),
+          _detailRow("HVF_SHIELD_STATUS", "UNDERWRITTEN", Colors.cyan),
+          _detailRow("SOURCE_NODE", data['source'] ?? "MASTER_GRID", Colors.grey),
+          const SizedBox(height: 30),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.white, minimumSize: const Size(double.infinity, 50)),
+            onPressed: () => Navigator.pop(context),
+            child: const Text("EXECUTE TRANSACTION", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+          ),
+        ]),
+      ),
+    );
+  }
+
+  Widget _detailRow(String l, String v, Color c) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 4),
+    child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+      Text(l, style: const TextStyle(fontSize: 8, color: Colors.grey)),
+      Text(v, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
+    ]),
+  );
 }
