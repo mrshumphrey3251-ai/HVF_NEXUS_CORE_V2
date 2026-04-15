@@ -3,10 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 // =========================================================
-// HVF NEXUS OS - INSTITUTIONAL LEDGER V146.0
-// BULK LOT BIDDING | CONTRACTUAL UNDERWRITING
-// CAGE: 1AHA8 | UEI: S1M4ENLHTDH5
-// AUTHORIZED BY: JEFFERY DONNELL HUMPHREY (CEO / SME)
+// HVF NEXUS OS - MASTER INTERLOCK V148.0
+// REAL-TIME DATA CROSS-FLOW | ZERO-LATENCY COMMANDS
+// CAGE: 1AHA8 | AUTHORIZED: J.D. HUMPHREY (CEO)
 // =========================================================
 
 void main() async {
@@ -21,45 +20,41 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d82899",
     ),
   );
-  runApp(const HVFNexusLive());
+  runApp(const HVFNexusRealWork());
 }
 
-class HVFNexusLive extends StatelessWidget {
-  const HVFNexusLive({super.key});
+class HVFNexusRealWork extends StatelessWidget {
+  const HVFNexusRealWork({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Courier'),
-      home: const SovereignCockpit(),
+      home: const OperationalNode(),
     );
   }
 }
 
-class SovereignCockpit extends StatefulWidget {
-  const SovereignCockpit({super.key});
+class OperationalNode extends StatefulWidget {
+  const OperationalNode({super.key});
   @override
-  State<SovereignCockpit> createState() => _SovereignCockpitState();
+  State<OperationalNode> createState() => _OperationalNodeState();
 }
 
-class _SovereignCockpitState extends State<SovereignCockpit> {
-  int _viewIndex = 1; // Default to BUYER for this phase
-  double _stormChestBalance = 2400000.00;
+class _OperationalNodeState extends State<OperationalNode> {
+  // --- THE LIVE NODE STATE ---
+  int _activeModule = 0; 
+  double _stormChest = 2400000.00;
+  int _activeInventory = 450;
+  List<String> _commandLog = ["SYSTEM_READY: CAGE_1AHA8"];
 
-  // --- OPTION C: INSTITUTIONAL EXECUTION ---
-  Future<void> _executeBulkPurchase(String lotId, double totalValue) async {
-    // This executes the Humphrey Standard for bulk acquisition
+  // --- CROSS-MODULE EXECUTION LOGIC ---
+  void _executeTransaction(String lotId, double value) {
     setState(() {
-      _stormChestBalance += (totalValue * 0.05); // 5% SME Underwriting Fee
+      _activeInventory -= 50; // Inventory drops across all modules
+      _stormChest += (value * 0.05); // Capital increases
+      _commandLog.insert(0, "TRANSACTION: $lotId | LOGISTICS_DISPATCHED");
     });
-    _notify("BULK_PURCHASE_COMPLETE: LOT_$lotId | CONTRACT_GENERATED_CAGE_1AHA8");
-  }
-
-  void _notify(String msg) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      backgroundColor: const Color(0xFF0D0D0D),
-      content: Text(msg, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
-    ));
   }
 
   @override
@@ -68,84 +63,90 @@ class _SovereignCockpitState extends State<SovereignCockpit> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF_INSTITUTIONAL_LEDGER", style: TextStyle(fontSize: 8, color: Color(0xFFC5A059))),
-        actions: [
-          Center(child: Text("CHEST: \$${_stormChestBalance.toStringAsFixed(2)}  ", 
-          style: const TextStyle(fontSize: 8, color: Colors.greenAccent, fontWeight: FontWeight.bold))),
-        ],
+        title: const Text("HVF_NEXUS_COMMAND_ACTUAL", style: TextStyle(fontSize: 9, color: Color(0xFFC5A059))),
+        actions: [Center(child: Text("CHEST: \$${_stormChest.toStringAsFixed(2)}  ", style: const TextStyle(color: Colors.greenAccent, fontSize: 8)))],
       ),
-      body: Row(
+      body: Column(
         children: [
-          NavigationRail(
-            backgroundColor: const Color(0xFF0A0A0A),
-            selectedIndex: _viewIndex,
-            onDestinationSelected: (i) => setState(() => _viewIndex = i),
-            labelType: NavigationRailLabelType.all,
-            destinations: const [
-              NavigationRailDestination(icon: Icon(Icons.security), label: Text("OVERSEER")),
-              NavigationRailDestination(icon: Icon(Icons.business_center), label: Text("LEDGER")),
-              NavigationRailDestination(icon: Icon(Icons.agriculture), label: Text("PRODUCER")),
-            ],
-          ),
-          const VerticalDivider(width: 1, color: Colors.white10),
-          Expanded(child: _buildActiveView()),
+          _moduleSwitcher(),
+          const Divider(color: Colors.white10, height: 1),
+          Expanded(child: _buildActiveWorkSpace()),
+          _commandTerminal(),
         ],
       ),
     );
   }
 
-  Widget _buildActiveView() {
-    if (_viewIndex == 0) return _overseer();
-    if (_viewIndex == 1) return _institutionalLedger();
-    return _producer();
-  }
-
-  // 1. OVERSEER (RETAINED GROUND)
-  Widget _overseer() => _layout("EXECUTIVE_WAR_ROOM", [
-    _dataTile("HELIOGRID_STAT", "482 KW", Icons.bolt),
-    _dataTile("RESERVOIR_DEPTH", "22.4 FT", Icons.waves),
-  ]);
-
-  // 2. INSTITUTIONAL LEDGER (THE NEW POWER)
-  Widget _institutionalLedger() => _layout("BULK_ASSET_ACQUISITION", [
-    _bulkLotCard("LOT_882: 50_ANGUS_MIX", "VALUE: \$75,000", 75000),
-    _bulkLotCard("LOT_441: 5_CAT_EXCAVATORS", "VALUE: \$420,000", 420000),
-    _bulkLotCard("LOT_109: VINEYARD_EQUIP_PKG", "VALUE: \$12,500", 12500),
-  ]);
-
-  // 3. PRODUCER (RETAINED GROUND)
-  Widget _producer() => _layout("PROOF_OF_LIFE_VAULT", [
-    const Text("SME VIDEO UPLOAD ACTIVE", style: TextStyle(fontSize: 9, color: Colors.cyan)),
-    const SizedBox(height: 20),
-    ElevatedButton(onPressed: () => _notify("INITIALIZING_SME_CAMERA..."), child: const Text("START_UPLOAD")),
-  ]);
-
-  Widget _layout(String title, List<Widget> children) => Padding(
-    padding: const EdgeInsets.all(30),
-    child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(title, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
-      const Divider(color: Colors.white10),
-      const SizedBox(height: 20),
-      Expanded(child: ListView(children: children)),
-    ]),
+  Widget _moduleSwitcher() => Row(
+    children: [
+      _tab("OVERSEER", 0),
+      _tab("BUYER", 1),
+      _tab("PRODUCER", 2),
+    ],
   );
 
-  Widget _bulkLotCard(String title, String val, double price) => Card(
-    color: const Color(0xFF0D0D0D),
-    margin: const EdgeInsets.only(bottom: 15),
-    child: ListTile(
-      title: Text(title, style: const TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
-      subtitle: Text(val, style: const TextStyle(fontSize: 10, color: Colors.greenAccent)),
-      trailing: ElevatedButton(
-        onPressed: () => _executeBulkPurchase(title.split(":")[0], price),
-        child: const Text("ACQUIRE_LOT", style: TextStyle(fontSize: 7)),
+  Widget _tab(String l, int i) => Expanded(
+    child: InkWell(
+      onTap: () => setState(() => _activeModule = i),
+      child: Container(
+        padding: const EdgeInsets.all(15),
+        color: _activeModule == i ? const Color(0xFF0D0D0D) : Colors.black,
+        child: Center(child: Text(l, style: TextStyle(fontSize: 8, color: _activeModule == i ? const Color(0xFFC5A059) : Colors.white24))),
       ),
     ),
   );
 
-  Widget _dataTile(String l, String v, IconData i) => ListTile(
-    leading: Icon(i, color: const Color(0xFFC5A059)),
-    title: Text(l, style: const TextStyle(fontSize: 8)),
-    trailing: Text(v, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
+  Widget _buildActiveWorkSpace() {
+    switch (_activeModule) {
+      case 0: return _overseerWork();
+      case 1: return _buyerWork();
+      case 2: return _producerWork();
+      default: return _overseerWork();
+    }
+  }
+
+  // OVERSEER: Inventory and Utility Management
+  Widget _overseerWork() => ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      _workTile("CURRENT_INVENTORY", "$_activeInventory HEAD", Icons.inventory, () {}),
+      _workTile("HELIO_GRID", "482 KW", Icons.bolt, () {}),
+    ],
+  );
+
+  // BUYER: Market Execution
+  Widget _buyerWork() => ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      _workTile("ACQUIRE_LOT_A", "\$75,000", Icons.add_shopping_cart, () => _executeTransaction("LOT_A", 75000)),
+      _workTile("ACQUIRE_LOT_B", "\$120,000", Icons.add_shopping_cart, () => _executeTransaction("LOT_B", 120000)),
+    ],
+  );
+
+  // PRODUCER: Media and Compliance
+  Widget _producerWork() => ListView(
+    padding: const EdgeInsets.all(20),
+    children: [
+      _workTile("UPLOAD_VIDEO_PROOF", "SME_VERIFICATION", Icons.videocam, () => setState(() => _commandLog.insert(0, "VIDEO_UPLOAD_INITIALIZED"))),
+    ],
+  );
+
+  Widget _workTile(String t, String v, IconData i, VoidCallback a) => Card(
+    color: const Color(0xFF0D0D0D),
+    child: ListTile(
+      leading: Icon(i, color: const Color(0xFFC5A059), size: 18),
+      title: Text(t, style: const TextStyle(fontSize: 8)),
+      trailing: Text(v, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.cyan)),
+      onTap: a,
+    ),
+  );
+
+  Widget _commandTerminal() => Container(
+    height: 120, width: double.infinity, color: const Color(0xFF050505),
+    padding: const EdgeInsets.all(10),
+    child: ListView.builder(
+      itemCount: _commandLog.length,
+      itemBuilder: (context, i) => Text("> ${_commandLog[i]}", style: const TextStyle(fontSize: 7, color: Colors.white24)),
+    ),
   );
 }
