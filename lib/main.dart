@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V119.4 - SPRINT A STABILIZED
-// FOCUS: CORRECTING CONTROLLER LOGIC & CLEANING COMPILER SCOPE
+// HVF NEXUS CORE V119.5 - SPRINT B: THE REVENUE ENGINE
+// FOCUS: AUTOMATED PREMIUM ROUTING & CARRIER RESERVE LOGIC
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY (CEO)
 
 void main() async {
@@ -56,8 +56,8 @@ class SovereignGate extends StatelessWidget {
           const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(letterSpacing: 4, fontSize: 14, fontWeight: FontWeight.bold)),
           const Text("N E X U S   O S", style: TextStyle(letterSpacing: 8, fontSize: 8, color: Colors.grey)),
           const SizedBox(height: 80),
-          _actionBtn(context, "CEO_COMMAND_WAR_ROOM", const CEOWarRoom(), true),
-          _actionBtn(context, "PARTNER_UPLINK_RAILS", const ProducerUplink(), false),
+          _actionBtn(context, "EXECUTIVE_WAR_ROOM", const CEOWarRoom(), true),
+          _actionBtn(context, "PARTNER_UPLINK", const ProducerUplink(), false),
         ]),
       ),
     );
@@ -76,31 +76,35 @@ class SovereignGate extends StatelessWidget {
   );
 }
 
-// --- CEO COMMAND: HIGH-DENSITY OVERSIGHT ---
+// --- CEO COMMAND: THE REVENUE MONITOR ---
 class CEOWarRoom extends StatelessWidget {
   const CEOWarRoom({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: EXECUTIVE_SUMMARY ::", style: TextStyle(fontSize: 9, letterSpacing: 2))),
+      appBar: AppBar(title: const Text(":: GLOBAL_RESERVE_OVERSIGHT ::", style: TextStyle(fontSize: 9))),
       body: StreamBuilder<QuerySnapshot>(
         stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Colors.cyan));
-          int count = snapshot.data!.docs.length;
-          double marketValue = count * 2250.0;
+          
+          double totalReserve = 0;
+          for (var doc in snapshot.data!.docs) {
+            final data = doc.data() as Map<String, dynamic>;
+            totalReserve += (data['premium'] ?? 0.0);
+          }
 
           return Padding(
             padding: const EdgeInsets.all(30),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _metric("MANAGED_NODES", "$count UNITS", Colors.cyan),
+              _metric("CARRIER_RESERVE_TOTAL", "\$${totalReserve.toStringAsFixed(2)}", const Color(0xFFC5A059)),
               const SizedBox(height: 15),
-              _metric("TOTAL_GRID_FMV", "\$${marketValue.toStringAsFixed(0)}", const Color(0xFFC5A059)),
-              const SizedBox(height: 15),
-              _metric("CARRIER_RESERVE", "\$${(count * 10).toStringAsFixed(2)}", Colors.greenAccent),
+              _metric("ACTIVE_UNDERWRITTEN_UNITS", "${snapshot.data!.docs.length} NODES", Colors.cyan),
+              const Divider(height: 40, color: Colors.white10),
+              const Text("REVENUE_STREAM: RECURRING_MONTHLY", style: TextStyle(fontSize: 8, color: Colors.greenAccent)),
               const Spacer(),
-              const Center(child: Text("HVF SOVEREIGN SYSTEM STATUS: OPERATIONAL", style: TextStyle(fontSize: 7, color: Colors.white24))),
+              const Center(child: Icon(Icons.account_balance_outlined, color: Colors.white10, size: 80)),
             ]),
           );
         },
@@ -113,12 +117,12 @@ class CEOWarRoom extends StatelessWidget {
     decoration: BoxDecoration(color: const Color(0xFF0A0A0A), border: Border(left: BorderSide(color: c, width: 2))),
     child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(l, style: TextStyle(fontSize: 8, color: c, fontWeight: FontWeight.bold)),
-      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, letterSpacing: 1)),
+      Text(v, style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
     ]),
   );
 }
 
-// --- PARTNER PORTAL: THE SME RAILS ---
+// --- PARTNER PORTAL: PREMIUM ROUTING ---
 class ProducerUplink extends StatefulWidget {
   const ProducerUplink({super.key});
   @override
@@ -130,25 +134,35 @@ class _ProducerUplinkState extends State<ProducerUplink> {
   bool certified = false;
   final idController = TextEditingController();
 
+  // THE REVENUE LOGIC
+  final Map<String, double> premiumRates = {
+    "CATTLE": 10.0,
+    "PIGS": 5.0,
+    "CHICKENS": 2.0,
+    "FLEET_UNIT": 25.0,
+  };
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text(":: INITIALIZE_UPLINK ::", style: TextStyle(fontSize: 9))),
+      appBar: AppBar(title: const Text(":: CARRIER_UPLINK_RAILS ::", style: TextStyle(fontSize: 9))),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(30),
         child: Column(children: [
           DropdownButtonFormField<String>(
             value: selectedType,
-            items: ["CATTLE", "PIGS", "CHICKENS", "FLEET_UNIT"].map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 12)))).toList(),
+            items: premiumRates.keys.map((s) => DropdownMenuItem(value: s, child: Text(s, style: const TextStyle(fontSize: 12)))).toList(),
             onChanged: (v) => setState(() => selectedType = v!),
             decoration: const InputDecoration(labelText: "ASSET_CLASS"),
           ),
-          const SizedBox(height: 25),
-          TextField(controller: idController, decoration: const InputDecoration(labelText: "UNIQUE_IDENTIFIER (RFID/VIN)")),
+          const SizedBox(height: 20),
+          Text("REQUIRED_MONTHLY_PREMIUM: \$${premiumRates[selectedType]}", style: const TextStyle(fontSize: 8, color: Colors.cyan)),
+          const SizedBox(height: 30),
+          TextField(controller: idController, decoration: const InputDecoration(labelText: "ASSET_ID")),
           const SizedBox(height: 50),
           CheckboxListTile(
             activeColor: const Color(0xFFC5A059),
-            title: const Text("ATTEST TO SME SAFETY STANDARDS", style: TextStyle(fontSize: 9, color: Colors.cyan)),
+            title: const Text("ATTEST TO CARRIER STANDARDS", style: TextStyle(fontSize: 9)),
             value: certified, 
             onChanged: (v) => setState(() => certified = v!),
           ),
@@ -157,11 +171,15 @@ class _ProducerUplinkState extends State<ProducerUplink> {
             style: ElevatedButton.styleFrom(backgroundColor: certified ? const Color(0xFFC5A059) : Colors.grey, minimumSize: const Size(double.infinity, 65)),
             onPressed: certified ? () async {
               await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-                'name': idController.text, 'type': selectedType, 'certified': true, 'timestamp': FieldValue.serverTimestamp()
+                'name': idController.text,
+                'type': selectedType,
+                'premium': premiumRates[selectedType],
+                'certified': true,
+                'timestamp': FieldValue.serverTimestamp()
               });
               Navigator.pop(context);
             } : null,
-            child: const Text("EXECUTE SECURE UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+            child: const Text("INITIALIZE REVENUE FLOW", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           ),
         ]),
       ),
