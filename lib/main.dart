@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-// HVF NEXUS CORE V116.3 - THE INSTITUTIONAL BUILD
-// FOCUS: BULK UPLINK SIMULATION & MASS STEWARDSHIP PROJECTION
+// HVF NEXUS CORE V116.4 - THE WEALTH PATH
+// FOCUS: PROJECTED APPRECIATION & DISCIPLINED GROWTH TRACKING
 // AUTHORIZED: JEFFERY DONNELL HUMPHREY
 
 void main() async {
@@ -42,7 +42,6 @@ class HVFShell extends StatefulWidget {
 class _HVFShellState extends State<HVFShell> {
   String? role;
   String? userID;
-  bool bulkMode = false;
 
   @override
   Widget build(BuildContext context) {
@@ -52,10 +51,8 @@ class _HVFShellState extends State<HVFShell> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS: INSTITUTIONAL CORE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-        actions: [
-          IconButton(icon: Icon(Icons.logout, color: Colors.red, size: 16), onPressed: () => setState(() => role = null))
-        ],
+        title: Text(":: HVF WEALTH ENGINE ::", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10, letterSpacing: 2)),
+        actions: [IconButton(icon: Icon(Icons.trending_up, color: Colors.cyan, size: 18), onPressed: () {})],
       ),
       body: _buildRouter(),
     );
@@ -64,12 +61,13 @@ class _HVFShellState extends State<HVFShell> {
   Widget _buildGate() {
     return Scaffold(
       body: Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Icon(Icons.business_center, color: Color(0xFFC5A059), size: 80),
+        Icon(Icons.account_balance, color: Color(0xFFC5A059), size: 80),
         SizedBox(height: 20),
-        Text("HVF NEXUS CORE V116", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 4)),
+        Text("HVF NEXUS: THE WEALTH PATH", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 2)),
         SizedBox(height: 40),
         _gateBtn("CEO COMMAND", "CEO"),
-        _gateBtn("INSTITUTIONAL PARTNER", "PRODUCER"),
+        _gateBtn("PARTNER PRODUCER", "PRODUCER"),
+        _gateBtn("DISCIPLINED BUYER", "BUYER"),
       ])),
     );
   }
@@ -85,77 +83,46 @@ class _HVFShellState extends State<HVFShell> {
     final c = TextEditingController();
     return Scaffold(
       body: Padding(padding: const EdgeInsets.all(50), child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text("PARTNER AUTHENTICATION"),
-        TextField(controller: c, decoration: InputDecoration(labelText: "CORPORATE ENTITY ID")),
+        Text("INITIALIZE PORTFOLIO"),
+        TextField(controller: c, decoration: InputDecoration(labelText: "ENTITY / USER ID")),
         SizedBox(height: 30),
-        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: Text("INITIALIZE SYSTEM")),
+        ElevatedButton(onPressed: () => setState(() => userID = c.text), child: Text("OPEN EXCHANGE")),
       ])),
     );
   }
 
   Widget _buildRouter() {
-    if (role == "PRODUCER") return _buildProducerHub();
-    return _buildCEOOversight();
+    if (role == "BUYER") return _buildWealthTracker();
+    return Center(child: Text("$role INTERFACE ACTIVE"));
   }
 
-  Widget _buildProducerHub() {
-    return Padding(padding: const EdgeInsets.all(30), child: Column(children: [
-      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        Text(bulkMode ? "BULK CSV MODE" : "SINGLE ASSET MODE"),
-        Switch(value: bulkMode, onChanged: (v) => setState(() => bulkMode = v), activeColor: Color(0xFFC5A059)),
-      ]),
-      SizedBox(height: 40),
-      if (bulkMode) 
-        Column(children: [
-          Icon(Icons.upload_file, size: 100, color: Colors.cyan),
-          SizedBox(height: 20),
-          Text("UPLINK PARTNER LEDGER (.CSV / .XLSX)", textAlign: TextAlign.center),
-          SizedBox(height: 30),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan, minimumSize: Size(double.infinity, 60)),
-            onPressed: () => _simulateBulkUpload(),
-            child: Text("IMPORT INSTITUTIONAL VOLUME", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ])
-      else
-        Text("SINGLE ENTRY TOOLS ACTIVE", style: TextStyle(color: Colors.grey)),
-    ]));
-  }
-
-  void _simulateBulkUpload() async {
-    // Simulation logic for the tour
-    for (int i = 0; i < 5; i++) {
-      await FirebaseFirestore.instance.collection('enterprise_ledger').add({
-        'name': 'INSTITUTIONAL_LOT_${i+1}', 'value': 1200.0, 'species': 'CATTLE', 'status': 'AVAILABLE', 'source': userID, 'category': 'LIVESTOCK'
-      });
-    }
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("BATCH TOKENIZATION COMPLETE: 5 ASSETS LIVE")));
-  }
-
-  Widget _buildCEOOversight() {
+  Widget _buildWealthTracker() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance.collection('enterprise_ledger').snapshots(),
+      stream: FirebaseFirestore.instance.collection('enterprise_ledger').where('buyer', isEqualTo: userID).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return const Center(child: CircularProgressIndicator());
-        double projectedDividend = snapshot.data!.docs.length * 50.0;
         return Column(children: [
           Container(
-            padding: EdgeInsets.all(20), width: double.infinity, color: Color(0xFF111111),
+            padding: EdgeInsets.all(25), width: double.infinity, color: Color(0xFF111111),
             child: Column(children: [
-              Text("NATIONAL MANAGED VOLUME", style: TextStyle(fontSize: 10, color: Colors.grey)),
-              Text("${snapshot.data!.docs.length} HEAD", style: TextStyle(fontSize: 28, color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-              SizedBox(height: 10),
-              Text("PROJECTED PARTNER DIVIDEND: \$${projectedDividend.toStringAsFixed(2)}/MO", style: TextStyle(fontSize: 10, color: Colors.cyan)),
+              Text("PROJECTED ASSET VALUE AT MATURITY", style: TextStyle(fontSize: 10, color: Colors.grey)),
+              Text("\$${(snapshot.data!.docs.length * 2800.0).toStringAsFixed(2)}", style: TextStyle(fontSize: 28, color: Colors.greenAccent, fontWeight: FontWeight.bold)),
+              Text("BASED ON DISCIPLINED STEWARDSHIP", style: TextStyle(fontSize: 8, color: Colors.grey)),
             ]),
           ),
           Expanded(child: ListView.builder(
             itemCount: snapshot.data!.docs.length,
             itemBuilder: (context, i) {
               final d = snapshot.data!.docs[i].data() as Map<String, dynamic>;
-              return ListTile(
-                leading: Icon(Icons.lan, color: Colors.cyan, size: 18),
-                title: Text(d['name'] ?? "ASSET"),
-                subtitle: Text("ENTITY: ${d['source']}"),
+              return Card(
+                color: Color(0xFF1A1A1A),
+                margin: EdgeInsets.all(10),
+                child: ListTile(
+                  leading: Icon(Icons.circle, color: Colors.greenAccent, size: 12),
+                  title: Text(d['name'] ?? "ASSET"),
+                  subtitle: Text("CURRENT FMV: \$${d['value']}\nEST. MATURITY: \$2,800.00"),
+                  trailing: Icon(Icons.auto_graph, color: Colors.cyan),
+                ),
               );
             },
           )),
