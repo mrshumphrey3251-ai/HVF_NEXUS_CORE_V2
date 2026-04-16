@@ -28,8 +28,6 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   String view = "GATE";
   String sector = "LIVESTOCK";
   final _db = FirebaseFirestore.instance;
-  
-  // Track assets secured in the current session
   List<String> securedIds = [];
 
   void _challengePin(String targetView, String correctPin) {
@@ -70,7 +68,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS CORE", style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       bottomNavigationBar: view == "GATE" ? null : BottomAppBar(
@@ -167,12 +165,11 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
 
   Widget _buyer() {
     return Column(children: [
-      // NEW: BUYER'S SECURED VAULT
       if (securedIds.isNotEmpty) Container(
         padding: const EdgeInsets.all(10),
         color: Colors.green.withOpacity(0.1),
         child: Column(children: [
-          const Text("MY SECURED ASSETS / RECEIPTS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          const Text("MY SECURED ASSETS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
           ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
             future: _db.collection('enterprise_ledger').doc(id).get(),
             builder: (context, snap) {
@@ -188,7 +185,6 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           const Divider(color: Colors.green),
         ]),
       ),
-      // MAIN MARKET FEED
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -201,21 +197,41 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 final docId = snap.data!.docs[i].id;
                 return Card(
                   color: const Color(0xFF1A1A1A),
-                  child: ListTile(
-                    title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                      Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
-                      if (doc['media'] != null && doc['media'] != "") 
-                        TextButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent))),
-                    ]),
-                    trailing: ElevatedButton(
-                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green), 
-                      onPressed: () {
-                        snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
-                        setState(() => securedIds.add(docId));
-                      }, 
-                      child: const Text("SECURE")
-                    ),
+                  child: ExpansionTile(
+                    iconColor: const Color(0xFFC5A059),
+                    collapsedIconColor: Colors.white54,
+                    title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                    subtitle: Text("SECTOR: ${doc['sector']}", style: const TextStyle(color: Colors.white38)),
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(15),
+                        width: double.infinity,
+                        color: Colors.black,
+                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          const Text("DETAILED SPECIFICATIONS:", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+                          const SizedBox(height: 10),
+                          Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.greenAccent, fontSize: 16)),
+                          Text("UPLOAD DATE: ${doc['timestamp']?.toDate().toString().split('.')[0] ?? 'N/A'}", style: const TextStyle(color: Colors.white70)),
+                          const SizedBox(height: 15),
+                          if (doc['media'] != null && doc['media'] != "") 
+                            ElevatedButton.icon(
+                              onPressed: () => js.context.callMethod('open', [doc['media']]),
+                              icon: const Icon(Icons.visibility),
+                              label: const Text("VIEW PROOF OF ASSET"),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.cyan),
+                            ),
+                          const SizedBox(height: 10),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(double.infinity, 45)), 
+                            onPressed: () {
+                              snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
+                              setState(() => securedIds.add(docId));
+                            }, 
+                            child: const Text("SECURE THIS ASSET", style: TextStyle(fontWeight: FontWeight.bold))
+                          ),
+                        ]),
+                      )
+                    ],
                   ),
                 );
               },
