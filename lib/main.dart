@@ -14,28 +14,29 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMasterGate(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFNexusMarket(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMasterGate extends StatefulWidget {
-  const HVFMasterGate({super.key});
+class HVFNexusMarket extends StatefulWidget {
+  const HVFNexusMarket({super.key});
   @override
-  State<HVFMasterGate> createState() => _HVFMasterGateState();
+  State<HVFNexusMarket> createState() => _HVFNexusMarketState();
 }
 
-class _HVFMasterGateState extends State<HVFMasterGate> {
+class _HVFNexusMarketState extends State<HVFNexusMarket> {
   String view = "GATE";
-  String? buyerSession;
+  String? buyerID;
   final _db = FirebaseFirestore.instance;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.black,
+      backgroundColor: const Color(0xFF050505),
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0A0A0A),
-        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.arrow_back, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; buyerSession = null; })) : null,
+        backgroundColor: Colors.black,
+        elevation: 0,
+        title: const Text("HVF NEXUS: EXCHANGE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 3)),
+        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.close, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
       body: _buildCurrentTheater(),
     );
@@ -43,113 +44,106 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
 
   Widget _buildCurrentTheater() {
     switch (view) {
-      case "PRODUCER": return _producerTheater();
-      case "BUYER": return _buyerTheater();
-      case "CEO": return _ceoTheater();
-      default: return _gateTheater();
+      case "PRODUCER": return _producerTerminal();
+      case "BUYER": return _buyerTerminal();
+      case "CEO": return _ceoAudit();
+      default: return _gate();
     }
   }
 
-  Widget _gateTheater() {
+  Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      const Icon(Icons.shield, color: Color(0xFFC5A059), size: 100),
-      const SizedBox(height: 40),
-      _cmdBtn("CEO COMMAND", () => _pinAccess("CEO", "1978")),
-      _cmdBtn("PRODUCER DECK", () => _pinAccess("PRODUCER", "2026")),
-      _cmdBtn("BUYER MARKET", () => setState(() => view = "BUYER")),
+      const Icon(Icons.account_balance, color: Color(0xFFC5A059), size: 80),
+      const SizedBox(height: 50),
+      _gateBtn("FARMER / PRODUCER", () => _auth("PRODUCER", "2026")),
+      _gateBtn("ACQUISITION / BUYER", () => setState(() => view = "BUYER")),
+      _gateBtn("CEO OVERWATCH", () => _auth("CEO", "1978")),
     ]));
   }
 
-  void _pinAccess(String target, String pin) {
+  void _auth(String t, String p) {
     TextEditingController c = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF111111),
-        title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
-        content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
-        actions: [
-          TextButton(onPressed: () { if (c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS", style: TextStyle(color: Colors.green))),
-        ],
-      ),
-    );
+    showDialog(context: context, builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF111111),
+      title: Text("SECURE LOGIN: $t", style: const TextStyle(color: Color(0xFFC5A059))),
+      content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
+      actions: [TextButton(onPressed: () { if(c.text == p) { setState(() => view = t); Navigator.pop(context); } }, child: const Text("ENTER"))],
+    ));
   }
 
-  Widget _cmdBtn(String t, VoidCallback a) => Padding(
-    padding: const EdgeInsets.symmetric(vertical: 8),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(280, 60)),
-      onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold))
-    ),
+  Widget _gateBtn(String t, VoidCallback a) => Padding(
+    padding: const EdgeInsets.all(10),
+    child: ElevatedButton(
+      style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF1A1A1A), side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(300, 60)),
+      onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
-  // PRODUCER: ALWAYS SHOWS FORM, REGARDLESS OF DB STATUS
-  Widget _producerTheater() {
-    final n = TextEditingController(), v = TextEditingController(), p = TextEditingController();
+  Widget _producerTerminal() {
+    final name = TextEditingController(), yield = TextEditingController(), price = TextEditingController();
     return Column(children: [
-      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
-        TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
-        TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
-        const SizedBox(height: 10),
-        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
-          if(n.text.isNotEmpty) {
-            _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
-            n.clear(); v.clear(); p.clear();
-          }
-        }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))
+      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0F0F0F), child: Column(children: [
+        const Text("ASSET DISPATCH", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME (e.g. Johnston 200)")),
+        TextField(controller: yield, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "YIELD/SPECS")),
+        TextField(controller: price, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "OFFER PRICE (\$VAL)")),
+        ElevatedButton(onPressed: () {
+          _db.collection('exchange_ledger').add({'name': name.text, 'yield': yield.text, 'price': price.text, 'status': 'LIVE', 'owner': 'HVF'});
+          name.clear(); yield.clear(); price.clear();
+        }, child: const Text("POST TO EXCHANGE")),
       ])),
-      const Padding(padding: EdgeInsets.all(10), child: Text("LOCAL MONITOR", style: TextStyle(color: Colors.white24))),
-      Expanded(child: _listStream(_db.collection('enterprise_ledger').snapshots()))
+      Expanded(child: _marketStream(true))
     ]);
   }
 
-  // BUYER: SHOWS LOGIN FIRST, THEN LIST
-  Widget _buyerTheater() {
+  Widget _buyerTerminal() {
+    if (buyerID == null) return _buyerLogin();
+    return Column(children: [
+      Container(width: double.infinity, padding: const EdgeInsets.all(10), color: Colors.green.withOpacity(0.1), child: Text("BUYER ID: $buyerID", style: const TextStyle(color: Colors.green))),
+      Expanded(child: _marketStream(false))
+    ]);
+  }
+
+  Widget _buyerLogin() {
     final b = TextEditingController();
-    if (buyerSession == null) {
-      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("MARKET ACCESS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20)),
-        const SizedBox(height: 20),
-        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter ID"))),
-        const SizedBox(height: 20),
-        ElevatedButton(onPressed: () => setState(() => buyerSession = b.text), child: const Text("ENTER"))
-      ]));
-    }
-    return Column(children: [
-      ListTile(title: Text("SESSION: $buyerSession", style: const TextStyle(color: Colors.green))),
-      Expanded(child: _listStream(_db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots()))
-    ]);
+    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+      const Text("INITIALIZE BUYER SESSION", style: TextStyle(color: Colors.white)),
+      SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center)),
+      ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("ACCESS MARKET"))
+    ]));
   }
 
-  // CEO: MASTER VIEW
-  Widget _ceoTheater() {
-    return Column(children: [
-      const Padding(padding: EdgeInsets.all(20), child: Text("MASTER AUDIT LOG", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18))),
-      Expanded(child: _listStream(_db.collection('enterprise_ledger').snapshots()))
-    ]);
-  }
-
-  // UNIVERSAL LIST BUILDER: PREVENTS GREY SCREEN HANGS
-  Widget _listStream(Stream<QuerySnapshot> stream) {
+  Widget _marketStream(bool isProducer) {
     return StreamBuilder<QuerySnapshot>(
-      stream: stream,
+      stream: _db.collection('exchange_ledger').snapshots(),
       builder: (context, snap) {
-        if (snap.hasError) return const Center(child: Text("CONNECTION TIMEOUT", style: TextStyle(color: Colors.red)));
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
-        if (snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA RECORDED", style: TextStyle(color: Colors.white24)));
-        
-        return ListView(children: snap.data!.docs.map((d) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(padding: const EdgeInsets.all(10), children: snap.data!.docs.map((d) {
           final data = d.data() as Map<String, dynamic>;
+          bool isLive = data['status'] == 'LIVE';
           return Card(
-            color: const Color(0xFF1A1A1A),
+            color: const Color(0xFF111111),
             child: ListTile(
-              title: Text(data['name'] ?? "Asset", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("STATUS: ${data['status']}", style: const TextStyle(color: Colors.white38)),
-              trailing: view == "CEO" ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) : null,
+              title: Text(data['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text("SPECS: ${data['yield']}", style: const TextStyle(color: Colors.white54)),
+              trailing: isProducer ? Text(data['status'], style: const TextStyle(color: Color(0xFFC5A059))) 
+              : (isLive ? ElevatedButton(onPressed: () => d.reference.update({'status': 'PENDING', 'buyer': buyerID}), child: const Text("ACQUIRE")) : const Text("SOLD", style: TextStyle(color: Colors.red))),
             ),
           );
         }).toList());
+      },
+    );
+  }
+
+  Widget _ceoAudit() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('exchange_ledger').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)),
+          subtitle: Text("STATUS: ${d['status']}"),
+          trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()),
+        )).toList());
       },
     );
   }
