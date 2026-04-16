@@ -27,8 +27,8 @@ class HVFMasterControl extends StatefulWidget {
 class _HVFMasterControlState extends State<HVFMasterControl> {
   String view = "GATE";
   String sector = "LIVESTOCK";
+  String? currentBuyerId; // Persistent ID for the session
   final _db = FirebaseFirestore.instance;
-  List<String> securedIds = [];
 
   IconData _getSectorIcon(String? s) {
     switch (s) {
@@ -58,22 +58,19 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         content: TextField(
           controller: pinCtrl,
           obscureText: true,
-          keyboardType: TextInputType.number,
           style: const TextStyle(color: Colors.white, fontSize: 30),
           decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059)))),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL", style: TextStyle(color: Colors.red))),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
           TextButton(
             onPressed: () {
               if (pinCtrl.text == correctPin) {
                 setState(() => view = targetView);
                 Navigator.pop(context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ACCESS DENIED")));
               }
             },
-            child: const Text("ACCESS", style: TextStyle(color: Colors.green)),
+            child: const Text("ACCESS"),
           ),
         ],
       ),
@@ -139,7 +136,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     final name = TextEditingController();
     final data = TextEditingController();
     final price = TextEditingController();
-    final location = TextEditingController();
+    final loc = TextEditingController();
     final url = TextEditingController();
     return Column(children: [
       Container(
@@ -153,21 +150,21 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
             const SizedBox(width: 5),
             ChoiceChip(label: const Text("FLEET"), selected: sector == "FLEET", onSelected: (b) => setState(() => sector = "FLEET"))
           ]),
-          TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET / LOT #")),
-          TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITAL DATA")),
-          TextField(controller: price, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FMV VALUE")),
-          TextField(controller: location, style: const TextStyle(color: Colors.orangeAccent), decoration: const InputDecoration(labelText: "GPS (Internal)")),
+          TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET #")),
+          TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITALS")),
+          TextField(controller: price, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FMV")),
+          TextField(controller: loc, style: const TextStyle(color: Colors.orange), decoration: const InputDecoration(labelText: "GPS (INTERNAL)")),
           TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
           const SizedBox(height: 15),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
             onPressed: () async {
-              if (name.text.isEmpty || double.tryParse(price.text) == null) return;
+              if (name.text.isEmpty) return;
               await _db.collection('enterprise_ledger').add({
-                'name': name.text, 'vital': data.text, 'price': double.parse(price.text), 'location': location.text,
+                'name': name.text, 'vital': data.text, 'price': double.tryParse(price.text) ?? 0.0, 'location': loc.text,
                 'media': url.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
               });
-              name.clear(); data.clear(); price.clear(); location.clear(); url.clear();
+              name.clear(); data.clear(); price.clear(); loc.clear(); url.clear();
             },
             child: const Text("UPLINK ASSET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           )
@@ -182,11 +179,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               itemCount: snap.data!.docs.length,
               itemBuilder: (context, i) {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-                return ListTile(
-                  leading: Icon(_getSectorIcon(doc['sector']), color: _getSectorColor(doc['sector'])),
-                  title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
-                  subtitle: Text("FMV: \$${doc['price']}"),
-                );
+                return ListTile(title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)));
               },
             );
           },
@@ -196,19 +189,37 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   }
 
   Widget _buyer() {
+    final idCtrl = TextEditingController();
     return Column(children: [
-      Container(width: double.infinity, color: Colors.green.withOpacity(0.1), padding: const EdgeInsets.symmetric(vertical: 10), child: Column(children: [
-        const Text("MY SECURED ASSETS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
-        ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
-          future: _db.collection('enterprise_ledger').doc(id).get(),
-          builder: (context, snap) {
-            if (!snap.hasData) return const SizedBox();
-            final data = snap.data!.data() as Map<String, dynamic>;
-            return ListTile(dense: true, leading: const Icon(Icons.verified, color: Colors.green), title: Text(data['name'] ?? ""));
-          },
-        )).toList(),
-      ])),
-      Expanded(
+      if (currentBuyerId == null) Container(
+        padding: const EdgeInsets.all(20),
+        color: const Color(0xFF1A1A1A),
+        child: Column(children: [
+          const Text("AUTHORIZE BUYER IDENTITY", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          TextField(controller: idCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ENTER BUYER NAME OR ID")),
+          const SizedBox(height: 10),
+          ElevatedButton(onPressed: () => setState(() => currentBuyerId = idCtrl.text), child: const Text("ACCESS VAULT")),
+        ]),
+      ) else Column(children: [
+        Container(
+          width: double.infinity,
+          color: Colors.green.withOpacity(0.1),
+          padding: const EdgeInsets.all(10),
+          child: Column(children: [
+            Text("VAULT: $currentBuyerId", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+            StreamBuilder<QuerySnapshot>(
+              stream: _db.collection('enterprise_ledger').where('buyer_id', isEqualTo: currentBuyerId).snapshots(),
+              builder: (context, snap) {
+                if (!snap.hasData || snap.data!.docs.isEmpty) return const Text("NO SECURED ASSETS", style: TextStyle(color: Colors.white24));
+                return Column(children: snap.data!.docs.map((d) => ListTile(dense: true, title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)), leading: const Icon(Icons.verified, color: Colors.green))).toList());
+              },
+            ),
+            TextButton(onPressed: () => setState(() => currentBuyerId = null), child: const Text("LOGOUT", style: TextStyle(color: Colors.red))),
+          ]),
+        ),
+        const Divider(color: Color(0xFFC5A059)),
+      ]),
+      if (currentBuyerId != null) Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
           builder: (context, snap) {
@@ -217,22 +228,16 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               itemCount: snap.data!.docs.length,
               itemBuilder: (context, i) {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-                final docId = snap.data!.docs[i].id;
                 return Card(
                   color: const Color(0xFF1A1A1A),
-                  child: ExpansionTile(
-                    leading: Icon(_getSectorIcon(doc['sector']), color: _getSectorColor(doc['sector'])),
-                    title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    children: [
-                      Padding(padding: const EdgeInsets.all(15), child: Column(children: [
-                        Text("FMV: \$${doc['price']}", style: const TextStyle(color: Colors.yellowAccent)),
-                        const SizedBox(height: 10),
-                        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () {
-                          snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
-                          setState(() => securedIds.add(docId));
-                        }, child: const Text("SECURE")),
-                      ])),
-                    ],
+                  child: ListTile(
+                    title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    subtitle: Text("FMV: \$${doc['price']}"),
+                    trailing: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
+                      onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED', 'buyer_id': currentBuyerId}),
+                      child: const Text("SECURE"),
+                    ),
                   ),
                 );
               },
@@ -244,31 +249,26 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   }
 
   Widget _logistics() {
-    return Column(children: [
-      Container(width: double.infinity, color: const Color(0xFF111111), padding: const EdgeInsets.all(15), child: const Center(child: Text("INTERNAL MANIFEST", style: TextStyle(color: Colors.blueAccent, fontWeight: FontWeight.bold)))),
-      Expanded(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'CLAIMED').snapshots(),
-          builder: (context, snap) {
-            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-            return ListView.builder(
-              itemCount: snap.data!.docs.length,
-              itemBuilder: (context, i) {
-                final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-                return Card(
-                  color: const Color(0xFF0D0D1F),
-                  child: ListTile(
-                    title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
-                    subtitle: Text("LOC: ${doc['location'] ?? 'UNSET'}"),
-                    trailing: ElevatedButton(onPressed: () => snap.data!.docs[i].reference.update({'status': 'COMPLETED'}), child: const Text("DONE")),
-                  ),
-                );
-              },
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'CLAIMED').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView.builder(
+          itemCount: snap.data!.docs.length,
+          itemBuilder: (context, i) {
+            final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
+            return Card(
+              color: const Color(0xFF0D0D1F),
+              child: ListTile(
+                title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
+                subtitle: Text("FOR: ${doc['buyer_id']}\nLOC: ${doc['location']}"),
+                trailing: ElevatedButton(onPressed: () => snap.data!.docs[i].reference.update({'status': 'COMPLETED'}), child: const Text("DONE")),
+              ),
             );
           },
-        ),
-      ),
-    ]);
+        );
+      },
+    );
   }
 
   Widget _ceo() {
@@ -276,13 +276,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       stream: _db.collection('enterprise_ledger').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        double totalAvailable = 0;
+        double total = 0;
         for (var doc in snap.data!.docs) {
           final data = doc.data() as Map<String, dynamic>;
-          if (data['status'] == 'AVAILABLE') totalAvailable += (data['price'] ?? 0).toDouble();
+          if (data['status'] == 'AVAILABLE') total += (data['price'] ?? 0).toDouble();
         }
         return Column(children: [
-          Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Center(child: Text("TOTAL INVENTORY FMV: \$${totalAvailable.toStringAsFixed(2)}", style: const TextStyle(color: Colors.orange, fontSize: 18)))),
+          Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Center(child: Text("TOTAL FMV: \$${total.toStringAsFixed(2)}", style: const TextStyle(color: Colors.orange, fontSize: 18)))),
           Expanded(
             child: ListView.builder(
               itemCount: snap.data!.docs.length,
@@ -290,12 +290,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
                 return ListTile(
                   title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
+                  subtitle: Text("STATUS: ${doc['status']} | OWNER: ${doc['buyer_id'] ?? 'NONE'}"),
                   trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snap.data!.docs[i].reference.delete()),
                 );
               },
-            ),
-          ),
-        ]);
+            );
+          },
+        );
       },
     );
   }
