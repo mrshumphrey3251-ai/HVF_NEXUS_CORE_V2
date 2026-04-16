@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFSteelCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFMasterBuild(), debugShowCheckedModeBanner: false));
 }
 
-class HVFSteelCore extends StatefulWidget {
-  const HVFSteelCore({super.key});
+class HVFMasterBuild extends StatefulWidget {
+  const HVFMasterBuild({super.key});
   @override
-  State<HVFSteelCore> createState() => _HVFSteelCoreState();
+  State<HVFMasterBuild> createState() => _HVFMasterBuildState();
 }
 
-class _HVFSteelCoreState extends State<HVFSteelCore> {
+class _HVFMasterBuildState extends State<HVFMasterBuild> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -45,57 +45,67 @@ class _HVFSteelCoreState extends State<HVFSteelCore> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAcceptedTerms) return _legalShield();
+    if (!hasAcceptedTerms) return _sovereignLegalShield();
     return Scaffold(
       backgroundColor: const Color(0xFF050505),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
         leading: view != "GATE" ? IconButton(icon: const Icon(Icons.apps, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
-      body: _buildTheater(),
+      body: _buildCurrentTheater(),
     );
   }
 
-  Widget _legalShield() {
+  Widget _sovereignLegalShield() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: const EdgeInsets.all(30),
+        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(children: [
-          const Icon(Icons.security, color: Color(0xFFC5A059), size: 50),
+          // THE HUMPHREY CREST (SYMBOLIC)
+          const Icon(Icons.Shield_outlined, color: Color(0xFFC5A059), size: 80),
           const SizedBox(height: 10),
-          const Text("THE HUMPHREY MANDATE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 4)),
+          const Divider(color: Color(0xFFC5A059), thickness: 2, indent: 50, endIndent: 50),
           const SizedBox(height: 20),
+          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          const SizedBox(height: 15),
           Expanded(child: Container(
-            padding: const EdgeInsets.all(15),
-            decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3)), borderRadius: BorderRadius.circular(4)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("MASTER SERVICE AGREEMENT v4.4.0\n\n"
-              "1. DISCIPLINED BUYER: HVF provides a path to success for the well-disciplined buyer. Success is earned through stewardship.\n\n"
-              "2. SUBSCRIPTIONS: Farmer (\$200/mo), Buyer (\$25/mo). Agent Residual: 10% of subs.\n\n"
-              "3. SALES: Farmer pays 10% Platform Fee on gross sale price.\n\n"
-              "4. HUMPHREY SHIELD: Optional \$5.00/mo covers replacement cost (except neglect).\n\n"
-              "5. STEWARDSHIP: Farmer retains 100% of \$3.00/day fees.\n\n"
-              "6. JURISDICTION: Oklahoma Law.\n\n"
-              "(SCROLL TO BOTTOM TO EXECUTE)", 
-              style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.6)),
-              SizedBox(height: 500),
-              Text("MANDATE VALIDATED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              Text(
+                "ARTICLE 1: THE PLATFORM MANDATE\nHVF is a sovereign administrative exchange. We provide the path for success for the well-disciplined buyer.\n\n"
+                "ARTICLE 2: REVENUE & RESIDUALS\n• Farmer Subscription: \$200/mo\n• Buyer Subscription: \$25/mo\n• Agent Residual: 10% of monthly subscription fees only.\n\n"
+                "ARTICLE 3: TRANSACTIONAL FEES\n• Platform Sales Fee: 10% gross sale price to HVF Corporate.\n• Stewardship: \$3.00/day fees are 100% Farmer retained.\n\n"
+                "ARTICLE 4: THE HUMPHREY SHIELD\nHVF offers a \$5.00/mo Mortality Guarantee covering replacement costs for livestock. This guarantee is void in cases of documented neglect.\n\n"
+                "ARTICLE 5: LOGISTICS & ORIGIN\nMandatory City/State origin data required to minimize interstate friction. Interstate compliance (CVI/DOT) is the Buyer's responsibility.\n\n"
+                "ARTICLE 6: JURISDICTION\nAll disputes shall be handled under the laws of the State of Oklahoma.\n\n"
+                "CONCLUSION: By executing this agreement, you acknowledge that wealth is generated through discipline and stewardship.\n\n"
+                "--- SCROLL TO BOTTOM TO EXECUTE ---",
+                style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.8),
+              ),
+              SizedBox(height: 400),
+              Text("MANDATE FULLY REVIEWED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
             ]),
           )),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
-            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 60)),
-            child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.bold)),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10,
+              minimumSize: const Size(double.infinity, 60),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))
+            ),
+            child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900)),
           )
         ]),
       ),
     );
   }
 
-  Widget _buildTheater() {
+  Widget _buildCurrentTheater() {
     switch (view) {
       case "PRODUCER": return _producerTheater();
       case "BUYER": return _buyerTheater();
@@ -117,14 +127,18 @@ class _HVFSteelCoreState extends State<HVFSteelCore> {
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF111111),
       title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
-      actions: [TextButton(onPressed: () { if(c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS"))],
+      content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059))))),
+      actions: [TextButton(onPressed: () { if(c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS", style: TextStyle(color: Color(0xFFC5A059))))],
     ));
   }
 
   Widget _gateBtn(String t, VoidCallback a) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
-    child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
+    child: OutlinedButton(
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))), 
+      onPressed: a, 
+      child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2))
+    ),
   );
 
   Widget _producerTheater() {
@@ -147,17 +161,21 @@ class _HVFSteelCoreState extends State<HVFSteelCore> {
           Expanded(child: TextField(controller: a, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Agent Code"))),
         ]),
         const SizedBox(height: 15),
-        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)), onPressed: () {
-          if(n.text.isNotEmpty && l.text.isNotEmpty) {
-            double price = double.tryParse(p.text) ?? 0;
-            _db.collection('sovereign_ledger').add({
-              'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
-              'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
-              'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
-            });
-            n.clear(); l.clear(); p.clear(); a.clear();
-          }
-        }, child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))), 
+          onPressed: () {
+            if(n.text.isNotEmpty && l.text.isNotEmpty) {
+              double price = double.tryParse(p.text) ?? 0;
+              _db.collection('sovereign_ledger').add({
+                'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
+                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
+                'timestamp': FieldValue.serverTimestamp()
+              });
+              n.clear(); l.clear(); p.clear(); a.clear();
+            }
+          }, 
+          child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+        ),
       ])),
       Expanded(child: _ledgerFeed(true, "ALL"))
     ]);
@@ -170,7 +188,7 @@ class _HVFSteelCoreState extends State<HVFSteelCore> {
         const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 40),
         const Text("PATH FOR SUCCESS: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
-        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Name", hintStyle: TextStyle(color: Colors.white24)))),
+        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Full Name", hintStyle: TextStyle(color: Colors.white24)))),
         const SizedBox(height: 20),
         ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE PORTFOLIO"))
       ]));
