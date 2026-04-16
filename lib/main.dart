@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFDeepLegalCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFFederalCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFDeepLegalCore extends StatefulWidget {
-  const HVFDeepLegalCore({super.key});
+class HVFFederalCore extends StatefulWidget {
+  const HVFFederalCore({super.key});
   @override
-  State<HVFDeepLegalCore> createState() => _HVFDeepLegalCoreState();
+  State<HVFFederalCore> createState() => _HVFFederalCoreState();
 }
 
-class _HVFDeepLegalCoreState extends State<HVFDeepLegalCore> {
+class _HVFFederalCoreState extends State<HVFFederalCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -48,7 +48,7 @@ class _HVFDeepLegalCoreState extends State<HVFDeepLegalCore> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAcceptedTerms) return _marshalLegalGate();
+    if (!hasAcceptedTerms) return _marshalFederalGate();
     return Scaffold(
       backgroundColor: const Color(0xFF030303),
       appBar: AppBar(
@@ -62,39 +62,37 @@ class _HVFDeepLegalCoreState extends State<HVFDeepLegalCore> {
     );
   }
 
-  Widget _marshalLegalGate() {
+  Widget _marshalFederalGate() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
+        padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
         child: Column(children: [
           const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 90),
-          const SizedBox(height: 15),
+          const SizedBox(height: 10),
           const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 5)),
-          const Text("SOVEREIGN OPERATIONS MANDATE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
-          const SizedBox(height: 25),
+          const SizedBox(height: 5),
+          const Text("UEI: S1M4ENLHTDH5 | CAGE: [PENDING]", style: TextStyle(color: Colors.white70, fontSize: 10, letterSpacing: 2, fontFamily: 'Courier')),
+          const SizedBox(height: 20),
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v5.5.0\nTHE SEVEN-POINT MANDATE | PATENT PENDING\n\n"
-                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Humphrey Seven-Point Badge is a unique trade mark representing the Sovereign Seal of Provenance.\n1.2 PATENT PROTECTION: Systems including Nexus Core and HelioGrid are protected under federal patent filings. Unauthorized use is a federal offense.\n\n"
-                "ARTICLE II: DATA SOVEREIGNTY & CONFIDENTIALITY\nAll information processed—user data, transaction logs, and metadata—is Personal and Confidential. HVF LLC maintains exclusive ownership of the digital ledger and all associated trade secrets.\n\n"
-                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200.00/mo Access Fee.\n• Buyer Node: \$25.00/mo Portfolio Fee.\n• Platform Override: 10% Gross Sales Fee payable to HVF LLC.\n• Agent Residual: 10% Monthly Subscription Credit to the Source Agent.\n\n"
-                "ARTICLE IV: STEWARDSHIP & CARRYING COSTS\nProducers maintain assets at the 'Humphrey Standard.' A \$3.00/day stewardship fee is accrued and retained 100% by the Producer. Failure to maintain standard results in Node termination.\n\n"
-                "ARTICLE V: THE HUMPHREY SHIELD\nAn optional mortality guarantee (\$5.00/mo). Coverage warrants 100% replacement value EXCEPT IN CASES OF PROVEN NEGLECT. 'Neglect' is defined by HVF husbandry protocols.\n\n"
-                "ARTICLE VI: INTERSTATE LOGISTICS & BIOSECURITY\n6.1 ORIGIN: Mandatory City/State node selection for every asset.\n6.2 COMPLIANCE: Buyers assume all burden for DOT transport and Certificates of Veterinary Inspection (CVI). Producers warrant biological health at uplink.\n\n"
-                "ARTICLE VII: NON-CIRCUMVENTION\nUsers shall not engage in off-ledger transactions to bypass platform fees. Breach of this article results in permanent banishment and legal pursuit for lost revenue.\n\n"
-                "ARTICLE VIII: FORCE MAJEURE\nHVF LLC is held harmless for Acts of God, weather anomalies, biological outbreaks, or global logistics collapse.\n\n"
-                "ARTICLE IX: DISPUTE RESOLUTION PATHWAY\n1. EXECUTIVE REVIEW: Mandatory 15-day CEO-level negotiation.\n2. MEDIATION: Seated exclusively in Johnston County, OK.\n3. BINDING ARBITRATION: Final resolution under AAA rules. JURY TRIALS ARE EXPRESSLY WAIVED.\n\n"
-                "ARTICLE X: ELECTRONIC SIGNATURES\nExecution of this mandate is governed by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101. Digital acceptance is legally binding.\n\n"
-                "ARTICLE XI: GOVERNING LAW\nThis agreement is governed by the laws of the State of Oklahoma and the Oklahoma Agricultural Code OK Stat § 2-16.\n\n"
-                "--- END OF DEEP-LEGAL MANDATE ---\n"
+                "MASTER SERVICE AGREEMENT v5.6.0\nFEDERAL ENTITY IDENTIFIED | PATENT PENDING\n\n"
+                "ARTICLE I: FEDERAL REGISTRATION & AUTHORITY\n1.1 UEI IDENTIFICATION: HVF LLC is a registered federal entity under UEI S1M4ENLHTDH5.\n1.2 THE BADGE: The Seven-Point Crest represents the Sovereign Seal of Provenance.\n1.3 PATENT PROTECTION: Systems are protected under federal patent filings. Unauthorized use is a federal offense.\n\n"
+                "ARTICLE II: DATA SOVEREIGNTY & CONFIDENTIALITY\nAll information—user data, transaction logs, and metadata—is classified as PERSONAL AND CONFIDENTIAL.\n\n"
+                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200.00/mo | Buyer Node: \$25.00/mo\n• Platform Override: 10% Gross Sales Fee.\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
+                "ARTICLE IV: STEWARDSHIP\nProducers maintain assets at the 'Humphrey Standard.' A \$3.00/day stewardship fee is 100% Producer retained.\n\n"
+                "ARTICLE V: THE HUMPHREY SHIELD\nOptional mortality guarantee (\$5.00/mo). Coverage warrants replacement value EXCEPT IN CASES OF NEGLECT.\n\n"
+                "ARTICLE VI: INTERSTATE LOGISTICS\nMandatory State Node selection. Buyers assume all burden for DOT and CVI compliance.\n\n"
+                "ARTICLE VII: DISPUTE ESCALATION\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage path.\n\n"
+                "ARTICLE VIII: ELECTRONIC SIGNATURES\nGoverned by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101.\n\n"
+                "--- END OF MANDATE ---\n"
                 "--- SCROLL FULLY TO EXECUTE ---",
                 style: TextStyle(color: Colors.white70, fontSize: 11, height: 1.8, fontFamily: 'Courier'),
               ),
-              SizedBox(height: 2500), // MASSIVE DENSITY SCROLL
-              Text("MANDATE FULLY REVIEWED. JURISDICTION ACCEPTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
+              SizedBox(height: 2200),
+              Text("MANDATE VALIDATED. SOVEREIGN ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
           const SizedBox(height: 25),
