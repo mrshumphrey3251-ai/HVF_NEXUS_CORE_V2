@@ -67,7 +67,7 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
         title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
         content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
         actions: [
-          TextButton(onPressed: () { if (c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS")),
+          TextButton(onPressed: () { if (c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS", style: TextStyle(color: Colors.green))),
         ],
       ),
     );
@@ -85,19 +85,21 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
     final n = TextEditingController(), v = TextEditingController(), p = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
-        TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
-        TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
+        TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME", labelStyle: TextStyle(color: Colors.white38))),
+        TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS", labelStyle: TextStyle(color: Colors.white38))),
+        TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE", labelStyle: TextStyle(color: Colors.white38))),
         const SizedBox(height: 10),
-        ElevatedButton(onPressed: () {
-          _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
-          n.clear(); v.clear(); p.clear();
-        }, child: const Text("UPLINK"))
+        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
+          if(n.text.isNotEmpty) {
+            _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
+            n.clear(); v.clear(); p.clear();
+          }
+        }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))
       ])),
       Expanded(child: StreamBuilder<QuerySnapshot>(
         stream: _db.collection('enterprise_ledger').snapshots(),
         builder: (context, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+          if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
           return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? "Asset", style: const TextStyle(color: Colors.white)))).toList());
         },
       ))
@@ -118,13 +120,19 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
         if (snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA AVAILABLE", style: TextStyle(color: Colors.white38)));
-        return ListView(children: snap.data!.docs.map((d) => ListTile(
-          title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)),
-          subtitle: Text("FMV: \$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))),
-          trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'CLAIMED', 'buyer': buyerSession}), child: const Text("SECURE")),
-        )).toList());
+        return ListView(children: [
+          ListTile(title: Text("BUYER: $buyerSession", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
+          ...snap.data!.docs.map((d) => Card(
+            color: const Color(0xFF1A1A1A),
+            child: ListTile(
+              title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text("FMV: \$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))),
+              trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'CLAIMED', 'buyer': buyerSession}), child: const Text("SECURE")),
+            ),
+          )).toList()
+        ]);
       },
     );
   }
@@ -133,7 +141,7 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('enterprise_ledger').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
         if (snap.data!.docs.isEmpty) return const Center(child: Text("LEDGER EMPTY", style: TextStyle(color: Colors.white38)));
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)),
