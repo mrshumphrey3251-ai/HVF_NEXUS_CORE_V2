@@ -4,21 +4,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // We initialize but DO NOT let a failure here stop the app from drawing the UI.
-  try {
-    await Firebase.initializeApp(
-      options: const FirebaseOptions(
-        apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
-        authDomain: "hvf-nexus.firebaseapp.com",
-        projectId: "hvf-nexus",
-        storageBucket: "hvf-nexus.firebasestorage.app",
-        messagingSenderId: "892263251736",
-        appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
-      ),
-    );
-  } catch (e) {
-    print("Firebase Prep Failed: $e");
-  }
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
+      authDomain: "hvf-nexus.firebaseapp.com",
+      projectId: "hvf-nexus",
+      storageBucket: "hvf-nexus.firebasestorage.app",
+      messagingSenderId: "892263251736",
+      appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
+    ),
+  );
   runApp(const MaterialApp(home: HVFMasterGate(), debugShowCheckedModeBanner: false));
 }
 
@@ -31,6 +26,7 @@ class HVFMasterGate extends StatefulWidget {
 class _HVFMasterGateState extends State<HVFMasterGate> {
   String view = "GATE";
   String? buyerSession;
+  String statusMsg = "READY"; 
   final _db = FirebaseFirestore.instance;
 
   void _auth(String target, String pin) {
@@ -43,7 +39,7 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
         content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
         actions: [
           TextButton(onPressed: () { 
-            if (c.text == pin) { setState(() => view = target); Navigator.pop(context); } 
+            if (c.text == pin) { setState(() { view = target; statusMsg = "AUTHORIZED"; }); Navigator.pop(context); } 
             else { Navigator.pop(context); }
           }, child: const Text("ACCESS", style: TextStyle(color: Colors.green))),
         ],
@@ -58,9 +54,8 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.arrow_back, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; buyerSession = null; })) : null,
+        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.arrow_back, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; buyerSession = null; statusMsg = "READY"; })) : null,
       ),
-      // THE FIX: We show the UI immediately. Only the LISTS wait for the database.
       body: _buildTheater(),
     );
   }
@@ -94,23 +89,37 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
     final n = TextEditingController(), v = TextEditingController(), p = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
+        Text("STATUS: $statusMsg", style: TextStyle(color: statusMsg.contains("FAIL") ? Colors.red : Colors.green, fontSize: 10)),
         TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
         TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
         TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
         const SizedBox(height: 10),
-        ElevatedButton(onPressed: () {
+        ElevatedButton(onPressed: () async {
           if (n.text.isNotEmpty) {
-            _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
-            n.clear(); v.clear(); p.clear();
+            try {
+              await _db.collection('enterprise_ledger').add({
+                'name': n.text, 
+                'vital': v.text, 
+                'price': p.text, 
+                'status': 'AVAILABLE',
+                'timestamp': FieldValue.serverTimestamp()
+              });
+              setState(() => statusMsg = "UPLINK SUCCESS");
+              n.clear(); v.clear(); p.clear();
+            } catch (e) {
+              setState(() => statusMsg = "UPLINK FAIL: $e");
+            }
           }
         }, child: const Text("UPLINK"))
       ])),
       Expanded(child: StreamBuilder<QuerySnapshot>(
-        stream: _db.collection('enterprise_ledger').snapshots(),
+        stream: _db.collection('enterprise_ledger').orderBy('timestamp', descending: true).snapshots(),
         builder: (context, snap) {
-          if (snap.hasError) return Center(child: Text("DB WAIT: ${snap.error}", style: const TextStyle(color: Colors.white24)));
           if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-          return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)))).toList());
+          return ListView(children: snap.data!.docs.map((d) => ListTile(
+            title: Text(d['name'] ?? "Asset", style: const TextStyle(color: Colors.white)),
+            subtitle: Text(d['status'] ?? "", style: const TextStyle(color: Colors.white24)),
+          )).toList());
         },
       ))
     ]);
