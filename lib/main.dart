@@ -16,16 +16,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFResidualEngine(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFSuccessCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFResidualEngine extends StatefulWidget {
-  const HVFResidualEngine({super.key});
+class HVFSuccessCore extends StatefulWidget {
+  const HVFSuccessCore({super.key});
   @override
-  State<HVFResidualEngine> createState() => _HVFResidualEngineState();
+  State<HVFSuccessCore> createState() => _HVFSuccessCoreState();
 }
 
-class _HVFResidualEngineState extends State<HVFResidualEngine> {
+class _HVFSuccessCoreState extends State<HVFSuccessCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -75,23 +75,23 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
         padding: const EdgeInsets.all(30),
         child: Column(children: [
           const SizedBox(height: 30),
-          const Icon(Icons.gavel, color: Color(0xFFC5A059), size: 50),
-          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold)),
+          const Icon(Icons.shield_rounded, color: Color(0xFFC5A059), size: 50),
+          const Text("THE HUMPHREY STANDARD", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("1. REVENUE MODEL: Farmers ($200/mo), Buyers ($25/mo).\n\n"
-              "2. AGENT RESIDUAL: 10% of monthly subscriptions only. No sales commission.\n\n"
-              "3. SALES FEE: Farmer pays 10% Platform Fee to HVF Corporate on gross sale price.\n\n"
-              "4. HUMPHREY SHIELD: Optional $5.00/mo Mortality Guarantee covers replacement cost (except neglect).\n\n"
-              "5. STEWARDSHIP: Farmer retains 100% of $3.00/day fees.\n\n"
-              "6. JURISDICTION: Oklahoma Law.\n\n"
+              Text("MASTER SERVICE AGREEMENT v4.3.0\n\n"
+              "1. REVENUE: Farmers ($200/mo), Buyers ($25/mo). Agents earn 10% Residual.\n\n"
+              "2. THE DISCIPLINED BUYER: HVF warrants a path to success for the well-disciplined buyer. Success is predicated on consistent stewardship and adherence to platform protocols.\n\n"
+              "3. MORTALITY: $5.00/mo Humphrey Shield covers replacement cost (except neglect).\n\n"
+              "4. FEES: Farmer pays 10% Platform Sales Fee. Farmer keeps 100% of $3.00/day fees.\n\n"
+              "5. JURISDICTION: Oklahoma Law.\n\n"
               "(SCROLL TO BOTTOM TO EXECUTE)", 
               style: TextStyle(color: Colors.white60, fontSize: 13, height: 1.7)),
               SizedBox(height: 500),
-              Text("AGREEMENT READY FOR EXECUTION.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              Text("MANDATE READY FOR EXECUTION.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
             ]),
           )),
           const SizedBox(height: 20),
@@ -107,8 +107,8 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
 
   Widget _buildTheater() {
     switch (view) {
-      case "PRODUCER": return _producerTerminal();
-      case "BUYER": return _buyerTerminal();
+      case "PRODUCER": return _producerTheater();
+      case "BUYER": return _buyerTheater();
       case "CEO": return _ceoTheater();
       default: return _gate();
     }
@@ -137,7 +137,7 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
-  Widget _producerTerminal() {
+  Widget _producerTheater() {
     final n = TextEditingController(), l = TextEditingController(), p = TextEditingController(), a = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
@@ -181,9 +181,12 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("BUYER ACCESS", style: TextStyle(color: Color(0xFFC5A059))),
-        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center)),
-        ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE"))
+        const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 40),
+        const Text("PATH FOR SUCCESS: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const SizedBox(height: 20),
+        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Name", hintStyle: TextStyle(color: Colors.white24)))),
+        const SizedBox(height: 20),
+        ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE PORTFOLIO"))
       ]));
     }
     return DefaultTabController(
@@ -203,19 +206,15 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
       stream: _db.collection('sovereign_ledger').snapshots(),
       builder: (context, snap) {
         double totalAUM = 0;
-        double platformSalesFees = 0;
         if (snap.hasData) {
           for (var d in snap.data!.docs) {
-            final data = d.data() as Map<String, dynamic>;
-            totalAUM += double.tryParse(data['price'].toString()) ?? 0;
-            if(data['status'] == 'SECURED') platformSalesFees += (double.tryParse(data['platform_fee'].toString()) ?? 0);
+            totalAUM += double.tryParse(d['price'].toString()) ?? 0;
           }
         }
         return Column(children: [
           Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), width: double.infinity, child: Column(children: [
-            Text("TOTAL ASSETS: \$${totalAUM.toStringAsFixed(0)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.bold)),
-            Text("PLATFORM SALES REVENUE: \$${platformSalesFees.toStringAsFixed(2)}", style: const TextStyle(color: Colors.greenAccent, fontSize: 12)),
-            const Text("AGENT EARNINGS: 10% RESIDUAL ON SUBSCRIPTIONS", style: TextStyle(color: Colors.white38, fontSize: 10)),
+            Text("TOTAL AUM: \$${totalAUM.toStringAsFixed(0)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.bold)),
+            const Text("HVF EXECUTIVE COMMAND", style: TextStyle(color: Colors.white38, fontSize: 10)),
           ])),
           Expanded(child: _ledgerFeed(true, "ALL"))
         ]);
@@ -231,7 +230,7 @@ class _HVFResidualEngineState extends State<HVFResidualEngine> {
     return StreamBuilder<QuerySnapshot>(
       stream: query.snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA FOUND", style: TextStyle(color: Colors.white24)));
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA ON LEDGER", style: TextStyle(color: Colors.white24)));
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
           final data = d.data() as Map<String, dynamic>;
           bool live = data['status'] == 'LIVE';
