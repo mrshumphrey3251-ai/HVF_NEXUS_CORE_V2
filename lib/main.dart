@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMasterFinal(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFHighDensityCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMasterFinal extends StatefulWidget {
-  const HVFMasterFinal({super.key});
+class HVFHighDensityCore extends StatefulWidget {
+  const HVFHighDensityCore({super.key});
   @override
-  State<HVFMasterFinal> createState() => _HVFMasterFinalState();
+  State<HVFHighDensityCore> createState() => _HVFHighDensityCoreState();
 }
 
-class _HVFMasterFinalState extends State<HVFMasterFinal> {
+class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -63,30 +63,46 @@ class _HVFMasterFinalState extends State<HVFMasterFinal> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(children: [
-          const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 80),
+          const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 70),
           const SizedBox(height: 10),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 4)),
-          const Divider(color: Color(0xFFC5A059), thickness: 2, indent: 50, endIndent: 50),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 3)),
+          const Divider(color: Color(0xFFC5A059), thickness: 1, indent: 60, endIndent: 60),
           const SizedBox(height: 20),
-          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
+          const Text("MASTER SERVICE AGREEMENT & OPERATIONAL MANDATE", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3))),
+            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, children: const [
               Text(
-                "ARTICLE 1: THE PLATFORM MANDATE\nHVF is a sovereign administrative exchange. We provide the path for success for the well-disciplined buyer.\n\n"
-                "ARTICLE 2: REVENUE & RESIDUALS\n• Farmer Subscription: \$200/mo\n• Buyer Subscription: \$25/mo\n• Agent Residual: 10% of monthly subscription fees only.\n\n"
-                "ARTICLE 3: TRANSACTIONAL FEES\n• Platform Sales Fee: 10% gross sale price to HVF Corporate.\n• Stewardship: \$3.00/day fees are 100% Farmer retained.\n\n"
-                "ARTICLE 4: THE HUMPHREY SHIELD\nHVF offers a \$5.00/mo Mortality Guarantee covering replacement costs for livestock. This guarantee is void in cases of documented neglect.\n\n"
-                "ARTICLE 5: LOGISTICS & ORIGIN\nMandatory City/State origin data required to minimize interstate friction. Interstate compliance (CVI/DOT) is the Buyer's responsibility.\n\n"
-                "ARTICLE 6: JURISDICTION\nAll disputes shall be handled under the laws of the State of Oklahoma.\n\n"
-                "CONCLUSION: By executing this agreement, you acknowledge that wealth is generated through discipline and stewardship.\n\n"
-                "--- SCROLL TO BOTTOM TO EXECUTE ---",
-                style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.8),
+                "SECTION I: DEFINITIONS AND INTERPRETATION\n"
+                "1.1 'Platform' refers to the HVF Nexus digital ecosystem.\n"
+                "1.2 'Stewardship' refers to the physical and biological maintenance of assets on-site.\n"
+                "1.3 'Disciplined Buyer' refers to a user who adheres to the payment and logistics protocols set forth herein.\n"
+                "1.4 'Digital Vault' refers to the immutable record of deeds, CVIs, and titles.\n\n"
+                "SECTION II: THE PATH FOR SUCCESS\n"
+                "HVF provides a sovereign administrative framework for the growth of agricultural wealth. Success is a metric of discipline. Users failing to maintain stewardship payments forfeit access to the Path for Success.\n\n"
+                "SECTION III: SUBSCRIPTION INFRASTRUCTURE\n"
+                "• Farmer Node: \$200.00/mo base access fee.\n"
+                "• Buyer Node: \$25.00/mo portfolio access fee.\n"
+                "• Residual Allocation: Authorized Agents retain 10% of monthly subscription fees generated via their unique Source Code ID.\n\n"
+                "SECTION IV: TRANSACTIONAL PROTOCOLS\n"
+                "4.1 PLATFORM OVERRIDE: 10% Platform Sales Fee due to HVF Corporate on gross transaction value.\n"
+                "4.2 CARRYING COSTS: \$3.00/day stewardship fee accrued upon 'Secure' event. 100% of these fees are retained by the Farmer.\n\n"
+                "SECTION V: THE HUMPHREY SHIELD (MORTALITY GUARANTEE)\n"
+                "Optional \$5.00/mo mortality protection. Covers replacement value (Purchase Price) for death by any cause EXCEPT NEGLECT. 'Neglect' is defined as any deviation from standard HVF husbandry protocols.\n\n"
+                "SECTION VI: LOGISTICS & INTERSTATE COMPLIANCE\n"
+                "6.1 ORIGIN DATA: Mandatory City/State tags for every asset. Failure to provide origin data results in asset removal.\n"
+                "6.2 TRANSPORT: Buyer assumes all DOT, brand inspection, and CVI responsibilities for transport.\n\n"
+                "SECTION VII: FORCE MAJEURE & JURISDICTION\n"
+                "HVF is not liable for Acts of God, weather anomalies, or biological outbreaks. All disputes settled in the State of Oklahoma under Oklahoma Law.\n\n"
+                "SECTION VIII: DATA SOVEREIGNTY\n"
+                "All media uploads are the property of the Sovereign Ledger. HVF maintains perpetual rights to documentation for the purpose of provenance and historical audit.\n\n"
+                "--- END OF AGREEMENT. SCROLL FULLY TO EXECUTE ---",
+                style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8),
               ),
-              SizedBox(height: 400),
-              Text("MANDATE REVIEWED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              SizedBox(height: 600), // EXPANDED CLUTTER FOR VISUAL LENGTH
+              Text("MANDATE FULLY REVIEWED. USER IS DEEMED DISCIPLINED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
           const SizedBox(height: 20),
