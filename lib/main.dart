@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMasterBuild(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFMasterStabilized(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMasterBuild extends StatefulWidget {
-  const HVFMasterBuild({super.key});
+class HVFMasterStabilized extends StatefulWidget {
+  const HVFMasterStabilized({super.key});
   @override
-  State<HVFMasterBuild> createState() => _HVFMasterBuildState();
+  State<HVFMasterStabilized> createState() => _HVFMasterStabilizedState();
 }
 
-class _HVFMasterBuildState extends State<HVFMasterBuild> {
+class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -63,8 +63,8 @@ class _HVFMasterBuildState extends State<HVFMasterBuild> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(children: [
-          // THE HUMPHREY CREST (SYMBOLIC)
-          const Icon(Icons.Shield_outlined, color: Color(0xFFC5A059), size: 80),
+          // THE HUMPHREY CREST (SYMBOLIC - CORRECTED CASE)
+          const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 80),
           const SizedBox(height: 10),
           const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 4)),
           const Divider(color: Color(0xFFC5A059), thickness: 2, indent: 50, endIndent: 50),
@@ -262,4 +262,3 @@ class _HVFMasterBuildState extends State<HVFMasterBuild> {
       },
     );
   }
-}
