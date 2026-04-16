@@ -42,10 +42,12 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
   }
 
   Widget _buildCurrentTheater() {
-    if (view == "PRODUCER") return _producerTheater();
-    if (view == "BUYER") return _buyerTheater();
-    if (view == "CEO") return _ceoTheater();
-    return _gateTheater();
+    switch (view) {
+      case "PRODUCER": return _producerTheater();
+      case "BUYER": return _buyerTheater();
+      case "CEO": return _ceoTheater();
+      default: return _gateTheater();
+    }
   }
 
   Widget _gateTheater() {
@@ -81,13 +83,14 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
     ),
   );
 
+  // PRODUCER: ALWAYS SHOWS FORM, REGARDLESS OF DB STATUS
   Widget _producerTheater() {
     final n = TextEditingController(), v = TextEditingController(), p = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME", labelStyle: TextStyle(color: Colors.white38))),
-        TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS", labelStyle: TextStyle(color: Colors.white38))),
-        TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE", labelStyle: TextStyle(color: Colors.white38))),
+        TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
+        TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
+        TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
         const SizedBox(height: 10),
         ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
           if(n.text.isNotEmpty) {
@@ -96,58 +99,57 @@ class _HVFMasterGateState extends State<HVFMasterGate> {
           }
         }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))
       ])),
-      Expanded(child: StreamBuilder<QuerySnapshot>(
-        stream: _db.collection('enterprise_ledger').snapshots(),
-        builder: (context, snap) {
-          if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
-          return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? "Asset", style: const TextStyle(color: Colors.white)))).toList());
-        },
-      ))
+      const Padding(padding: EdgeInsets.all(10), child: Text("LOCAL MONITOR", style: TextStyle(color: Colors.white24))),
+      Expanded(child: _listStream(_db.collection('enterprise_ledger').snapshots()))
     ]);
   }
 
+  // BUYER: SHOWS LOGIN FIRST, THEN LIST
   Widget _buyerTheater() {
     final b = TextEditingController();
     if (buyerSession == null) {
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("ENTER BUYER ID", style: TextStyle(color: Colors.white, fontSize: 18)),
+        const Text("MARKET ACCESS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20)),
         const SizedBox(height: 20),
-        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center)),
+        SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter ID"))),
         const SizedBox(height: 20),
-        ElevatedButton(onPressed: () => setState(() => buyerSession = b.text), child: const Text("ACCESS MARKET"))
+        ElevatedButton(onPressed: () => setState(() => buyerSession = b.text), child: const Text("ENTER"))
       ]));
     }
-    return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
-      builder: (context, snap) {
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
-        if (snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA AVAILABLE", style: TextStyle(color: Colors.white38)));
-        return ListView(children: [
-          ListTile(title: Text("BUYER: $buyerSession", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold))),
-          ...snap.data!.docs.map((d) => Card(
-            color: const Color(0xFF1A1A1A),
-            child: ListTile(
-              title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("FMV: \$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))),
-              trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'CLAIMED', 'buyer': buyerSession}), child: const Text("SECURE")),
-            ),
-          )).toList()
-        ]);
-      },
-    );
+    return Column(children: [
+      ListTile(title: Text("SESSION: $buyerSession", style: const TextStyle(color: Colors.green))),
+      Expanded(child: _listStream(_db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots()))
+    ]);
   }
 
+  // CEO: MASTER VIEW
   Widget _ceoTheater() {
+    return Column(children: [
+      const Padding(padding: EdgeInsets.all(20), child: Text("MASTER AUDIT LOG", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18))),
+      Expanded(child: _listStream(_db.collection('enterprise_ledger').snapshots()))
+    ]);
+  }
+
+  // UNIVERSAL LIST BUILDER: PREVENTS GREY SCREEN HANGS
+  Widget _listStream(Stream<QuerySnapshot> stream) {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('enterprise_ledger').snapshots(),
+      stream: stream,
       builder: (context, snap) {
+        if (snap.hasError) return const Center(child: Text("CONNECTION TIMEOUT", style: TextStyle(color: Colors.red)));
         if (!snap.hasData) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
-        if (snap.data!.docs.isEmpty) return const Center(child: Text("LEDGER EMPTY", style: TextStyle(color: Colors.white38)));
-        return ListView(children: snap.data!.docs.map((d) => ListTile(
-          title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)),
-          subtitle: Text("STATUS: ${d['status']}", style: TextStyle(color: Colors.white38)),
-          trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()),
-        )).toList());
+        if (snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA RECORDED", style: TextStyle(color: Colors.white24)));
+        
+        return ListView(children: snap.data!.docs.map((d) {
+          final data = d.data() as Map<String, dynamic>;
+          return Card(
+            color: const Color(0xFF1A1A1A),
+            child: ListTile(
+              title: Text(data['name'] ?? "Asset", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              subtitle: Text("STATUS: ${data['status']}", style: const TextStyle(color: Colors.white38)),
+              trailing: view == "CEO" ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) : null,
+            ),
+          );
+        }).toList());
       },
     );
   }
