@@ -15,23 +15,31 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMarshalCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFLogisticsCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMarshalCore extends StatefulWidget {
-  const HVFMarshalCore({super.key});
+class HVFLogisticsCore extends StatefulWidget {
+  const HVFLogisticsCore({super.key});
   @override
-  State<HVFMarshalCore> createState() => _HVFMarshalCoreState();
+  State<HVFLogisticsCore> createState() => _HVFLogisticsCoreState();
 }
 
-class _HVFMarshalCoreState extends State<HVFMarshalCore> {
+class _HVFLogisticsCoreState extends State<HVFLogisticsCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
+  
+  // LOGISTICS SELECTIONS
   String assetCategory = "LIVESTOCK";
+  String selectedState = "OK";
+  final List<String> states = [
+    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
+    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
+    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
+  ];
 
   @override
   void initState() {
@@ -65,32 +73,21 @@ class _HVFMarshalCoreState extends State<HVFMarshalCore> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
         child: Column(children: [
-          // THE HUMPHREY SEVEN-POINT BADGE (IMAGE PLACEHOLDER)
-          Container(
-            height: 180, width: 180,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: const Color(0xFFC5A059), width: 2),
-              boxShadow: [BoxShadow(color: const Color(0xFFC5A059).withOpacity(0.1), blurRadius: 40)],
-            ),
-            child: const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 140),
-          ),
+          const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 100),
           const SizedBox(height: 20),
-          const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 5)),
-          const Text("FOUNDER & CEO | J. HUMPHREY", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
+          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 5)),
+          const Text("LOGISTICS & SOVEREIGN MANDATE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
           const SizedBox(height: 30),
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v5.3.0\nTHE SEVEN-POINT MANDATE\n\n"
-                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Humphrey Seven-Point Badge is a unique, proprietary trade mark. It represents the Sovereign Seal of Provenance.\n1.2 PATENT SHIELD: All systems are protected under HVF Federal Patent Filings.\n\n"
-                "ARTICLE II: DATA CONFIDENTIALITY\nAll information—user IDs, transaction metadata, and logs—is strictly PERSONAL AND CONFIDENTIAL.\n\n"
-                "ARTICLE III: THE PATH FOR SUCCESS\nSuccess on the HVF Nexus is earned through the rigorous discipline of the buyer and the stewardship of the farmer.\n\n"
-                "ARTICLE IV: REVENUE & RESIDUALS\n• Farmer Node: \$200/mo | Buyer Node: \$25/mo\n• Platform Override: 10% Gross Sales\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
-                "ARTICLE V: THE HUMPHREY SHIELD\n\$5.00/mo mortality guarantee. Neglect voids all coverage.\n\n"
-                "ARTICLE VI: STATUTORY VENUE\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage escalation path.\n\n"
-                "--- SCROLL FULLY TO EXECUTE MANDATE ---",
+                "MASTER SERVICE AGREEMENT v5.4.0\nTHE SEVEN-POINT MANDATE\n\n"
+                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Seven-Point Badge represents the Sovereign Seal of Provenance.\n1.2 PATENT SHIELD: All systems (HelioGrid / Nexus) are patent-protected.\n\n"
+                "ARTICLE II: LOGISTICS & ORIGIN DATA\nProducers are mandated to select the correct State Node and City terminal. Failure to provide accurate origin data voids the Stewardship Guarantee.\n\n"
+                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200/mo | Buyer Node: \$25/mo\n• Platform Override: 10% Gross Sales\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
+                "ARTICLE IV: DISPUTE ESCALATION\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage path.\n\n"
+                "--- SCROLL FULLY TO EXECUTE ---",
                 style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.9, fontFamily: 'Courier'),
               ),
               SizedBox(height: 1800),
@@ -100,11 +97,7 @@ class _HVFMarshalCoreState extends State<HVFMarshalCore> {
           const SizedBox(height: 30),
           ElevatedButton(
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10,
-              minimumSize: const Size(double.infinity, 75),
-              shape: const BeveledRectangleBorder(),
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 75), shape: const BeveledRectangleBorder()),
             child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900, letterSpacing: 3)),
           )
         ]),
@@ -126,8 +119,6 @@ class _HVFMarshalCoreState extends State<HVFMarshalCore> {
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
       _gateBtn("PRODUCER UPLINK", () => _pinAuth("PRODUCER", "2026")),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
-      const SizedBox(height: 40),
-      const Text("JOHNSTON COUNTY, OKLAHOMA", style: TextStyle(color: Colors.white10, letterSpacing: 5, fontSize: 10)),
     ]));
   }
 
@@ -144,27 +135,31 @@ class _HVFMarshalCoreState extends State<HVFMarshalCore> {
 
   Widget _gateBtn(String t, VoidCallback a) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 12),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 1.5), minimumSize: const Size(320, 75), shape: const BeveledRectangleBorder()), 
-      onPressed: a, 
-      child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 13))
-    ),
+    child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 1.5), minimumSize: const Size(320, 75), shape: const BeveledRectangleBorder()), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 3, fontSize: 13))),
   );
 
   Widget _producerTerminal() {
-    final n = TextEditingController(), l = TextEditingController(), p = TextEditingController(), a = TextEditingController();
+    final n = TextEditingController(), city = TextEditingController(), p = TextEditingController(), a = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(25), decoration: const BoxDecoration(color: Color(0xFF0A0A0A), border: Border(bottom: BorderSide(color: Colors.white10))), child: Column(children: [
         Row(children: [
           Expanded(child: DropdownButton<String>(
-            dropdownColor: Colors.black, value: assetCategory, isExpanded: true, style: const TextStyle(color: Colors.white, fontSize: 12),
+            dropdownColor: Colors.black, value: assetCategory, isExpanded: true, style: const TextStyle(color: Colors.white, fontSize: 11),
             items: ["LIVESTOCK", "EQUIPMENT", "LAND", "SERVICE"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
             onChanged: (v) => setState(() => assetCategory = v!),
           )),
           const SizedBox(width: 15),
           Expanded(child: TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET IDENTITY", labelStyle: TextStyle(fontSize: 10)))),
         ]),
-        TextField(controller: l, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ORIGIN (CITY, STATE)", labelStyle: TextStyle(fontSize: 10))),
+        Row(children: [
+          Expanded(flex: 2, child: TextField(controller: city, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY TERMINAL", labelStyle: TextStyle(fontSize: 10)))),
+          const SizedBox(width: 15),
+          Expanded(child: DropdownButton<String>(
+            dropdownColor: Colors.black, value: selectedState, isExpanded: true, style: const TextStyle(color: Colors.white, fontSize: 11),
+            items: states.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            onChanged: (v) => setState(() => selectedState = v!),
+          )),
+        ]),
         Row(children: [
           Expanded(child: TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION (\$USD)", labelStyle: TextStyle(fontSize: 10)))),
           const SizedBox(width: 15),
@@ -174,14 +169,14 @@ class _HVFMarshalCoreState extends State<HVFMarshalCore> {
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 55), shape: const BeveledRectangleBorder()), 
           onPressed: () {
-            if(n.text.isNotEmpty && l.text.isNotEmpty) {
+            if(n.text.isNotEmpty && city.text.isNotEmpty) {
               double price = double.tryParse(p.text) ?? 0;
               _db.collection('sovereign_ledger').add({
-                'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
-                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
+                'category': assetCategory, 'name': n.text, 'location': "${city.text}, $selectedState", 
+                'price': price, 'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
                 'timestamp': FieldValue.serverTimestamp()
               });
-              n.clear(); l.clear(); p.clear(); a.clear();
+              n.clear(); city.clear(); p.clear(); a.clear();
             }
           }, 
           child: const Text("UPLINK TO SOVEREIGN LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 12))
