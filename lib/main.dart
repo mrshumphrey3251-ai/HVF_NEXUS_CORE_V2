@@ -142,24 +142,34 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
           TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET / LOT #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITAL DATA")),
-          TextField(controller: price, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FAIR MARKET VALUE (FMV)")),
+          TextField(controller: price, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FMV VALUE")),
           TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
           const SizedBox(height: 15),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
             onPressed: () async {
-              if (name.text.isEmpty) return;
+              if (name.text.isEmpty || double.tryParse(price.text) == null || double.parse(price.text) <= 0) {
+                 ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("INVALID FMV: ASSET NOT UPLINKED")));
+                 return;
+              }
               await _db.collection('enterprise_ledger').add({
-                'name': name.text, 'vital': data.text, 'price': double.tryParse(price.text) ?? 0.0, 'media': url.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
+                'name': name.text, 
+                'vital': data.text, 
+                'price': double.parse(price.text), 
+                'media': url.text, 
+                'sector': sector, 
+                'timestamp': FieldValue.serverTimestamp(), 
+                'status': 'AVAILABLE' // INSTANT MARKET ENTRY
               });
               name.clear(); data.clear(); price.clear(); url.clear();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(backgroundColor: Colors.green, content: Text("ASSET LIVE IN MARKETPLACE")));
             },
             child: const Text("UPLINK TO MARKET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           )
         ]),
       ),
       const Divider(color: Color(0xFFC5A059)),
-      const Padding(padding: EdgeInsets.all(8), child: Text("FARMER'S CURRENT LISTINGS", style: TextStyle(color: Colors.white38, fontSize: 10))),
+      const Padding(padding: EdgeInsets.all(8), child: Text("FARMER'S CURRENT ACTIVE LISTINGS", style: TextStyle(color: Colors.white38, fontSize: 10))),
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -193,7 +203,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           builder: (context, snap) {
             if (!snap.hasData) return const SizedBox();
             final data = snap.data!.data() as Map<String, dynamic>;
-            return Card(color: const Color(0xFF0D1F0D), margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4), child: ListTile(leading: const Icon(Icons.verified, color: Colors.green), title: Text(data['name'] ?? "", style: const TextStyle(color: Colors.white)), subtitle: Text("PURCHASE FMV: \$${data['price']}", style: const TextStyle(color: Colors.white70))));
+            return Card(color: const Color(0xFF0D1F0D), margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4), child: ListTile(leading: const Icon(Icons.verified, color: Colors.green), title: Text(data['name'] ?? ""), subtitle: Text("PURCHASE FMV: \$${data['price']}")));
           },
         )).toList(),
       ])),
@@ -218,11 +228,11 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                     subtitle: Text("FMV: \$${doc['price']}", style: TextStyle(color: sColor, fontWeight: FontWeight.bold)),
                     children: [
                       Container(padding: const EdgeInsets.all(15), color: Colors.black54, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text("FMV ASSET VALUE: \$${doc['price']}", style: const TextStyle(color: Colors.yellowAccent, fontSize: 18, fontWeight: FontWeight.bold)),
+                        Text("FMV: \$${doc['price']}", style: const TextStyle(color: Colors.yellowAccent, fontSize: 18, fontWeight: FontWeight.bold)),
                         Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white)),
                         const SizedBox(height: 15),
                         Row(children: [
-                          if (doc['media'] != null && doc['media'] != "") Expanded(child: OutlinedButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF"), style: OutlinedButton.styleFrom(foregroundColor: Colors.cyanAccent, side: const BorderSide(color: Colors.cyanAccent)))),
+                          if (doc['media'] != null && doc['media'] != "") Expanded(child: OutlinedButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF"))),
                           const SizedBox(width: 10),
                           Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () {
                             snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
