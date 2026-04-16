@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFLogisticsCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFDeepLegalCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFLogisticsCore extends StatefulWidget {
-  const HVFLogisticsCore({super.key});
+class HVFDeepLegalCore extends StatefulWidget {
+  const HVFDeepLegalCore({super.key});
   @override
-  State<HVFLogisticsCore> createState() => _HVFLogisticsCoreState();
+  State<HVFDeepLegalCore> createState() => _HVFDeepLegalCoreState();
 }
 
-class _HVFLogisticsCoreState extends State<HVFLogisticsCore> {
+class _HVFDeepLegalCoreState extends State<HVFDeepLegalCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -32,14 +32,9 @@ class _HVFLogisticsCoreState extends State<HVFLogisticsCore> {
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
   
-  // LOGISTICS SELECTIONS
   String assetCategory = "LIVESTOCK";
   String selectedState = "OK";
-  final List<String> states = [
-    "AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", 
-    "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", 
-    "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"
-  ];
+  final List<String> states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
 
   @override
   void initState() {
@@ -73,32 +68,40 @@ class _HVFLogisticsCoreState extends State<HVFLogisticsCore> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
         child: Column(children: [
-          const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 100),
-          const SizedBox(height: 20),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 5)),
-          const Text("LOGISTICS & SOVEREIGN MANDATE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
-          const SizedBox(height: 30),
+          const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 90),
+          const SizedBox(height: 15),
+          const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 5)),
+          const Text("SOVEREIGN OPERATIONS MANDATE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
+          const SizedBox(height: 25),
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v5.4.0\nTHE SEVEN-POINT MANDATE\n\n"
-                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Seven-Point Badge represents the Sovereign Seal of Provenance.\n1.2 PATENT SHIELD: All systems (HelioGrid / Nexus) are patent-protected.\n\n"
-                "ARTICLE II: LOGISTICS & ORIGIN DATA\nProducers are mandated to select the correct State Node and City terminal. Failure to provide accurate origin data voids the Stewardship Guarantee.\n\n"
-                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200/mo | Buyer Node: \$25/mo\n• Platform Override: 10% Gross Sales\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
-                "ARTICLE IV: DISPUTE ESCALATION\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage path.\n\n"
+                "MASTER SERVICE AGREEMENT v5.5.0\nTHE SEVEN-POINT MANDATE | PATENT PENDING\n\n"
+                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Humphrey Seven-Point Badge is a unique trade mark representing the Sovereign Seal of Provenance.\n1.2 PATENT PROTECTION: Systems including Nexus Core and HelioGrid are protected under federal patent filings. Unauthorized use is a federal offense.\n\n"
+                "ARTICLE II: DATA SOVEREIGNTY & CONFIDENTIALITY\nAll information processed—user data, transaction logs, and metadata—is Personal and Confidential. HVF LLC maintains exclusive ownership of the digital ledger and all associated trade secrets.\n\n"
+                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200.00/mo Access Fee.\n• Buyer Node: \$25.00/mo Portfolio Fee.\n• Platform Override: 10% Gross Sales Fee payable to HVF LLC.\n• Agent Residual: 10% Monthly Subscription Credit to the Source Agent.\n\n"
+                "ARTICLE IV: STEWARDSHIP & CARRYING COSTS\nProducers maintain assets at the 'Humphrey Standard.' A \$3.00/day stewardship fee is accrued and retained 100% by the Producer. Failure to maintain standard results in Node termination.\n\n"
+                "ARTICLE V: THE HUMPHREY SHIELD\nAn optional mortality guarantee (\$5.00/mo). Coverage warrants 100% replacement value EXCEPT IN CASES OF PROVEN NEGLECT. 'Neglect' is defined by HVF husbandry protocols.\n\n"
+                "ARTICLE VI: INTERSTATE LOGISTICS & BIOSECURITY\n6.1 ORIGIN: Mandatory City/State node selection for every asset.\n6.2 COMPLIANCE: Buyers assume all burden for DOT transport and Certificates of Veterinary Inspection (CVI). Producers warrant biological health at uplink.\n\n"
+                "ARTICLE VII: NON-CIRCUMVENTION\nUsers shall not engage in off-ledger transactions to bypass platform fees. Breach of this article results in permanent banishment and legal pursuit for lost revenue.\n\n"
+                "ARTICLE VIII: FORCE MAJEURE\nHVF LLC is held harmless for Acts of God, weather anomalies, biological outbreaks, or global logistics collapse.\n\n"
+                "ARTICLE IX: DISPUTE RESOLUTION PATHWAY\n1. EXECUTIVE REVIEW: Mandatory 15-day CEO-level negotiation.\n2. MEDIATION: Seated exclusively in Johnston County, OK.\n3. BINDING ARBITRATION: Final resolution under AAA rules. JURY TRIALS ARE EXPRESSLY WAIVED.\n\n"
+                "ARTICLE X: ELECTRONIC SIGNATURES\nExecution of this mandate is governed by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101. Digital acceptance is legally binding.\n\n"
+                "ARTICLE XI: GOVERNING LAW\nThis agreement is governed by the laws of the State of Oklahoma and the Oklahoma Agricultural Code OK Stat § 2-16.\n\n"
+                "--- END OF DEEP-LEGAL MANDATE ---\n"
                 "--- SCROLL FULLY TO EXECUTE ---",
-                style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.9, fontFamily: 'Courier'),
+                style: TextStyle(color: Colors.white70, fontSize: 11, height: 1.8, fontFamily: 'Courier'),
               ),
-              SizedBox(height: 1800),
-              Text("MANDATE VALIDATED. SOVEREIGN ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 12)),
+              SizedBox(height: 2500), // MASSIVE DENSITY SCROLL
+              Text("MANDATE FULLY REVIEWED. JURISDICTION ACCEPTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
-          const SizedBox(height: 30),
+          const SizedBox(height: 25),
           ElevatedButton(
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
-            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 75), shape: const BeveledRectangleBorder()),
-            child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900, letterSpacing: 3)),
+            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 70), shape: const BeveledRectangleBorder()),
+            child: Text("EXECUTE MANDATE", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900, letterSpacing: 3)),
           )
         ]),
       ),
@@ -275,4 +278,3 @@ class _HVFLogisticsCoreState extends State<HVFLogisticsCore> {
       },
     );
   }
-}
