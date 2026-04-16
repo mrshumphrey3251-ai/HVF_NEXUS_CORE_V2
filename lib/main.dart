@@ -16,16 +16,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFPortfolioCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFResidualCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFPortfolioCore extends StatefulWidget {
-  const HVFPortfolioCore({super.key});
+class HVFResidualCore extends StatefulWidget {
+  const HVFResidualCore({super.key});
   @override
-  State<HVFPortfolioCore> createState() => _HVFPortfolioCoreState();
+  State<HVFResidualCore> createState() => _HVFResidualCoreState();
 }
 
-class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
+class _HVFResidualCoreState extends State<HVFResidualCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -33,7 +33,7 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
   String selectedFileName = "NONE";
-  String assetCategory = "LIVESTOCK"; // DROPDOWN STATE
+  String assetCategory = "LIVESTOCK";
 
   @override
   void initState() {
@@ -80,9 +80,9 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
           const SizedBox(height: 20),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(border: Border.all(color: Colors.white10), borderRadius: BorderRadius.circular(8)),
+            decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("OFFICIAL TERMS OF USE\n\n1. ASSET VERIFICATION: HVF LLC provides the platform but does not guarantee health or provenance beyond documented records.\n\n2. CARRYING COSTS: Buyers agree to pay \$3.00/day for stewardship.\n\n3. INTERSTATE COMPLIANCE: Responsibility for legal barriers lies with the Buyer.\n\n4. DATA SOVEREIGNTY: All uploads are locked to the asset's digital ID.\n\n(SCROLL TO BOTTOM TO ACCEPT)", 
+              Text("SUBSCRIPTION & FEE PROTOCOL\n\n1. SUBSCRIPTIONS: Farmers (\$200/mo), Buyers (\$25/mo).\n\n2. AGENT RESIDUAL: 10% of monthly subscription fees.\n\n3. SALES FEE: Farmers pay 10% of gross sale price to the platform.\n\n4. STEWARDSHIP: Farmers keep 100% of the \$3.00/day fees.\n\n(SCROLL TO BOTTOM TO ACCEPT)", 
               style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.8)),
               SizedBox(height: 500),
               Text("DOCUMENT VALIDATED. ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
@@ -135,7 +135,7 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
     final n = TextEditingController(), l = TextEditingController(), p = TextEditingController(), a = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        const Text("ASSET DISPATCH", style: TextStyle(color: Color(0xFFC5A059), fontSize: 12)),
+        const Text("PRODUCER UPLINK (\$200/mo Sub)", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
         Row(children: [
           Expanded(child: DropdownButton<String>(
             dropdownColor: Colors.black, value: assetCategory, isExpanded: true, style: const TextStyle(color: Colors.white),
@@ -153,11 +153,15 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
         ]),
         const SizedBox(height: 15),
         Row(children: [
-          Expanded(child: OutlinedButton.icon(onPressed: _startNativeUpload, icon: const Icon(Icons.attach_file, color: Color(0xFFC5A059)), label: Text(selectedFileName == "NONE" ? "ATTACH" : "LINKED", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)))),
+          Expanded(child: OutlinedButton.icon(onPressed: _startNativeUpload, icon: const Icon(Icons.attach_file, color: Color(0xFFC5A059)), label: const Text("ATTACH", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)))),
           const SizedBox(width: 10),
           Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
             if(n.text.isNotEmpty) {
-              _db.collection('sovereign_ledger').add({'category': assetCategory, 'name': n.text, 'location': l.text, 'price': p.text, 'agent': a.text, 'media': selectedFileName, 'status': 'LIVE', 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()});
+              double price = double.tryParse(p.text) ?? 0;
+              _db.collection('sovereign_ledger').add({
+                'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
+                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
+              });
               n.clear(); l.clear(); p.clear(); a.clear(); setState(() => selectedFileName = "NONE");
             }
           }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
@@ -171,7 +175,7 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("BUYER ACCESS", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("BUYER ACCESS (\$25/mo Sub)", style: TextStyle(color: Color(0xFFC5A059))),
         SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center)),
         ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE"))
       ]));
@@ -188,7 +192,29 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
     );
   }
 
-  Widget _ceoTheater() => _ledgerFeed(true, "ALL");
+  Widget _ceoTheater() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('sovereign_ledger').snapshots(),
+      builder: (context, snap) {
+        double totalAUM = 0;
+        double salesFees = 0;
+        if (snap.hasData) {
+          for (var d in snap.data!.docs) {
+            totalAUM += double.tryParse(d['price'].toString()) ?? 0;
+            if(d['status'] == 'SECURED') salesFees += double.tryParse(d['platform_fee'].toString()) ?? 0;
+          }
+        }
+        return Column(children: [
+          Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), width: double.infinity, child: Column(children: [
+            Text("TOTAL ASSETS: \$${totalAUM.toStringAsFixed(0)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("ACCRIUED SALES FEES (10%): \$${salesFees.toStringAsFixed(0)}", style: const TextStyle(color: Colors.greenAccent, fontSize: 12)),
+            const Text("AGENT RESIDUAL: 10% OF SUBSCRIPTIONS", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          ])),
+          Expanded(child: _ledgerFeed(true, "ALL"))
+        ]);
+      }
+    );
+  }
 
   Widget _ledgerFeed(bool isAdmin, String filterStatus) {
     Query query = _db.collection('sovereign_ledger');
@@ -207,7 +233,7 @@ class _HVFPortfolioCoreState extends State<HVFPortfolioCore> {
             shape: RoundedRectangleBorder(side: BorderSide(color: isLive ? const Color(0xFFC5A059).withOpacity(0.3) : Colors.green.withOpacity(0.3))),
             child: ListTile(
               title: Text("${data['category']}: ${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("LOC: ${data['location']} | DOC: ${data['media']}\nSTEWARDSHIP: \$3.00/DAY", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              subtitle: Text("LOC: ${data['location']} | PLATFORM FEE: \$${data['platform_fee']}\nSTEWARDSHIP: \$3.00/DAY (FARMER KEEPS)", style: const TextStyle(color: Colors.white38, fontSize: 10)),
               trailing: isAdmin 
                 ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
                 : (isLive ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
