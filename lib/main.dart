@@ -142,7 +142,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
           TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET / LOT #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITAL DATA")),
-          TextField(controller: price, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "MARKET VALUE")),
+          TextField(controller: price, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FAIR MARKET VALUE (FMV)")),
           TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
           const SizedBox(height: 15),
           ElevatedButton(
@@ -159,6 +159,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         ]),
       ),
       const Divider(color: Color(0xFFC5A059)),
+      const Padding(padding: EdgeInsets.all(8), child: Text("FARMER'S CURRENT LISTINGS", style: TextStyle(color: Colors.white38, fontSize: 10))),
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -171,7 +172,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 return ListTile(
                   leading: Icon(_getSectorIcon(doc['sector']), color: _getSectorColor(doc['sector'])),
                   title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
-                  subtitle: Text("\$${doc['price']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                  subtitle: Text("FMV: \$${doc['price']} | DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
                 );
               },
             );
@@ -186,13 +187,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   Widget _buyer() {
     return Column(children: [
       Container(width: double.infinity, color: Colors.green.withOpacity(0.1), padding: const EdgeInsets.symmetric(vertical: 10), child: Column(children: [
-        const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.verified_user, color: Colors.green, size: 20), SizedBox(width: 8), Text("MY SECURED ASSET VAULT", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))]),
+        const Row(mainAxisAlignment: MainAxisAlignment.center, children: [Icon(Icons.verified_user, color: Colors.green, size: 20), SizedBox(width: 8), Text("MY SECURED ASSETS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold))]),
         ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
           future: _db.collection('enterprise_ledger').doc(id).get(),
           builder: (context, snap) {
             if (!snap.hasData) return const SizedBox();
             final data = snap.data!.data() as Map<String, dynamic>;
-            return Card(color: const Color(0xFF0D1F0D), margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4), child: ListTile(leading: const Icon(Icons.verified, color: Colors.green), title: Text(data['name'] ?? "", style: const TextStyle(color: Colors.white)), subtitle: Text("VALUE: \$${data['price']}", style: const TextStyle(color: Colors.white70))));
+            return Card(color: const Color(0xFF0D1F0D), margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4), child: ListTile(leading: const Icon(Icons.verified, color: Colors.green), title: Text(data['name'] ?? "", style: const TextStyle(color: Colors.white)), subtitle: Text("PURCHASE FMV: \$${data['price']}", style: const TextStyle(color: Colors.white70))));
           },
         )).toList(),
       ])),
@@ -214,9 +215,10 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                   child: ExpansionTile(
                     leading: Icon(_getSectorIcon(doc['sector']), color: sColor),
                     title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    subtitle: Text("\$${doc['price']}", style: TextStyle(color: sColor, fontWeight: FontWeight.bold)),
+                    subtitle: Text("FMV: \$${doc['price']}", style: TextStyle(color: sColor, fontWeight: FontWeight.bold)),
                     children: [
                       Container(padding: const EdgeInsets.all(15), color: Colors.black54, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text("FMV ASSET VALUE: \$${doc['price']}", style: const TextStyle(color: Colors.yellowAccent, fontSize: 18, fontWeight: FontWeight.bold)),
                         Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white)),
                         const SizedBox(height: 15),
                         Row(children: [
@@ -257,8 +259,8 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
             padding: const EdgeInsets.all(20),
             color: const Color(0xFF111111),
             child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-              _finStat("TOTAL INVENTORY", totalAvailable, Colors.orange),
-              _finStat("LIQUIDATED INCOME", totalClaimed, Colors.green),
+              _finStat("TOTAL FMV INVENTORY", totalAvailable, Colors.orange),
+              _finStat("TOTAL FMV LIQUIDATED", totalClaimed, Colors.green),
             ]),
           ),
           const Divider(color: Color(0xFFC5A059), thickness: 2),
@@ -268,29 +270,20 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               itemBuilder: (context, i) {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
                 final Color statusColor = doc['status'] == 'CLAIMED' ? Colors.green : Colors.orange;
-                final DateTime? ts = (doc['timestamp'] as Timestamp?)?.toDate();
-
                 return Card(
                   color: const Color(0xFF1A1A1A),
                   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
                   child: ExpansionTile(
                     leading: Icon(_getSectorIcon(doc['sector']), color: _getSectorColor(doc['sector'])),
                     title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    subtitle: Text("STATUS: ${doc['status']} | VALUE: \$${doc['price']}", style: TextStyle(color: statusColor, fontSize: 12)),
+                    subtitle: Text("FMV: \$${doc['price']} | STATUS: ${doc['status']}", style: TextStyle(color: statusColor, fontSize: 12)),
                     trailing: IconButton(icon: const Icon(Icons.delete_forever, color: Colors.red), onPressed: () => snap.data!.docs[i].reference.delete()),
                     children: [
-                      Container(
-                        padding: const EdgeInsets.all(15),
-                        width: double.infinity,
-                        color: Colors.black,
-                        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          const Text("AUDIT DATA", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-                          Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white70)),
-                          Text("TIMESTAMP: ${ts?.toString() ?? 'N/A'}", style: const TextStyle(color: Colors.white38, fontSize: 10)),
-                          if (doc['media'] != null && doc['media'] != "") 
-                            TextButton.icon(onPressed: () => js.context.callMethod('open', [doc['media']]), icon: const Icon(Icons.link, color: Colors.cyanAccent), label: const Text("SOURCE MEDIA")),
-                        ]),
-                      )
+                      Container(padding: const EdgeInsets.all(15), width: double.infinity, color: Colors.black, child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        const Text("FINANCIAL AUDIT", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+                        Text("ASSET FMV: \$${doc['price']}", style: const TextStyle(color: Colors.yellowAccent)),
+                        Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white70)),
+                      ])),
                     ],
                   ),
                 );
