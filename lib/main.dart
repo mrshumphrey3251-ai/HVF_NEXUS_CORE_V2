@@ -16,16 +16,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFResidualCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFResidualEngine(), debugShowCheckedModeBanner: false));
 }
 
-class HVFResidualCore extends StatefulWidget {
-  const HVFResidualCore({super.key});
+class HVFResidualEngine extends StatefulWidget {
+  const HVFResidualEngine({super.key});
   @override
-  State<HVFResidualCore> createState() => _HVFResidualCoreState();
+  State<HVFResidualEngine> createState() => _HVFResidualEngineState();
 }
 
-class _HVFResidualCoreState extends State<HVFResidualCore> {
+class _HVFResidualEngineState extends State<HVFResidualEngine> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -74,25 +74,31 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(children: [
-          const SizedBox(height: 50),
-          const Icon(Icons.gavel, color: Color(0xFFC5A059), size: 60),
-          const Text("LIABILITY SHIELD", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 20),
+          const SizedBox(height: 30),
+          const Icon(Icons.gavel, color: Color(0xFFC5A059), size: 50),
+          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 15),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("SUBSCRIPTION & FEE PROTOCOL\n\n1. SUBSCRIPTIONS: Farmers (\$200/mo), Buyers (\$25/mo).\n\n2. AGENT RESIDUAL: 10% of monthly subscription fees.\n\n3. SALES FEE: Farmers pay 10% of gross sale price to the platform.\n\n4. STEWARDSHIP: Farmers keep 100% of the \$3.00/day fees.\n\n(SCROLL TO BOTTOM TO ACCEPT)", 
-              style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.8)),
+              Text("1. REVENUE MODEL: Farmers ($200/mo), Buyers ($25/mo).\n\n"
+              "2. AGENT RESIDUAL: 10% of monthly subscriptions only. No sales commission.\n\n"
+              "3. SALES FEE: Farmer pays 10% Platform Fee to HVF Corporate on gross sale price.\n\n"
+              "4. HUMPHREY SHIELD: Optional $5.00/mo Mortality Guarantee covers replacement cost (except neglect).\n\n"
+              "5. STEWARDSHIP: Farmer retains 100% of $3.00/day fees.\n\n"
+              "6. JURISDICTION: Oklahoma Law.\n\n"
+              "(SCROLL TO BOTTOM TO EXECUTE)", 
+              style: TextStyle(color: Colors.white60, fontSize: 13, height: 1.7)),
               SizedBox(height: 500),
-              Text("DOCUMENT VALIDATED. ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              Text("AGREEMENT READY FOR EXECUTION.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
             ]),
           )),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
             style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 60)),
-            child: Text("I ACCEPT", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.bold)),
+            child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.bold)),
           )
         ]),
       ),
@@ -101,8 +107,8 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
 
   Widget _buildTheater() {
     switch (view) {
-      case "PRODUCER": return _producerTheater();
-      case "BUYER": return _buyerTheater();
+      case "PRODUCER": return _producerTerminal();
+      case "BUYER": return _buyerTerminal();
       case "CEO": return _ceoTheater();
       default: return _gate();
     }
@@ -131,11 +137,10 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
-  Widget _producerTheater() {
+  Widget _producerTerminal() {
     final n = TextEditingController(), l = TextEditingController(), p = TextEditingController(), a = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        const Text("PRODUCER UPLINK (\$200/mo Sub)", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
         Row(children: [
           Expanded(child: DropdownButton<String>(
             dropdownColor: Colors.black, value: assetCategory, isExpanded: true, style: const TextStyle(color: Colors.white),
@@ -145,7 +150,7 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Asset Identity"))),
         ]),
-        TextField(controller: l, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "City, State")),
+        TextField(controller: l, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Origin: City, State")),
         Row(children: [
           Expanded(child: TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Price (\$USD)"))),
           const SizedBox(width: 10),
@@ -153,14 +158,15 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
         ]),
         const SizedBox(height: 15),
         Row(children: [
-          Expanded(child: OutlinedButton.icon(onPressed: _startNativeUpload, icon: const Icon(Icons.attach_file, color: Color(0xFFC5A059)), label: const Text("ATTACH", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)))),
+          Expanded(child: OutlinedButton.icon(onPressed: _startNativeUpload, icon: const Icon(Icons.add_a_photo, color: Color(0xFFC5A059)), label: const Text("ATTACH", style: TextStyle(color: Color(0xFFC5A059), fontSize: 10)))),
           const SizedBox(width: 10),
           Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
-            if(n.text.isNotEmpty) {
+            if(n.text.isNotEmpty && l.text.isNotEmpty) {
               double price = double.tryParse(p.text) ?? 0;
               _db.collection('sovereign_ledger').add({
                 'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
-                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
+                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
+                'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
               });
               n.clear(); l.clear(); p.clear(); a.clear(); setState(() => selectedFileName = "NONE");
             }
@@ -175,7 +181,7 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("BUYER ACCESS (\$25/mo Sub)", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("BUYER ACCESS", style: TextStyle(color: Color(0xFFC5A059))),
         SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center)),
         ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE"))
       ]));
@@ -183,7 +189,7 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
     return DefaultTabController(
       length: 2,
       child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "MY ACQUISITIONS")]),
+        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "MY PORTFOLIO")]),
         Expanded(child: TabBarView(children: [
           _ledgerFeed(false, "LIVE"),
           _ledgerFeed(false, "SECURED")
@@ -197,18 +203,19 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
       stream: _db.collection('sovereign_ledger').snapshots(),
       builder: (context, snap) {
         double totalAUM = 0;
-        double salesFees = 0;
+        double platformSalesFees = 0;
         if (snap.hasData) {
           for (var d in snap.data!.docs) {
-            totalAUM += double.tryParse(d['price'].toString()) ?? 0;
-            if(d['status'] == 'SECURED') salesFees += double.tryParse(d['platform_fee'].toString()) ?? 0;
+            final data = d.data() as Map<String, dynamic>;
+            totalAUM += double.tryParse(data['price'].toString()) ?? 0;
+            if(data['status'] == 'SECURED') platformSalesFees += (double.tryParse(data['platform_fee'].toString()) ?? 0);
           }
         }
         return Column(children: [
           Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), width: double.infinity, child: Column(children: [
-            Text("TOTAL ASSETS: \$${totalAUM.toStringAsFixed(0)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("ACCRIUED SALES FEES (10%): \$${salesFees.toStringAsFixed(0)}", style: const TextStyle(color: Colors.greenAccent, fontSize: 12)),
-            const Text("AGENT RESIDUAL: 10% OF SUBSCRIPTIONS", style: TextStyle(color: Colors.white38, fontSize: 10)),
+            Text("TOTAL ASSETS: \$${totalAUM.toStringAsFixed(0)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.bold)),
+            Text("PLATFORM SALES REVENUE: \$${platformSalesFees.toStringAsFixed(2)}", style: const TextStyle(color: Colors.greenAccent, fontSize: 12)),
+            const Text("AGENT EARNINGS: 10% RESIDUAL ON SUBSCRIPTIONS", style: TextStyle(color: Colors.white38, fontSize: 10)),
           ])),
           Expanded(child: _ledgerFeed(true, "ALL"))
         ]);
@@ -227,16 +234,25 @@ class _HVFResidualCoreState extends State<HVFResidualCore> {
         if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA FOUND", style: TextStyle(color: Colors.white24)));
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
           final data = d.data() as Map<String, dynamic>;
-          bool isLive = data['status'] == 'LIVE';
+          bool live = data['status'] == 'LIVE';
+          bool isLS = data['category'] == 'LIVESTOCK';
+          bool shield = data['guarantee'] == true;
+
           return Card(
             color: const Color(0xFF111111),
-            shape: RoundedRectangleBorder(side: BorderSide(color: isLive ? const Color(0xFFC5A059).withOpacity(0.3) : Colors.green.withOpacity(0.3))),
+            shape: RoundedRectangleBorder(side: BorderSide(color: live ? const Color(0xFFC5A059).withOpacity(0.3) : Colors.green.withOpacity(0.3))),
             child: ListTile(
               title: Text("${data['category']}: ${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("LOC: ${data['location']} | PLATFORM FEE: \$${data['platform_fee']}\nSTEWARDSHIP: \$3.00/DAY (FARMER KEEPS)", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text("ORIGIN: ${data['location']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+                if (shield) const Text("SHIELD PROTECTED", style: TextStyle(color: Colors.cyanAccent, fontSize: 9, fontWeight: FontWeight.bold)),
+              ]),
               trailing: isAdmin 
                 ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
-                : (isLive ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
+                : Column(mainAxisSize: MainAxisSize.min, children: [
+                    if (live) ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")),
+                    if (isLS && live && !shield) TextButton(onPressed: () => d.reference.update({'guarantee': true}), child: const Text("+SHIELD (\$5)", style: TextStyle(color: Colors.cyanAccent, fontSize: 10))),
+                  ]),
             ),
           );
         }).toList());
