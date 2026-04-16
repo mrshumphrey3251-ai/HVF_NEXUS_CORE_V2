@@ -4,32 +4,17 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MaterialApp(home: HVFLaunchWrapper(), debugShowCheckedModeBanner: false));
-}
-
-class HVFLaunchWrapper extends StatelessWidget {
-  const HVFLaunchWrapper({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Firebase.initializeApp(
-        options: const FirebaseOptions(
-          apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
-          authDomain: "hvf-nexus.firebaseapp.com",
-          projectId: "hvf-nexus",
-          storageBucket: "hvf-nexus.firebasestorage.app",
-          messagingSenderId: "892263251736",
-          appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
-        ),
-      ),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) return Scaffold(body: Center(child: Text("CONNECTION ERROR: ${snapshot.error}", style: const TextStyle(color: Colors.red))));
-        if (snapshot.connectionState == ConnectionState.done) return const HVFNexusFinal();
-        return const Scaffold(backgroundColor: Colors.black, body: Center(child: CircularProgressIndicator(color: Color(0xFFC5A059))));
-      },
-    );
-  }
+  await Firebase.initializeApp(
+    options: const FirebaseOptions(
+      apiKey: "AIzaSyAPLSeGUyBXWHUDzGDTPULGnFs11EbPpO0",
+      authDomain: "hvf-nexus.firebaseapp.com",
+      projectId: "hvf-nexus",
+      storageBucket: "hvf-nexus.firebasestorage.app",
+      messagingSenderId: "892263251736",
+      appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
+    ),
+  );
+  runApp(const MaterialApp(home: HVFNexusFinal(), debugShowCheckedModeBanner: false));
 }
 
 class HVFNexusFinal extends StatefulWidget {
@@ -41,6 +26,7 @@ class HVFNexusFinal extends StatefulWidget {
 class _HVFNexusFinalState extends State<HVFNexusFinal> {
   String view = "GATE";
   String? buyerSession;
+  String errorLog = ""; // SME EMERGENCY LOG
   final _db = FirebaseFirestore.instance;
 
   void _authorize(String target, String pin) {
@@ -52,7 +38,15 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
         title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
         content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
         actions: [
-          TextButton(onPressed: () { if (c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS", style: TextStyle(color: Colors.green))),
+          TextButton(onPressed: () { 
+            if (c.text == pin) { 
+              setState(() { view = target; errorLog = ""; }); 
+              Navigator.pop(context); 
+            } else {
+              setState(() => errorLog = "INVALID PIN FOR $target");
+              Navigator.pop(context);
+            }
+          }, child: const Text("ACCESS", style: TextStyle(color: Colors.green))),
         ],
       ),
     );
@@ -65,9 +59,12 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
       appBar: AppBar(
         backgroundColor: const Color(0xFF0A0A0A),
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-        actions: [if(view != "GATE") IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red), onPressed: () => setState(() => view = "GATE"))],
+        actions: [if(view != "GATE") IconButton(icon: const Icon(Icons.power_settings_new, color: Colors.red), onPressed: () => setState(() { view = "GATE"; buyerSession = null; }))],
       ),
-      body: _buildTheater(),
+      body: Column(children: [
+        if (errorLog.isNotEmpty) Container(width: double.infinity, color: Colors.red, padding: const EdgeInsets.all(8), child: Text(errorLog, style: const TextStyle(color: Colors.white, fontSize: 10))),
+        Expanded(child: _buildTheater()),
+      ]),
     );
   }
 
@@ -106,15 +103,18 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
         TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
         TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
         const SizedBox(height: 10),
-        ElevatedButton(onPressed: () {
-          _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
-          n.clear(); v.clear(); p.clear();
+        ElevatedButton(onPressed: () async {
+          try {
+            await _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
+            n.clear(); v.clear(); p.clear();
+          } catch (e) { setState(() => errorLog = e.toString()); }
         }, child: const Text("UPLINK"))
       ])),
       Expanded(child: StreamBuilder<QuerySnapshot>(
-        stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+        stream: _db.collection('enterprise_ledger').snapshots(),
         builder: (context, snap) {
-          if (!snap.hasData) return const SizedBox();
+          if (snap.hasError) return Center(child: Text("ERROR: ${snap.error}", style: const TextStyle(color: Colors.red)));
+          if (!snap.hasData) return const Center(child: CircularProgressIndicator());
           return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)))).toList());
         },
       ))
@@ -132,6 +132,7 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
       builder: (context, snap) {
+        if (snap.hasError) return Center(child: Text("ACCESS DENIED: ${snap.error}", style: const TextStyle(color: Colors.red)));
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return ListView(children: [
           ListTile(title: Text("BUYER: $buyerSession", style: const TextStyle(color: Colors.green))),
@@ -149,6 +150,7 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('enterprise_ledger').snapshots(),
       builder: (context, snap) {
+        if (snap.hasError) return Center(child: Text("AUDIT FAILED: ${snap.error}", style: const TextStyle(color: Colors.red)));
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)),
