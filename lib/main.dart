@@ -67,7 +67,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS :: $view", style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        title: Text("HVF NEXUS CORE", style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         centerTitle: true,
       ),
       bottomNavigationBar: view == "GATE" ? null : BottomAppBar(
@@ -94,7 +94,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Icon(Icons.security, color: Color(0xFFC5A059), size: 100),
-      const SizedBox(height: 40),
+      const SizedBox(height: 50),
       _gateBtn("CEO OVERSIGHT", () => _challengePin("CEO", "1978")),
       _gateBtn("PRODUCER DECK", () => _challengePin("PRODUCER", "2026")),
       _gateBtn("BUYER MARKET", () => setState(() => view = "BUYER")),
@@ -114,17 +114,15 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     final name = TextEditingController();
     final data = TextEditingController();
     final url = TextEditingController();
-
     return Column(children: [
-      // ENTRY FORM SECTION
       Container(
         padding: const EdgeInsets.all(20),
         color: const Color(0xFF111111),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
-          TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME", labelStyle: TextStyle(color: Colors.white54))),
+          TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET / LOT #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITAL DATA")),
-          TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
+          TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL (PostImages/YT)")),
           const SizedBox(height: 15),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
@@ -139,12 +137,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           )
         ]),
       ),
-      const Divider(color: Color(0xFFC5A059), thickness: 2),
-      const Padding(
-        padding: EdgeInsets.symmetric(vertical: 8),
-        child: Text("MY CURRENT ONLINE INVENTORY", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-      ),
-      // FARMER'S VIEW SECTION
+      const Divider(color: Color(0xFFC5A059)),
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -155,12 +148,9 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               itemBuilder: (context, i) {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
                 return ListTile(
-                  leading: const Icon(Icons.check_circle, color: Colors.green),
                   title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
-                  subtitle: Text("SECTOR: ${doc['sector']} | VITAL: ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
-                  trailing: (doc['media'] != null && doc['media'] != "") 
-                    ? IconButton(icon: const Icon(Icons.link, color: Colors.cyanAccent), onPressed: () => js.context.callMethod('open', [doc['media']])) 
-                    : null,
+                  subtitle: Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                  trailing: (doc['media'] != null && doc['media'] != "") ? IconButton(icon: const Icon(Icons.link, color: Colors.cyanAccent), onPressed: () => js.context.callMethod('open', [doc['media']])) : null,
                 );
               },
             );
@@ -170,10 +160,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     ]);
   }
 
-  Widget _tab(String s) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 4),
-    child: ChoiceChip(label: Text(s), selected: sector == s, onSelected: (b) => setState(() => sector = s), selectedColor: const Color(0xFFC5A059)),
-  );
+  Widget _tab(String s) => ChoiceChip(label: Text(s), selected: sector == s, onSelected: (b) => setState(() => sector = s));
 
   Widget _buyer() {
     return StreamBuilder<QuerySnapshot>(
@@ -188,7 +175,11 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               color: const Color(0xFF1A1A1A),
               child: ListTile(
                 title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                  if (doc['media'] != null && doc['media'] != "") 
+                    TextButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent))),
+                ]),
                 trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE")),
               ),
             );
