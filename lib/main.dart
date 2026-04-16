@@ -53,12 +53,12 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
         actions: [if(view != "GATE") IconButton(icon: const Icon(Icons.logout, color: Colors.red), onPressed: () => setState(() => view = "GATE"))],
       ),
       body: StreamBuilder<QuerySnapshot>(
-        // SEARCHING PRIMARY LEDGER
         stream: _db.collection('enterprise_ledger').snapshots(),
         builder: (context, snap) {
           if (snap.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator());
           
-          final docs = snap.hasData ? snap.data!.docs : [];
+          // Hard-typing the list to satisfy the compiler
+          List<QueryDocumentSnapshot> docs = snap.hasData ? snap.data!.docs : [];
           
           if (view == "PRODUCER") return _producer(docs);
           if (view == "BUYER") return _buyer(docs);
@@ -73,7 +73,7 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       const Icon(Icons.security, color: Color(0xFFC5A059), size: 100),
       const SizedBox(height: 20),
-      Text("SIGNAL: ${count > 0 ? 'ACTIVE ($count Assets)' : 'NO DATA IN LEDGER'}", style: TextStyle(color: count > 0 ? Colors.green : Colors.red, fontSize: 12)),
+      Text("SIGNAL: ${count > 0 ? 'ACTIVE ($count Assets)' : 'NO DATA'}", style: TextStyle(color: count > 0 ? Colors.green : Colors.red, fontSize: 12)),
       const SizedBox(height: 40),
       _b("CEO COMMAND", () => _authorize("CEO", "1978")),
       _b("PRODUCER DECK", () => _authorize("PRODUCER", "2026")),
@@ -90,7 +90,6 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
     final n = TextEditingController(), v = TextEditingController(), p = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
-        const Text("NEW ASSET UPLINK", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
         TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
         TextField(controller: v, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VITALS")),
         TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FMV")),
@@ -100,11 +99,9 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
             _db.collection('enterprise_ledger').add({'name': n.text, 'vital': v.text, 'price': p.text, 'status': 'AVAILABLE'});
             n.clear(); v.clear(); p.clear();
           }
-        }, child: const Text("FORCE UPLINK"))
+        }, child: const Text("UPLINK"))
       ])),
-      const Divider(color: Color(0xFFC5A059)),
-      const Text("CURRENT LIVE INVENTORY", style: TextStyle(color: Colors.white38, fontSize: 10)),
-      Expanded(child: ListView(children: docs.map((d) => ListTile(title: Text(d['name'] ?? "Unnamed", style: const TextStyle(color: Colors.white)))).toList()))
+      Expanded(child: ListView(children: docs.where((d) => d['status'] == 'AVAILABLE').map((d) => ListTile(title: Text(d['name'] ?? "Unnamed", style: const TextStyle(color: Colors.white)))).toList()))
     ]);
   }
 
@@ -120,26 +117,19 @@ class _HVFNexusFinalState extends State<HVFNexusFinal> {
     final available = docs.where((d) => d['status'] == 'AVAILABLE').toList();
     return ListView(children: [
       ListTile(title: Text("BUYER: $buyerSession", style: const TextStyle(color: Colors.green))),
-      if (available.isEmpty) const Center(child: Text("NO ASSETS AVAILABLE FOR PURCHASE", style: TextStyle(color: Colors.white24))),
-      ...available.map((d) => Card(
-        color: const Color(0xFF1A1A1A),
-        child: ListTile(
-          title: Text(d['name'] ?? "Asset", style: const TextStyle(color: Colors.white)),
-          subtitle: Text("FMV: \$${d['price']}"),
-          trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'CLAIMED', 'buyer': buyerSession}), child: const Text("SECURE")),
-        ),
+      ...available.map((d) => ListTile(
+        title: Text(d['name'] ?? "Asset", style: const TextStyle(color: Colors.white)),
+        subtitle: Text("FMV: \$${d['price']}"),
+        trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'CLAIMED', 'buyer': buyerSession}), child: const Text("SECURE")),
       )).toList()
     ]);
   }
 
   Widget _ceo(List<QueryDocumentSnapshot> docs) {
-    return Column(children: [
-      const Padding(padding: EdgeInsets.all(10), child: Text("MASTER AUDIT: ALL DATA POINTS", style: TextStyle(color: Colors.white38))),
-      Expanded(child: ListView(children: docs.map((d) => ListTile(
-        title: Text(d['name'] ?? "No Name", style: const TextStyle(color: Colors.white)),
-        subtitle: Text("STATUS: ${d['status']}"),
-        trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()),
-      )).toList())),
-    ]);
+    return ListView(children: docs.map((d) => ListTile(
+      title: Text(d['name'] ?? "No Name", style: const TextStyle(color: Colors.white)),
+      subtitle: Text("STATUS: ${d['status']}"),
+      trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()),
+    )).toList());
   }
 }
