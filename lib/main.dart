@@ -30,7 +30,6 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   final _db = FirebaseFirestore.instance;
   List<String> securedIds = [];
 
-  // TACTICAL VISUAL MAPPING
   IconData _getSectorIcon(String? s) {
     switch (s) {
       case "LIVESTOCK": return Icons.pets;
@@ -42,7 +41,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
 
   Color _getSectorColor(String? s) {
     switch (s) {
-      case "LIVESTOCK": return const Color(0xFFC5A059); // Gold
+      case "LIVESTOCK": return const Color(0xFFC5A059);
       case "CROPS": return Colors.greenAccent;
       case "FLEET": return Colors.blueAccent;
       default: return Colors.white;
@@ -186,11 +185,22 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
 
   Widget _buyer() {
     return Column(children: [
-      if (securedIds.isNotEmpty) Container(
+      // --- SECTION 1: THE BUYER VAULT (SECURED) ---
+      Container(
+        width: double.infinity,
+        color: Colors.green.withOpacity(0.1),
         padding: const EdgeInsets.symmetric(vertical: 10),
-        color: Colors.green.withOpacity(0.05),
         child: Column(children: [
-          const Text("MY SECURED ASSETS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          const Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.verified_user, color: Colors.green, size: 20),
+            SizedBox(width: 8),
+            Text("MY SECURED ASSET VAULT", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold, letterSpacing: 1.2)),
+          ]),
+          const Text("CONFIRMED PURCHASES READY FOR LOGISTICS", style: TextStyle(color: Colors.green, fontSize: 10)),
+          if (securedIds.isEmpty) const Padding(
+            padding: EdgeInsets.all(20),
+            child: Text("NO ASSETS SECURED YET", style: TextStyle(color: Colors.white24, fontSize: 12)),
+          ),
           ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
             future: _db.collection('enterprise_ledger').doc(id).get(),
             builder: (context, snap) {
@@ -198,7 +208,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               final data = snap.data!.data() as Map<String, dynamic>;
               return Card(
                 color: const Color(0xFF0D1F0D),
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
                 child: ExpansionTile(
                   leading: Icon(_getSectorIcon(data['sector']), color: Colors.green),
                   title: Text(data['name'] ?? "SECURED", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
@@ -206,10 +216,9 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                     Padding(
                       padding: const EdgeInsets.all(15),
                       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                        Text("SECTOR: ${data['sector']}", style: const TextStyle(color: Colors.white70)),
                         Text("VITAL DATA: ${data['vital']}", style: const TextStyle(color: Colors.greenAccent, fontSize: 16)),
                         if (data['media'] != null && data['media'] != "") 
-                          TextButton(onPressed: () => js.context.callMethod('open', [data['media']]), child: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent))),
+                          TextButton(onPressed: () => js.context.callMethod('open', [data['media']]), child: const Text("VIEW FINAL PROOF", style: TextStyle(color: Colors.cyanAccent))),
                       ]),
                     )
                   ],
@@ -219,6 +228,18 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           )).toList(),
         ]),
       ),
+
+      // --- SOVEREIGN DIVIDER ---
+      Container(
+        height: 40,
+        width: double.infinity,
+        color: const Color(0xFF111111),
+        child: const Center(
+          child: Text("AVAILABLE ENTERPRISE MARKETPLACE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 14, letterSpacing: 2)),
+        ),
+      ),
+
+      // --- SECTION 2: OPEN MARKETPLACE (AVAILABLE) ---
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
@@ -233,23 +254,20 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 return Card(
                   color: const Color(0xFF1A1A1A),
                   margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                  shape: RoundedRectangleBorder(side: BorderSide(color: sColor.withOpacity(0.3), width: 1), borderRadius: BorderRadius.circular(8)),
                   child: ExpansionTile(
-                    leading: Icon(_getSectorIcon(doc['sector']), color: sColor, size: 30),
+                    leading: Icon(_getSectorIcon(doc['sector']), color: sColor),
                     title: Text(doc['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                    subtitle: Text(doc['sector'] ?? "", style: TextStyle(color: sColor.withOpacity(0.7), letterSpacing: 1.5, fontSize: 12)),
+                    subtitle: Text(doc['sector'] ?? "", style: TextStyle(color: sColor.withOpacity(0.7), fontSize: 12)),
                     children: [
                       Container(
                         padding: const EdgeInsets.all(15),
                         color: Colors.black54,
                         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text("SPECIFICATIONS", style: TextStyle(color: sColor, fontWeight: FontWeight.bold)),
-                          const SizedBox(height: 8),
                           Text("VITAL DATA: ${doc['vital']}", style: const TextStyle(color: Colors.white, fontSize: 16)),
                           const SizedBox(height: 15),
                           Row(children: [
                             if (doc['media'] != null && doc['media'] != "") 
-                              Expanded(child: OutlinedButton.icon(onPressed: () => js.context.callMethod('open', [doc['media']]), icon: const Icon(Icons.play_circle), label: const Text("VIEW PROOF"), style: OutlinedButton.styleFrom(foregroundColor: Colors.cyanAccent, side: const BorderSide(color: Colors.cyanAccent)))),
+                              Expanded(child: OutlinedButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF"), style: OutlinedButton.styleFrom(foregroundColor: Colors.cyanAccent, side: const BorderSide(color: Colors.cyanAccent)))),
                             const SizedBox(width: 10),
                             Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () {
                               snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
