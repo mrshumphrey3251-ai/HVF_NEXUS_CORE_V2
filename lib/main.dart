@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFShowroomCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFMarshalCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFShowroomCore extends StatefulWidget {
-  const HVFShowroomCore({super.key});
+class HVFMarshalCore extends StatefulWidget {
+  const HVFMarshalCore({super.key});
   @override
-  State<HVFShowroomCore> createState() => _HVFShowroomCoreState();
+  State<HVFMarshalCore> createState() => _HVFMarshalCoreState();
 }
 
-class _HVFShowroomCoreState extends State<HVFShowroomCore> {
+class _HVFMarshalCoreState extends State<HVFMarshalCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -45,48 +45,56 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAcceptedTerms) return _polishedLegalGate();
+    if (!hasAcceptedTerms) return _marshalLegalGate();
     return Scaffold(
       backgroundColor: const Color(0xFF030303),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        elevation: 0,
+        elevation: 1,
         centerTitle: true,
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4, fontSize: 16)),
-        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.grid_view_sharp, color: Color(0xFFC5A059), size: 18), onPressed: () => setState(() => view = "GATE")) : null,
+        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.shield_rounded, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
-      body: _buildPolishedTheater(),
+      body: _buildCurrentTerminal(),
     );
   }
 
-  Widget _polishedLegalGate() {
+  Widget _marshalLegalGate() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 60),
         child: Column(children: [
-          const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 90),
-          const SizedBox(height: 15),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.w900, letterSpacing: 5)),
-          const Text("EST. 2026 | SOVEREIGN EXCHANGE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
+          // THE HUMPHREY SEVEN-POINT BADGE (IMAGE PLACEHOLDER)
+          Container(
+            height: 180, width: 180,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: const Color(0xFFC5A059), width: 2),
+              boxShadow: [BoxShadow(color: const Color(0xFFC5A059).withOpacity(0.1), blurRadius: 40)],
+            ),
+            child: const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 140),
+          ),
+          const SizedBox(height: 20),
+          const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 5)),
+          const Text("FOUNDER & CEO | J. HUMPHREY", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
           const SizedBox(height: 30),
           Expanded(child: Container(
-            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.15))),
+            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v5.1.0\nPROPRIETARY & CONFIDENTIAL\n\n"
-                "ARTICLE I: PATENT PROTECTION & IP\nThis system, including the Nexus Core and HelioGrid logic, is protected under HVF Patent Filings. Unauthorized duplication is a federal offense.\n\n"
-                "ARTICLE II: DATA CONFIDENTIALITY\nAll information on this ledger is Personal and Confidential. No third-party data extraction is permitted.\n\n"
-                "ARTICLE III: THE DISCIPLINED BUYER\nHVF provides a path for success exclusively for the well-disciplined buyer. Success is contingent upon stewardship and protocol adherence.\n\n"
-                "ARTICLE IV: REVENUE INFRASTRUCTURE\n• Farmer Node: \$200/mo\n• Buyer Node: \$25/mo\n• Agent Residual: 10% Sub-Fee Credit\n• Platform Override: 10% Gross Sales Fee\n\n"
-                "ARTICLE V: THE HUMPHREY SHIELD\n\$5.00/mo Mortality Guarantee. Replacement warranted except in cases of proven neglect.\n\n"
-                "ARTICLE VI: LOGISTICS\nMandatory City/State origin verification. Buyer assumes all CVI/DOT compliance.\n\n"
-                "ARTICLE VII: DISPUTE ESCALATION\n1. Executive Review | 2. Johnston Co. Mediation | 3. Binding Arbitration. Jury Trials Waived.\n\n"
-                "--- SCROLL TO EXECUTE MANDATE ---",
+                "MASTER SERVICE AGREEMENT v5.3.0\nTHE SEVEN-POINT MANDATE\n\n"
+                "ARTICLE I: PROPRIETARY AUTHORITY\n1.1 THE CREST: The Humphrey Seven-Point Badge is a unique, proprietary trade mark. It represents the Sovereign Seal of Provenance.\n1.2 PATENT SHIELD: All systems are protected under HVF Federal Patent Filings.\n\n"
+                "ARTICLE II: DATA CONFIDENTIALITY\nAll information—user IDs, transaction metadata, and logs—is strictly PERSONAL AND CONFIDENTIAL.\n\n"
+                "ARTICLE III: THE PATH FOR SUCCESS\nSuccess on the HVF Nexus is earned through the rigorous discipline of the buyer and the stewardship of the farmer.\n\n"
+                "ARTICLE IV: REVENUE & RESIDUALS\n• Farmer Node: \$200/mo | Buyer Node: \$25/mo\n• Platform Override: 10% Gross Sales\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
+                "ARTICLE V: THE HUMPHREY SHIELD\n\$5.00/mo mortality guarantee. Neglect voids all coverage.\n\n"
+                "ARTICLE VI: STATUTORY VENUE\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage escalation path.\n\n"
+                "--- SCROLL FULLY TO EXECUTE MANDATE ---",
                 style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.9, fontFamily: 'Courier'),
               ),
-              SizedBox(height: 2000),
-              Text("MANDATE VALIDATED. PROCEED TO COMMAND.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 12)),
+              SizedBox(height: 1800),
+              Text("MANDATE VALIDATED. SOVEREIGN ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 12)),
             ]),
           )),
           const SizedBox(height: 30),
@@ -94,17 +102,17 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
             style: ElevatedButton.styleFrom(
               backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10,
-              minimumSize: const Size(double.infinity, 70),
-              shape: const BeveledRectangleBorder(), // Sharp Industrial Edges
+              minimumSize: const Size(double.infinity, 75),
+              shape: const BeveledRectangleBorder(),
             ),
-            child: Text("EXECUTE MANDATE", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900, letterSpacing: 3)),
+            child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900, letterSpacing: 3)),
           )
         ]),
       ),
     );
   }
 
-  Widget _buildPolishedTheater() {
+  Widget _buildCurrentTerminal() {
     switch (view) {
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
@@ -115,11 +123,11 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
 
   Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      _gateBtn("EXECUTIVE OVERWATCH", () => _pinAuth("CEO", "1978")),
+      _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
       _gateBtn("PRODUCER UPLINK", () => _pinAuth("PRODUCER", "2026")),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
       const SizedBox(height: 40),
-      const Text("DISCIPLINE EQUALS WEALTH", style: TextStyle(color: Colors.white10, letterSpacing: 4, fontSize: 10)),
+      const Text("JOHNSTON COUNTY, OKLAHOMA", style: TextStyle(color: Colors.white10, letterSpacing: 5, fontSize: 10)),
     ]));
   }
 
@@ -179,7 +187,7 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
           child: const Text("UPLINK TO SOVEREIGN LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 12))
         ),
       ])),
-      Expanded(child: _polishedLedger(true, "ALL"))
+      Expanded(child: _ledgerFeed(true, "ALL"))
     ]);
   }
 
@@ -187,7 +195,7 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.analytics_outlined, color: Color(0xFFC5A059), size: 50),
+        const Icon(Icons.shield_moon_outlined, color: Color(0xFFC5A059), size: 50),
         const SizedBox(height: 15),
         const Text("PATH FOR SUCCESS INITIALIZATION", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 2)),
         const SizedBox(height: 30),
@@ -199,10 +207,10 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
     return DefaultTabController(
       length: 2,
       child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 2), tabs: [Tab(text: "LIVE MARKET"), Tab(text: "MY ACQUISITIONS")]),
+        const TabBar(indicatorColor: Color(0xFFC5A059), labelStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 11, letterSpacing: 2), tabs: [Tab(text: "LIVE MARKET"), Tab(text: "MY PORTFOLIO")]),
         Expanded(child: TabBarView(children: [
-          _polishedLedger(false, "LIVE"),
-          _polishedLedger(false, "SECURED")
+          _ledgerFeed(false, "LIVE"),
+          _ledgerFeed(false, "SECURED")
         ]))
       ]),
     );
@@ -226,13 +234,13 @@ class _HVFShowroomCoreState extends State<HVFShowroomCore> {
             const SizedBox(height: 5),
             const Divider(color: Color(0xFFC5A059), thickness: 0.5, indent: 80, endIndent: 80),
           ])),
-          Expanded(child: _polishedLedger(true, "ALL"))
+          Expanded(child: _ledgerFeed(true, "ALL"))
         ]);
       }
     );
   }
 
-  Widget _polishedLedger(bool isAdmin, String filterStatus) {
+  Widget _ledgerFeed(bool isAdmin, String filterStatus) {
     Query query = _db.collection('sovereign_ledger');
     if (filterStatus == "LIVE") query = query.where('status', isEqualTo: 'LIVE');
     if (filterStatus == "SECURED") query = query.where('status', isEqualTo: 'SECURED').where('buyer', isEqualTo: buyerID);
