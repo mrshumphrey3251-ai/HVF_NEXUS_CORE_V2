@@ -92,7 +92,7 @@ class _HVFNexusV2State extends State<HVFNexusV2> {
         child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
           const Text("AUTHORIZE BUYER IDENTITY", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 18)),
           const SizedBox(height: 20),
-          TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Name or ID", hintStyle: TextStyle(color: Colors.white24), enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Colors.white24)))),
+          TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Name or ID", hintStyle: TextStyle(color: Colors.white24))),
           const SizedBox(height: 30),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green, minimumSize: const Size(200, 50)),
@@ -107,8 +107,6 @@ class _HVFNexusV2State extends State<HVFNexusV2> {
     
     return Column(children: [
       Container(padding: const EdgeInsets.all(15), color: Colors.green.withOpacity(0.1), child: Row(children: [
-        const Icon(Icons.verified_user, color: Colors.green, size: 20),
-        const SizedBox(width: 10),
         Text("BUYER: $currentBuyer", style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
         const Spacer(),
         IconButton(icon: const Icon(Icons.exit_to_app, color: Colors.red), onPressed: () => setState(() { currentBuyer = null; view = "GATE"; }))
@@ -117,7 +115,7 @@ class _HVFNexusV2State extends State<HVFNexusV2> {
         stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
         builder: (context, snap) {
           if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-          if (snap.data!.docs.isEmpty) return const Center(child: Text("NO ASSETS AVAILABLE", style: TextStyle(color: Colors.white24)));
+          if (snap.data!.docs.isEmpty) return const Center(child: Text("DATABASE EMPTY - UPLINK REQUIRED", style: TextStyle(color: Colors.white24)));
           return ListView(children: snap.data!.docs.map((d) => Card(
             color: const Color(0xFF1A1A1A), margin: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
             child: ListTile(
@@ -155,17 +153,12 @@ class _HVFNexusV2State extends State<HVFNexusV2> {
       stream: _db.collection('enterprise_ledger').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        double open = 0, closed = 0;
-        for (var d in snap.data!.docs) {
-          double p = (d['price'] ?? 0).toDouble();
-          if (d['status'] == 'AVAILABLE') open += p; else closed += p;
-        }
         return Column(children: [
-          Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround, children: [
-            Column(children: [const Text("OPEN FMV", style: TextStyle(color: Colors.white38, fontSize: 10)), Text("\$${open.toStringAsFixed(2)}", style: const TextStyle(color: Colors.orange, fontSize: 18, fontWeight: FontWeight.bold))]),
-            Column(children: [const Text("LIQUIDATED", style: TextStyle(color: Colors.white38, fontSize: 10)), Text("\$${closed.toStringAsFixed(2)}", style: const TextStyle(color: Colors.green, fontSize: 18, fontWeight: FontWeight.bold))]),
-          ])),
-          Expanded(child: ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)), subtitle: Text("STATUS: ${d['status']}"), trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()))).toList())),
+          const Padding(padding: EdgeInsets.all(10), child: Text("GLOBAL AUDIT: ALL STATUSES", style: TextStyle(color: Colors.white38))),
+          Expanded(child: ListView(children: snap.data!.docs.map((d) => ListTile(
+            title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)), 
+            subtitle: Text("STATUS: ${d['status']} | OWNER: ${d['buyer'] ?? 'None'}"), 
+            trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()))).toList())),
           IconButton(icon: const Icon(Icons.exit_to_app, color: Colors.red), onPressed: () => setState(() => view = "GATE"))
         ]);
       },
