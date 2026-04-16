@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMasterStabilized(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFMasterFinal(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMasterStabilized extends StatefulWidget {
-  const HVFMasterStabilized({super.key});
+class HVFMasterFinal extends StatefulWidget {
+  const HVFMasterFinal({super.key});
   @override
-  State<HVFMasterStabilized> createState() => _HVFMasterStabilizedState();
+  State<HVFMasterFinal> createState() => _HVFMasterFinalState();
 }
 
-class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
+class _HVFMasterFinalState extends State<HVFMasterFinal> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -63,17 +63,16 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
         child: Column(children: [
-          // THE HUMPHREY CREST (SYMBOLIC - CORRECTED CASE)
           const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 80),
           const SizedBox(height: 10),
           const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 22, fontWeight: FontWeight.w900, letterSpacing: 4)),
           const Divider(color: Color(0xFFC5A059), thickness: 2, indent: 50, endIndent: 50),
           const SizedBox(height: 20),
-          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold, letterSpacing: 1)),
+          const Text("MASTER SERVICE AGREEMENT", style: TextStyle(color: Colors.white, fontSize: 14, fontWeight: FontWeight.bold)),
           const SizedBox(height: 15),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3)), borderRadius: BorderRadius.circular(4)),
+            decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.3))),
             child: ListView(controller: _legalScroll, children: const [
               Text(
                 "ARTICLE 1: THE PLATFORM MANDATE\nHVF is a sovereign administrative exchange. We provide the path for success for the well-disciplined buyer.\n\n"
@@ -87,7 +86,7 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
                 style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.8),
               ),
               SizedBox(height: 400),
-              Text("MANDATE FULLY REVIEWED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              Text("MANDATE REVIEWED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
             ]),
           )),
           const SizedBox(height: 20),
@@ -96,7 +95,6 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
             style: ElevatedButton.styleFrom(
               backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10,
               minimumSize: const Size(double.infinity, 60),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))
             ),
             child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900)),
           )
@@ -127,7 +125,7 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF111111),
       title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059))))),
+      content: TextField(controller: c, obscureText: true, style: const TextStyle(color: Colors.white)),
       actions: [TextButton(onPressed: () { if(c.text == pin) { setState(() => view = target); Navigator.pop(context); } }, child: const Text("ACCESS", style: TextStyle(color: Color(0xFFC5A059))))],
     ));
   }
@@ -135,9 +133,9 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
   Widget _gateBtn(String t, VoidCallback a) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
     child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))), 
+      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), 
       onPressed: a, 
-      child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2))
+      child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))
     ),
   );
 
@@ -162,7 +160,7 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
         ]),
         const SizedBox(height: 15),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(0))), 
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)), 
           onPressed: () {
             if(n.text.isNotEmpty && l.text.isNotEmpty) {
               double price = double.tryParse(p.text) ?? 0;
@@ -262,3 +260,4 @@ class _HVFMasterStabilizedState extends State<HVFMasterStabilized> {
       },
     );
   }
+}
