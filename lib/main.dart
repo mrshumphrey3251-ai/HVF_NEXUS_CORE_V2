@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFHighDensityCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFStatuteCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFHighDensityCore extends StatefulWidget {
-  const HVFHighDensityCore({super.key});
+class HVFStatuteCore extends StatefulWidget {
+  const HVFStatuteCore({super.key});
   @override
-  State<HVFHighDensityCore> createState() => _HVFHighDensityCoreState();
+  State<HVFStatuteCore> createState() => _HVFStatuteCoreState();
 }
 
-class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
+class _HVFStatuteCoreState extends State<HVFStatuteCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -45,7 +45,7 @@ class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAcceptedTerms) return _sovereignLegalShield();
+    if (!hasAcceptedTerms) return _sovereignStatuteShield();
     return Scaffold(
       backgroundColor: const Color(0xFF050505),
       appBar: AppBar(
@@ -53,65 +53,62 @@ class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
         leading: view != "GATE" ? IconButton(icon: const Icon(Icons.apps, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
-      body: _buildCurrentTheater(),
+      body: _buildTheater(),
     );
   }
 
-  Widget _sovereignLegalShield() {
+  Widget _sovereignStatuteShield() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(children: [
-          const Icon(Icons.shield_outlined, color: Color(0xFFC5A059), size: 70),
+          const Icon(Icons.gavel_rounded, color: Color(0xFFC5A059), size: 60),
           const SizedBox(height: 10),
-          const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 3)),
-          const Divider(color: Color(0xFFC5A059), thickness: 1, indent: 60, endIndent: 60),
+          const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
+          const Text("STATUTORY COMPLIANCE MANDATE", style: TextStyle(color: Colors.white, fontSize: 10, letterSpacing: 1)),
           const SizedBox(height: 20),
-          const Text("MASTER SERVICE AGREEMENT & OPERATIONAL MANDATE", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 15),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, children: const [
               Text(
-                "SECTION I: DEFINITIONS AND INTERPRETATION\n"
-                "1.1 'Platform' refers to the HVF Nexus digital ecosystem.\n"
-                "1.2 'Stewardship' refers to the physical and biological maintenance of assets on-site.\n"
-                "1.3 'Disciplined Buyer' refers to a user who adheres to the payment and logistics protocols set forth herein.\n"
-                "1.4 'Digital Vault' refers to the immutable record of deeds, CVIs, and titles.\n\n"
-                "SECTION II: THE PATH FOR SUCCESS\n"
-                "HVF provides a sovereign administrative framework for the growth of agricultural wealth. Success is a metric of discipline. Users failing to maintain stewardship payments forfeit access to the Path for Success.\n\n"
-                "SECTION III: SUBSCRIPTION INFRASTRUCTURE\n"
-                "• Farmer Node: \$200.00/mo base access fee.\n"
-                "• Buyer Node: \$25.00/mo portfolio access fee.\n"
-                "• Residual Allocation: Authorized Agents retain 10% of monthly subscription fees generated via their unique Source Code ID.\n\n"
-                "SECTION IV: TRANSACTIONAL PROTOCOLS\n"
-                "4.1 PLATFORM OVERRIDE: 10% Platform Sales Fee due to HVF Corporate on gross transaction value.\n"
-                "4.2 CARRYING COSTS: \$3.00/day stewardship fee accrued upon 'Secure' event. 100% of these fees are retained by the Farmer.\n\n"
-                "SECTION V: THE HUMPHREY SHIELD (MORTALITY GUARANTEE)\n"
-                "Optional \$5.00/mo mortality protection. Covers replacement value (Purchase Price) for death by any cause EXCEPT NEGLECT. 'Neglect' is defined as any deviation from standard HVF husbandry protocols.\n\n"
-                "SECTION VI: LOGISTICS & INTERSTATE COMPLIANCE\n"
-                "6.1 ORIGIN DATA: Mandatory City/State tags for every asset. Failure to provide origin data results in asset removal.\n"
-                "6.2 TRANSPORT: Buyer assumes all DOT, brand inspection, and CVI responsibilities for transport.\n\n"
-                "SECTION VII: FORCE MAJEURE & JURISDICTION\n"
-                "HVF is not liable for Acts of God, weather anomalies, or biological outbreaks. All disputes settled in the State of Oklahoma under Oklahoma Law.\n\n"
-                "SECTION VIII: DATA SOVEREIGNTY\n"
-                "All media uploads are the property of the Sovereign Ledger. HVF maintains perpetual rights to documentation for the purpose of provenance and historical audit.\n\n"
-                "--- END OF AGREEMENT. SCROLL FULLY TO EXECUTE ---",
-                style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8),
+                "MASTER SERVICE AGREEMENT v4.8.0\n\n"
+                "ARTICLE I: STATUTORY GOVERNANCE\n"
+                "1.1 OKLAHOMA AG CODE: All livestock transactions are governed by OK Stat § 2-16 (Agricultural Code). HVF warrants no health beyond the Producer's documented provenance.\n"
+                "1.2 DIGITAL EXECUTION: Execution of this agreement is governed by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101. Digital acceptance is legally equivalent to a notarized signature.\n\n"
+                "ARTICLE II: MANDATORY DISPUTE RESOLUTION PATHWAY\n"
+                "In the event of a dispute, all users irrevocably agree to the following 'HVF Escalation Path':\n"
+                "STAGE 1: EXECUTIVE REVIEW. The claimant must submit a formal written grievance to HVF Executive Command. A 15-day mandatory negotiation period shall follow.\n"
+                "STAGE 2: MEDIATION. If unresolved, parties must undergo professional mediation seated in Johnston County, OK.\n"
+                "STAGE 3: BINDING ARBITRATION. Final resolution shall be achieved via binding arbitration in Oklahoma, under the rules of the American Arbitration Association. JURY TRIALS ARE EXPRESSLY WAIVED.\n\n"
+                "ARTICLE III: THE WELL-DISCIPLINED BUYER\n"
+                "Success is a metric of discipline. Users failing to maintain stewardship payments forfeit access to the Path for Success. Wealth generation is contingent upon strict adherence to the Humphrey Standard.\n\n"
+                "ARTICLE IV: FEE SCHEDULES\n"
+                "4.1 NODES: Farmer (\$200/mo), Buyer (\$25/mo).\n"
+                "4.2 RESIDUALS: 10% of monthly node subscriptions are credited to the Agent Source Code.\n"
+                "4.3 PLATFORM FEE: 10% gross transaction value payable to HVF LLC.\n"
+                "4.4 STEWARDSHIP: \$3.00/day fees are 100% Farmer retained.\n\n"
+                "ARTICLE V: THE HUMPHREY SHIELD\n"
+                "Optional mortality guarantee (\$5.00/mo). Coverage warrants replacement value for death EXCEPT IN CASES OF NEGLECT.\n\n"
+                "ARTICLE VI: INTERSTATE LOGISTICS\n"
+                "Interstate compliance (CVI/DOT) is exclusively the Buyer's responsibility. Origin City/State data is mandatory.\n\n"
+                "ARTICLE VII: FORCE MAJEURE\n"
+                "HVF LLC is held harmless for Acts of God, weather anomalies, or biological outbreaks.\n\n"
+                "ARTICLE VIII: DATA SOVEREIGNTY\n"
+                "All media uploads are the property of the Sovereign Ledger for the purposes of historical provenance.\n\n"
+                "--- END OF STATUTORY MANDATE ---\n"
+                "--- SCROLL FULLY TO EXECUTE ---",
+                style: TextStyle(color: Colors.white70, fontSize: 11, height: 1.8),
               ),
-              SizedBox(height: 600), // EXPANDED CLUTTER FOR VISUAL LENGTH
-              Text("MANDATE FULLY REVIEWED. USER IS DEEMED DISCIPLINED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
+              SizedBox(height: 1500), // THREE-PAGE DENSITY SCROLL
+              Text("MANDATE FULLY REVIEWED. JURISDICTION ACCEPTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
           const SizedBox(height: 20),
           ElevatedButton(
             onPressed: canAccept ? () => setState(() => hasAcceptedTerms = true) : null,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10,
-              minimumSize: const Size(double.infinity, 60),
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 60)),
             child: Text("EXECUTE & ENTER", style: TextStyle(color: canAccept ? Colors.black : Colors.white24, fontWeight: FontWeight.w900)),
           )
         ]),
@@ -119,7 +116,7 @@ class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
     );
   }
 
-  Widget _buildCurrentTheater() {
+  Widget _buildTheater() {
     switch (view) {
       case "PRODUCER": return _producerTheater();
       case "BUYER": return _buyerTheater();
@@ -148,11 +145,7 @@ class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
 
   Widget _gateBtn(String t, VoidCallback a) => Padding(
     padding: const EdgeInsets.symmetric(vertical: 10),
-    child: OutlinedButton(
-      style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), 
-      onPressed: a, 
-      child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))
-    ),
+    child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
   Widget _producerTheater() {
@@ -200,7 +193,7 @@ class _HVFHighDensityCoreState extends State<HVFHighDensityCore> {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 40),
-        const Text("PATH FOR SUCCESS: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const Text("SUCCESS PATH: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Full Name", hintStyle: TextStyle(color: Colors.white24)))),
         const SizedBox(height: 20),
