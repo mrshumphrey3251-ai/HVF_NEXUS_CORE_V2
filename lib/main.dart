@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:js' as js;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,24 +28,6 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   String sector = "LIVESTOCK";
   String? currentBuyerId; 
   final _db = FirebaseFirestore.instance;
-
-  IconData _getSectorIcon(String? s) {
-    switch (s) {
-      case "LIVESTOCK": return Icons.pets;
-      case "CROPS": return Icons.eco;
-      case "FLEET": return Icons.agriculture;
-      default: return Icons.inventory;
-    }
-  }
-
-  Color _getSectorColor(String? s) {
-    switch (s) {
-      case "LIVESTOCK": return const Color(0xFFC5A059);
-      case "CROPS": return Colors.greenAccent;
-      case "FLEET": return Colors.blueAccent;
-      default: return Colors.white;
-    }
-  }
 
   void _challengePin(String targetView, String correctPin) {
     TextEditingController pinCtrl = TextEditingController();
@@ -94,18 +75,16 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           label: const Text("LOCK & EXIT", style: TextStyle(color: Colors.white)),
         ),
       ),
-      body: _buildCurrentTheater(),
+      body: _buildTheater(),
     );
   }
 
-  Widget _buildCurrentTheater() {
-    switch (view) {
-      case "PRODUCER": return _producer();
-      case "BUYER": return _buyer();
-      case "CEO": return _ceo();
-      case "LOGISTICS": return _logistics();
-      default: return _gate();
-    }
+  Widget _buildTheater() {
+    if (view == "PRODUCER") return _producer();
+    if (view == "BUYER") return _buyer();
+    if (view == "CEO") return _ceo();
+    if (view == "LOGISTICS") return _logistics();
+    return _gate();
   }
 
   Widget _gate() {
@@ -137,24 +116,18 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     final data = TextEditingController();
     final price = TextEditingController();
     final loc = TextEditingController();
-    final url = TextEditingController();
     return Column(children: [
       Container(
         padding: const EdgeInsets.all(20),
         color: const Color(0xFF111111),
         child: Column(children: [
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-            ChoiceChip(label: const Text("LIVESTOCK"), selected: sector == "LIVESTOCK", onSelected: (b) => setState(() => sector = "LIVESTOCK")),
-            const SizedBox(width: 5),
-            ChoiceChip(label: const Text("CROPS"), selected: sector == "CROPS", onSelected: (b) => setState(() => sector = "CROPS")),
-            const SizedBox(width: 5),
-            ChoiceChip(label: const Text("FLEET"), selected: sector == "FLEET", onSelected: (b) => setState(() => sector = "FLEET"))
+            _pChip("LIVESTOCK"), _pChip("CROPS"), _pChip("FLEET")
           ]),
           TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITALS")),
           TextField(controller: price, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FMV")),
-          TextField(controller: loc, style: const TextStyle(color: Colors.orange), decoration: const InputDecoration(labelText: "GPS (Internal)")),
-          TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
+          TextField(controller: loc, style: const TextStyle(color: Colors.orange), decoration: const InputDecoration(labelText: "GPS")),
           const SizedBox(height: 15),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
@@ -162,9 +135,9 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
               if (name.text.isEmpty) return;
               await _db.collection('enterprise_ledger').add({
                 'name': name.text, 'vital': data.text, 'price': double.tryParse(price.text) ?? 0.0, 'location': loc.text,
-                'media': url.text, 'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
+                'sector': sector, 'timestamp': FieldValue.serverTimestamp(), 'status': 'AVAILABLE'
               });
-              name.clear(); data.clear(); price.clear(); loc.clear(); url.clear();
+              name.clear(); data.clear(); price.clear(); loc.clear();
             },
             child: const Text("UPLINK ASSET", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
           )
@@ -174,12 +147,12 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
           builder: (context, snap) {
-            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+            if (!snap.hasData) return const SizedBox();
             return ListView.builder(
               itemCount: snap.data!.docs.length,
               itemBuilder: (context, i) {
-                final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-                return ListTile(title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)));
+                final d = snap.data!.docs[i].data() as Map<String, dynamic>;
+                return ListTile(title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)));
               },
             );
           },
@@ -188,6 +161,11 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
     ]);
   }
 
+  Widget _pChip(String s) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 4),
+    child: ChoiceChip(label: Text(s), selected: sector == s, onSelected: (b) => setState(() => sector = s)),
+  );
+
   Widget _buyer() {
     final idCtrl = TextEditingController();
     return Column(children: [
@@ -195,8 +173,8 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
         padding: const EdgeInsets.all(20),
         color: const Color(0xFF1A1A1A),
         child: Column(children: [
-          const Text("AUTHORIZE BUYER IDENTITY", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          TextField(controller: idCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ENTER BUYER NAME OR ID")),
+          const Text("AUTHORIZE IDENTITY", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+          TextField(controller: idCtrl, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ENTER BUYER ID")),
           const SizedBox(height: 10),
           ElevatedButton(onPressed: () => setState(() => currentBuyerId = idCtrl.text), child: const Text("ACCESS VAULT")),
         ]),
@@ -210,14 +188,13 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
             StreamBuilder<QuerySnapshot>(
               stream: _db.collection('enterprise_ledger').where('buyer_id', isEqualTo: currentBuyerId).snapshots(),
               builder: (context, snap) {
-                if (!snap.hasData || snap.data!.docs.isEmpty) return const Text("NO SECURED ASSETS", style: TextStyle(color: Colors.white24));
+                if (!snap.hasData || snap.data!.docs.isEmpty) return const Text("NO ASSETS", style: TextStyle(color: Colors.white24));
                 return Column(children: snap.data!.docs.map((d) => ListTile(dense: true, title: Text(d['name'] ?? "", style: const TextStyle(color: Colors.white)), leading: const Icon(Icons.verified, color: Colors.green))).toList());
               },
             ),
             TextButton(onPressed: () => setState(() => currentBuyerId = null), child: const Text("LOGOUT", style: TextStyle(color: Colors.red))),
           ]),
         ),
-        const Divider(color: Color(0xFFC5A059)),
       ]),
       if (currentBuyerId != null) Expanded(
         child: StreamBuilder<QuerySnapshot>(
@@ -290,7 +267,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
                 return ListTile(
                   title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white)),
-                  subtitle: Text("STATUS: ${doc['status']} | OWNER: ${doc['buyer_id'] ?? 'NONE'}"),
+                  subtitle: Text("OWNER: ${doc['buyer_id'] ?? 'NONE'}"),
                   trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => snap.data!.docs[i].reference.delete()),
                 );
               },
