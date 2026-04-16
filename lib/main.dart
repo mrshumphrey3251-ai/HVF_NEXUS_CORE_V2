@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
+import 'dart:html' as html; // NATIVE WEB HARDWARE LINK
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,23 +16,23 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFStabilizedCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFFollowThroughCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFStabilizedCore extends StatefulWidget {
-  const HVFStabilizedCore({super.key});
+class HVFFollowThroughCore extends StatefulWidget {
+  const HVFFollowThroughCore({super.key});
   @override
-  State<HVFStabilizedCore> createState() => _HVFStabilizedCoreState();
+  State<HVFFollowThroughCore> createState() => _HVFFollowThroughCoreState();
 }
 
-class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
+class _HVFFollowThroughCoreState extends State<HVFFollowThroughCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
-  String selectedMedia = "NONE";
+  String selectedFileName = "NONE";
 
   @override
   void initState() {
@@ -43,11 +44,18 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     });
   }
 
-  // NATIVE WEB COMPATIBLE MEDIA TRIGGER
-  void _triggerNativeMedia() {
-    // This simulates the successful handshake with the OS file system
-    // for web environments to prevent compilation crashes.
-    setState(() => selectedMedia = "VERIFIED_FILE_${Random().nextInt(999)}");
+  // NATIVE FOLLOW-THROUGH: TRIGGERS ACTUAL BROWSER UPLOAD
+  void _startNativeUpload() {
+    html.FileUploadInputElement uploadInput = html.FileUploadInputElement();
+    uploadInput.accept = 'image/*,application/pdf'; // ACCEPT PHOTOS AND DEEDS
+    uploadInput.click();
+
+    uploadInput.onChange.listen((e) {
+      final files = uploadInput.files;
+      if (files!.isNotEmpty) {
+        setState(() => selectedFileName = files[0].name);
+      }
+    });
   }
 
   @override
@@ -60,7 +68,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
         leading: view != "GATE" ? IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
-      body: _buildCurrentTheater(),
+      body: _buildTheater(),
     );
   }
 
@@ -78,7 +86,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: Colors.white10), borderRadius: BorderRadius.circular(8)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("OFFICIAL TERMS OF USE\n\n1. ASSET VERIFICATION: HVF LLC provides the platform but does not guarantee livestock health or machine hours beyond documented provenance.\n\n2. JURISDICTION: This exchange operates under Oklahoma law.\n\n3. INTERSTATE COMPLIANCE: Buyers are responsible for CVI and DOT requirements for cross-state sales.\n\n4. AGENT QUOTA: 40-City mandate is verified via metadata attribution.\n\n(SCROLL TO BOTTOM TO ACCEPT)", 
+              Text("OFFICIAL TERMS OF USE\n\n1. ASSET VERIFICATION: HVF LLC provides the platform but does not guarantee livestock health or machine hours beyond documented provenance.\n\n2. CARRYING COSTS: Buyers agree to pay the farmer \$3.00/day for stewardship and growth until liquidation.\n\n3. INTERSTATE COMPLIANCE: Buyers are responsible for legal barriers when purchasing outside their state.\n\n4. DATA SOVEREIGNTY: All media uploads are locked to the asset's digital ID.\n\n(SCROLL TO BOTTOM TO ACCEPT)", 
               style: TextStyle(color: Colors.white60, fontSize: 14, height: 1.8)),
               SizedBox(height: 500),
               Text("DOCUMENT VALIDATED. ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
@@ -95,10 +103,10 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     );
   }
 
-  Widget _buildCurrentTheater() {
+  Widget _buildTheater() {
     switch (view) {
-      case "PRODUCER": return _producerTheater();
-      case "BUYER": return _buyerTheater();
+      case "PRODUCER": return _producerTerminal();
+      case "BUYER": return _buyerTerminal();
       case "CEO": return _ceoTheater();
       default: return _gate();
     }
@@ -127,7 +135,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
-  Widget _producerTheater() {
+  Widget _producerTerminal() {
     final n = TextEditingController(), l = TextEditingController(), p = TextEditingController(), a = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF111111), child: Column(children: [
@@ -141,17 +149,17 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
         const SizedBox(height: 15),
         Row(children: [
           Expanded(child: OutlinedButton.icon(
-            onPressed: _triggerNativeMedia, 
-            icon: Icon(Icons.attach_file, color: selectedMedia == "NONE" ? const Color(0xFFC5A059) : Colors.green), 
-            label: Text(selectedMedia == "NONE" ? "ATTACH PROOF" : "MEDIA LINKED", style: TextStyle(color: selectedMedia == "NONE" ? const Color(0xFFC5A059) : Colors.green, fontSize: 10))
+            onPressed: _startNativeUpload, 
+            icon: Icon(Icons.add_a_photo, color: selectedFileName == "NONE" ? const Color(0xFFC5A059) : Colors.green), 
+            label: Text(selectedFileName == "NONE" ? "ATTACH PROOF" : "LINKED: $selectedFileName", style: TextStyle(color: selectedFileName == "NONE" ? const Color(0xFFC5A059) : Colors.green, fontSize: 10))
           )),
           const SizedBox(width: 10),
           Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
             if(n.text.isNotEmpty) {
               _db.collection('sovereign_ledger').add({
-                'name': n.text, 'location': l.text, 'price': p.text, 'agent': a.text, 'media': selectedMedia, 'status': 'LIVE', 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
+                'name': n.text, 'location': l.text, 'price': p.text, 'agent': a.text, 'media': selectedFileName, 'status': 'LIVE', 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
               });
-              n.clear(); l.clear(); p.clear(); a.clear(); setState(() => selectedMedia = "NONE");
+              n.clear(); l.clear(); p.clear(); a.clear(); setState(() => selectedFileName = "NONE");
             }
           }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
         ]),
@@ -160,7 +168,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     ]);
   }
 
-  Widget _buyerTheater() {
+  Widget _buyerTerminal() {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -189,7 +197,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
             shape: RoundedRectangleBorder(side: BorderSide(color: live ? const Color(0xFFC5A059).withOpacity(0.3) : Colors.green.withOpacity(0.3))),
             child: ListTile(
               title: Text(data['name'] ?? "ASSET", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-              subtitle: Text("LOC: ${data['location']} | STATUS: ${data['status']}\nSTW-FEE: \$3.00/DAY", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              subtitle: Text("LOC: ${data['location']} | DOC: ${data['media']}\nSTEWARDSHIP: \$3.00 / DAY", style: const TextStyle(color: Colors.white38, fontSize: 10)),
               trailing: isAdmin 
                 ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
                 : (live ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
