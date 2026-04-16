@@ -165,26 +165,55 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
 
   Widget _buyer() {
     return Column(children: [
+      // UPGRADED: FULL-DETAIL SECURED ASSET VAULT
       if (securedIds.isNotEmpty) Container(
-        padding: const EdgeInsets.all(10),
-        color: Colors.green.withOpacity(0.1),
+        padding: const EdgeInsets.symmetric(vertical: 10),
+        color: Colors.green.withOpacity(0.05),
         child: Column(children: [
-          const Text("MY SECURED ASSETS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          const Text("MY SECURED ASSETS (FULL SPECS)", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 5),
           ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
             future: _db.collection('enterprise_ledger').doc(id).get(),
             builder: (context, snap) {
               if (!snap.hasData) return const SizedBox();
               final data = snap.data!.data() as Map<String, dynamic>;
-              return ListTile(
-                dense: true,
-                title: Text(data['name'] ?? "SECURED", style: const TextStyle(color: Colors.white)),
-                trailing: const Icon(Icons.verified, color: Colors.green),
+              return Card(
+                color: const Color(0xFF0D1F0D), // Darker green for owned assets
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                child: ExpansionTile(
+                  iconColor: Colors.green,
+                  collapsedIconColor: Colors.green,
+                  title: Text(data['name'] ?? "SECURED", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  leading: const Icon(Icons.verified, color: Colors.green),
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(15),
+                      width: double.infinity,
+                      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                        Text("SECTOR: ${data['sector']}", style: const TextStyle(color: Colors.white70)),
+                        Text("VITAL DATA: ${data['vital']}", style: const TextStyle(color: Colors.greenAccent, fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text("PURCHASED: ${data['timestamp']?.toDate().toString().split('.')[0] ?? 'N/A'}", style: const TextStyle(color: Colors.white38, fontSize: 12)),
+                        if (data['media'] != null && data['media'] != "") 
+                          Padding(
+                            padding: const EdgeInsets.only(top: 10),
+                            child: ElevatedButton.icon(
+                              onPressed: () => js.context.callMethod('open', [data['media']]),
+                              icon: const Icon(Icons.visibility),
+                              label: const Text("VIEW PROOF OF PURCHASE"),
+                              style: ElevatedButton.styleFrom(backgroundColor: Colors.green[700]),
+                            ),
+                          ),
+                      ]),
+                    )
+                  ],
+                ),
               );
             },
           )).toList(),
           const Divider(color: Colors.green),
         ]),
       ),
+      // MARKET FEED REMAINS BELOW
       Expanded(
         child: StreamBuilder<QuerySnapshot>(
           stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
