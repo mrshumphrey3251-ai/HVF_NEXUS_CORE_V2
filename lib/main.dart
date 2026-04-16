@@ -28,6 +28,9 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   String view = "GATE";
   String sector = "LIVESTOCK";
   final _db = FirebaseFirestore.instance;
+  
+  // Track assets secured in the current session
+  List<String> securedIds = [];
 
   void _challengePin(String targetView, String correctPin) {
     TextEditingController pinCtrl = TextEditingController();
@@ -122,7 +125,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           Row(mainAxisAlignment: MainAxisAlignment.center, children: [_tab("LIVESTOCK"), _tab("CROPS"), _tab("FLEET")]),
           TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET / LOT #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITAL DATA")),
-          TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL (PostImages/YT)")),
+          TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
           const SizedBox(height: 15),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
@@ -163,30 +166,64 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
   Widget _tab(String s) => ChoiceChip(label: Text(s), selected: sector == s, onSelected: (b) => setState(() => sector = s));
 
   Widget _buyer() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
-      builder: (context, snap) {
-        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView.builder(
-          itemCount: snap.data!.docs.length,
-          itemBuilder: (context, i) {
-            final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
-            return Card(
-              color: const Color(0xFF1A1A1A),
-              child: ListTile(
-                title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
-                  if (doc['media'] != null && doc['media'] != "") 
-                    TextButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent))),
-                ]),
-                trailing: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: Colors.green), onPressed: () => snap.data!.docs[i].reference.update({'status': 'CLAIMED'}), child: const Text("SECURE")),
-              ),
+    return Column(children: [
+      // NEW: BUYER'S SECURED VAULT
+      if (securedIds.isNotEmpty) Container(
+        padding: const EdgeInsets.all(10),
+        color: Colors.green.withOpacity(0.1),
+        child: Column(children: [
+          const Text("MY SECURED ASSETS / RECEIPTS", style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold)),
+          ...securedIds.map((id) => FutureBuilder<DocumentSnapshot>(
+            future: _db.collection('enterprise_ledger').doc(id).get(),
+            builder: (context, snap) {
+              if (!snap.hasData) return const SizedBox();
+              final data = snap.data!.data() as Map<String, dynamic>;
+              return ListTile(
+                dense: true,
+                title: Text(data['name'] ?? "SECURED", style: const TextStyle(color: Colors.white)),
+                trailing: const Icon(Icons.verified, color: Colors.green),
+              );
+            },
+          )).toList(),
+          const Divider(color: Colors.green),
+        ]),
+      ),
+      // MAIN MARKET FEED
+      Expanded(
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _db.collection('enterprise_ledger').where('status', isEqualTo: 'AVAILABLE').snapshots(),
+          builder: (context, snap) {
+            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+            return ListView.builder(
+              itemCount: snap.data!.docs.length,
+              itemBuilder: (context, i) {
+                final doc = snap.data!.docs[i].data() as Map<String, dynamic>;
+                final docId = snap.data!.docs[i].id;
+                return Card(
+                  color: const Color(0xFF1A1A1A),
+                  child: ListTile(
+                    title: Text(doc['name'] ?? "", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                    subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                      Text("${doc['sector']} | ${doc['vital']}", style: const TextStyle(color: Colors.white38)),
+                      if (doc['media'] != null && doc['media'] != "") 
+                        TextButton(onPressed: () => js.context.callMethod('open', [doc['media']]), child: const Text("VIEW PROOF", style: TextStyle(color: Colors.cyanAccent))),
+                    ]),
+                    trailing: ElevatedButton(
+                      style: ElevatedButton.styleFrom(backgroundColor: Colors.green), 
+                      onPressed: () {
+                        snap.data!.docs[i].reference.update({'status': 'CLAIMED'});
+                        setState(() => securedIds.add(docId));
+                      }, 
+                      child: const Text("SECURE")
+                    ),
+                  ),
+                );
+              },
             );
           },
-        );
-      },
-    );
+        ),
+      ),
+    ]);
   }
 
   Widget _ceo() {
