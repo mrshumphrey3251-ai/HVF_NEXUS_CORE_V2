@@ -27,7 +27,7 @@ class HVFMasterControl extends StatefulWidget {
 class _HVFMasterControlState extends State<HVFMasterControl> {
   String view = "GATE";
   String sector = "LIVESTOCK";
-  String? currentBuyerId; // Persistent ID for the session
+  String? currentBuyerId; 
   final _db = FirebaseFirestore.instance;
 
   IconData _getSectorIcon(String? s) {
@@ -62,7 +62,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           decoration: const InputDecoration(enabledBorder: UnderlineInputBorder(borderSide: BorderSide(color: Color(0xFFC5A059)))),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL", style: TextStyle(color: Colors.red))),
           TextButton(
             onPressed: () {
               if (pinCtrl.text == correctPin) {
@@ -70,7 +70,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
                 Navigator.pop(context);
               }
             },
-            child: const Text("ACCESS"),
+            child: const Text("ACCESS", style: TextStyle(color: Colors.green)),
           ),
         ],
       ),
@@ -153,7 +153,7 @@ class _HVFMasterControlState extends State<HVFMasterControl> {
           TextField(controller: name, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET #")),
           TextField(controller: data, style: const TextStyle(color: Colors.greenAccent), decoration: const InputDecoration(labelText: "VITALS")),
           TextField(controller: price, style: const TextStyle(color: Colors.yellowAccent), decoration: const InputDecoration(labelText: "FMV")),
-          TextField(controller: loc, style: const TextStyle(color: Colors.orange), decoration: const InputDecoration(labelText: "GPS (INTERNAL)")),
+          TextField(controller: loc, style: const TextStyle(color: Colors.orange), decoration: const InputDecoration(labelText: "GPS (Internal)")),
           TextField(controller: url, style: const TextStyle(color: Colors.cyanAccent), decoration: const InputDecoration(labelText: "MEDIA URL")),
           const SizedBox(height: 15),
           ElevatedButton(
