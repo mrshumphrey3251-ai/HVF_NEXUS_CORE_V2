@@ -15,23 +15,22 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFResilientCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFSteelCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFResilientCore extends StatefulWidget {
-  const HVFResilientCore({super.key});
+class HVFSteelCore extends StatefulWidget {
+  const HVFSteelCore({super.key});
   @override
-  State<HVFResilientCore> createState() => _HVFResilientCoreState();
+  State<HVFSteelCore> createState() => _HVFSteelCoreState();
 }
 
-class _HVFResilientCoreState extends State<HVFResilientCore> {
+class _HVFSteelCoreState extends State<HVFSteelCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
-  String selectedMedia = "NONE";
   String assetCategory = "LIVESTOCK";
 
   @override
@@ -44,20 +43,15 @@ class _HVFResilientCoreState extends State<HVFResilientCore> {
     });
   }
 
-  void _simulateMediaUplink() {
-    // Stable simulation to prevent compiler crashes while maintaining hardware intent
-    setState(() => selectedMedia = "IMG_${Random().nextInt(9999)}_VERIFIED.JPG");
-  }
-
   @override
   Widget build(BuildContext context) {
     if (!hasAcceptedTerms) return _legalShield();
     return Scaffold(
-      backgroundColor: const Color(0xFF080808),
+      backgroundColor: const Color(0xFF050505),
       appBar: AppBar(
         backgroundColor: Colors.black,
-        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
-        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.arrow_back_ios, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
+        title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.apps, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
       ),
       body: _buildTheater(),
     );
@@ -69,24 +63,25 @@ class _HVFResilientCoreState extends State<HVFResilientCore> {
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(children: [
-          const SizedBox(height: 30),
-          const Icon(Icons.shield_rounded, color: Color(0xFFC5A059), size: 50),
-          const Text("THE HUMPHREY STANDARD", style: TextStyle(color: Color(0xFFC5A059), fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 15),
+          const Icon(Icons.security, color: Color(0xFFC5A059), size: 50),
+          const SizedBox(height: 10),
+          const Text("THE HUMPHREY MANDATE", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 20),
           Expanded(child: Container(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(15),
             decoration: BoxDecoration(border: Border.all(color: Colors.white10)),
             child: ListView(controller: _legalScroll, children: const [
-              Text("MASTER SERVICE AGREEMENT v4.3.1\n\n"
-              "1. REVENUE: Farmers (\$200/mo), Buyers (\$25/mo). Agents earn 10% Residual.\n\n"
-              "2. DISCIPLINED BUYER: HVF provides a path to success for the well-disciplined buyer. Success requires adherence to stewardship protocols.\n\n"
-              "3. MORTALITY: \$5.00/mo Humphrey Shield covers replacement cost (except neglect).\n\n"
-              "4. FEES: Farmer pays 10% Platform Sales Fee. Farmer keeps 100% of \$3.00/day fees.\n\n"
-              "5. JURISDICTION: Oklahoma Law.\n\n"
+              Text("MASTER SERVICE AGREEMENT v4.4.0\n\n"
+              "1. DISCIPLINED BUYER: HVF provides a path to success for the well-disciplined buyer. Success is earned through stewardship.\n\n"
+              "2. SUBSCRIPTIONS: Farmer (\$200/mo), Buyer (\$25/mo). Agent Residual: 10% of subs.\n\n"
+              "3. SALES: Farmer pays 10% Platform Fee on gross sale price.\n\n"
+              "4. HUMPHREY SHIELD: Optional \$5.00/mo covers replacement cost (except neglect).\n\n"
+              "5. STEWARDSHIP: Farmer retains 100% of \$3.00/day fees.\n\n"
+              "6. JURISDICTION: Oklahoma Law.\n\n"
               "(SCROLL TO BOTTOM TO EXECUTE)", 
-              style: TextStyle(color: Colors.white60, fontSize: 13, height: 1.7)),
+              style: TextStyle(color: Colors.white70, fontSize: 13, height: 1.6)),
               SizedBox(height: 500),
-              Text("MANDATE READY FOR EXECUTION.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              Text("MANDATE VALIDATED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
             ]),
           )),
           const SizedBox(height: 20),
@@ -128,7 +123,7 @@ class _HVFResilientCoreState extends State<HVFResilientCore> {
   }
 
   Widget _gateBtn(String t, VoidCallback a) => Padding(
-    padding: const EdgeInsets.all(10),
+    padding: const EdgeInsets.symmetric(vertical: 10),
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
@@ -152,21 +147,17 @@ class _HVFResilientCoreState extends State<HVFResilientCore> {
           Expanded(child: TextField(controller: a, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "Agent Code"))),
         ]),
         const SizedBox(height: 15),
-        Row(children: [
-          Expanded(child: OutlinedButton.icon(onPressed: _simulateMediaUplink, icon: Icon(Icons.camera_alt, color: selectedMedia == "NONE" ? const Color(0xFFC5A059) : Colors.green), label: Text(selectedMedia == "NONE" ? "ATTACH PROOF" : "MEDIA LINKED", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)))),
-          const SizedBox(width: 10),
-          Expanded(child: ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), onPressed: () {
-            if(n.text.isNotEmpty && l.text.isNotEmpty) {
-              double price = double.tryParse(p.text) ?? 0;
-              _db.collection('sovereign_ledger').add({
-                'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
-                'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
-                'media': selectedMedia, 'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
-              });
-              n.clear(); l.clear(); p.clear(); a.clear(); setState(() => selectedMedia = "NONE");
-            }
-          }, child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)))),
-        ]),
+        ElevatedButton(style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)), onPressed: () {
+          if(n.text.isNotEmpty && l.text.isNotEmpty) {
+            double price = double.tryParse(p.text) ?? 0;
+            _db.collection('sovereign_ledger').add({
+              'category': assetCategory, 'name': n.text, 'location': l.text, 'price': price, 
+              'agent': a.text, 'platform_fee': price * 0.10, 'status': 'LIVE', 'guarantee': false,
+              'hash': 'HVF-${Random().nextInt(9999)}', 'timestamp': FieldValue.serverTimestamp()
+            });
+            n.clear(); l.clear(); p.clear(); a.clear();
+          }
+        }, child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))),
       ])),
       Expanded(child: _ledgerFeed(true, "ALL"))
     ]);
@@ -177,7 +168,7 @@ class _HVFResilientCoreState extends State<HVFResilientCore> {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 40),
-        const Text("SUCCESS PATH: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const Text("PATH FOR SUCCESS: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Name", hintStyle: TextStyle(color: Colors.white24)))),
         const SizedBox(height: 20),
