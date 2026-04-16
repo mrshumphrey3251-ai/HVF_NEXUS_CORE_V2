@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFStatuteCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFPatentShieldCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFStatuteCore extends StatefulWidget {
-  const HVFStatuteCore({super.key});
+class HVFPatentShieldCore extends StatefulWidget {
+  const HVFPatentShieldCore({super.key});
   @override
-  State<HVFStatuteCore> createState() => _HVFStatuteCoreState();
+  State<HVFPatentShieldCore> createState() => _HVFPatentShieldCoreState();
 }
 
-class _HVFStatuteCoreState extends State<HVFStatuteCore> {
+class _HVFPatentShieldCoreState extends State<HVFPatentShieldCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -45,7 +45,7 @@ class _HVFStatuteCoreState extends State<HVFStatuteCore> {
 
   @override
   Widget build(BuildContext context) {
-    if (!hasAcceptedTerms) return _sovereignStatuteShield();
+    if (!hasAcceptedTerms) return _sovereignPatentShield();
     return Scaffold(
       backgroundColor: const Color(0xFF050505),
       appBar: AppBar(
@@ -57,52 +57,56 @@ class _HVFStatuteCoreState extends State<HVFStatuteCore> {
     );
   }
 
-  Widget _sovereignStatuteShield() {
+  Widget _sovereignPatentShield() {
     return Scaffold(
       backgroundColor: Colors.black,
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
         child: Column(children: [
-          const Icon(Icons.gavel_rounded, color: Color(0xFFC5A059), size: 60),
+          const Icon(Icons.lock_person_outlined, color: Color(0xFFC5A059), size: 60),
           const SizedBox(height: 10),
           const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 2)),
-          const Text("STATUTORY COMPLIANCE MANDATE", style: TextStyle(color: Colors.white, fontSize: 10, letterSpacing: 1)),
+          const Text("PROPRIETARY & CONFIDENTIAL MANDATE", style: TextStyle(color: Colors.white, fontSize: 10, letterSpacing: 1)),
           const SizedBox(height: 20),
           Expanded(child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v4.8.0\n\n"
-                "ARTICLE I: STATUTORY GOVERNANCE\n"
-                "1.1 OKLAHOMA AG CODE: All livestock transactions are governed by OK Stat § 2-16 (Agricultural Code). HVF warrants no health beyond the Producer's documented provenance.\n"
-                "1.2 DIGITAL EXECUTION: Execution of this agreement is governed by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101. Digital acceptance is legally equivalent to a notarized signature.\n\n"
-                "ARTICLE II: MANDATORY DISPUTE RESOLUTION PATHWAY\n"
-                "In the event of a dispute, all users irrevocably agree to the following 'HVF Escalation Path':\n"
-                "STAGE 1: EXECUTIVE REVIEW. The claimant must submit a formal written grievance to HVF Executive Command. A 15-day mandatory negotiation period shall follow.\n"
-                "STAGE 2: MEDIATION. If unresolved, parties must undergo professional mediation seated in Johnston County, OK.\n"
-                "STAGE 3: BINDING ARBITRATION. Final resolution shall be achieved via binding arbitration in Oklahoma, under the rules of the American Arbitration Association. JURY TRIALS ARE EXPRESSLY WAIVED.\n\n"
-                "ARTICLE III: THE WELL-DISCIPLINED BUYER\n"
-                "Success is a metric of discipline. Users failing to maintain stewardship payments forfeit access to the Path for Success. Wealth generation is contingent upon strict adherence to the Humphrey Standard.\n\n"
-                "ARTICLE IV: FEE SCHEDULES\n"
-                "4.1 NODES: Farmer (\$200/mo), Buyer (\$25/mo).\n"
-                "4.2 RESIDUALS: 10% of monthly node subscriptions are credited to the Agent Source Code.\n"
-                "4.3 PLATFORM FEE: 10% gross transaction value payable to HVF LLC.\n"
-                "4.4 STEWARDSHIP: \$3.00/day fees are 100% Farmer retained.\n\n"
-                "ARTICLE V: THE HUMPHREY SHIELD\n"
-                "Optional mortality guarantee (\$5.00/mo). Coverage warrants replacement value for death EXCEPT IN CASES OF NEGLECT.\n\n"
-                "ARTICLE VI: INTERSTATE LOGISTICS\n"
-                "Interstate compliance (CVI/DOT) is exclusively the Buyer's responsibility. Origin City/State data is mandatory.\n\n"
-                "ARTICLE VII: FORCE MAJEURE\n"
-                "HVF LLC is held harmless for Acts of God, weather anomalies, or biological outbreaks.\n\n"
-                "ARTICLE VIII: DATA SOVEREIGNTY\n"
-                "All media uploads are the property of the Sovereign Ledger for the purposes of historical provenance.\n\n"
-                "--- END OF STATUTORY MANDATE ---\n"
+                "MASTER SERVICE AGREEMENT v5.0.0 (PATENT PROTECTED)\n\n"
+                "ARTICLE I: PROPRIETARY ASSETS AND INTELLECTUAL PROPERTY\n"
+                "1.1 PATENT NOTICE: The HVF Nexus Platform, its underlying logic, HelioGrid power integration, and proprietary 'Path to Success' algorithms are protected under multiple patent filings and trade secret protections. Any unauthorized reproduction, reverse engineering, or use of platform logic is a violation of Federal Patent Law.\n"
+                "1.2 DATA CONFIDENTIALITY: All information processed on this platform—including but not limited to buyer identities, transaction histories, and asset metadata—is classified as PERSONAL AND CONFIDENTIAL. Users agree that all platform interactions occur within a non-disclosure framework.\n\n"
+                "ARTICLE II: STATUTORY GOVERNANCE\n"
+                "2.1 OKLAHOMA AG CODE: Governed by OK Stat § 2-16.\n"
+                "2.2 DIGITAL EXECUTION: Governed by the UETA OK Stat § 12A-15-101.\n\n"
+                "ARTICLE III: MANDATORY DISPUTE RESOLUTION\n"
+                "STAGE 1: 15-Day Executive Review.\n"
+                "STAGE 2: Mandatory Mediation in Johnston County, OK.\n"
+                "STAGE 3: Binding Arbitration (AAA Rules). JURY TRIALS WAIVED.\n\n"
+                "ARTICLE IV: THE WELL-DISCIPLINED BUYER\n"
+                "Success is predicated on adherence to the Humphrey Standard. Discipline in payment and stewardship is the only validated path to wealth.\n\n"
+                "ARTICLE V: REVENUE & SUBSCRIPTIONS\n"
+                "• Farmer Node: \$200/mo.\n"
+                "• Buyer Node: \$25/mo.\n"
+                "• Agent Residual: 10% of monthly node subscriptions.\n"
+                "• Corporate Override: 10% Platform Sales Fee on gross price.\n\n"
+                "ARTICLE VI: THE HUMPHREY SHIELD\n"
+                "Optional mortality guarantee (\$5.00/mo). Coverage warrants replacement value EXCEPT IN CASES OF NEGLECT.\n\n"
+                "ARTICLE VII: LOGISTICS\n"
+                "Mandatory City/State origin data required. Interstate compliance (CVI/DOT) is Buyer's responsibility.\n\n"
+                "ARTICLE VIII: NON-CIRCUMVENTION\n"
+                "Users shall not circumvent the 10% platform fee. Attempting to move assets off-ledger results in immediate banishment and legal pursuit.\n\n"
+                "ARTICLE IX: FORCE MAJEURE\n"
+                "HVF LLC is held harmless for Acts of God, market volatility, or biological outbreaks.\n\n"
+                "ARTICLE X: FINALITY OF EXECUTION\n"
+                "By executing this mandate, you acknowledge the patent protections and confidentiality requirements of HVF LLC.\n\n"
+                "--- END OF PROPRIETARY MANDATE ---\n"
                 "--- SCROLL FULLY TO EXECUTE ---",
                 style: TextStyle(color: Colors.white70, fontSize: 11, height: 1.8),
               ),
-              SizedBox(height: 1500), // THREE-PAGE DENSITY SCROLL
-              Text("MANDATE FULLY REVIEWED. JURISDICTION ACCEPTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
+              SizedBox(height: 1800), // MAX DENSITY SCROLL
+              Text("MANDATE FULLY REVIEWED. PATENT PROTECTIONS ACKNOWLEDGED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
           const SizedBox(height: 20),
@@ -192,8 +196,8 @@ class _HVFStatuteCoreState extends State<HVFStatuteCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.trending_up, color: Color(0xFFC5A059), size: 40),
-        const Text("SUCCESS PATH: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const Icon(Icons.shield_moon_outlined, color: Color(0xFFC5A059), size: 40),
+        const Text("PATH FOR SUCCESS: DISCIPLINED BUYER", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
         SizedBox(width: 250, child: TextField(controller: b, style: const TextStyle(color: Colors.white), textAlign: TextAlign.center, decoration: const InputDecoration(hintText: "Enter Full Name", hintStyle: TextStyle(color: Colors.white24)))),
         const SizedBox(height: 20),
