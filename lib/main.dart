@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFUplinkCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFVaultCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFUplinkCore extends StatefulWidget {
-  const HVFUplinkCore({super.key});
+class HVFVaultCore extends StatefulWidget {
+  const HVFVaultCore({super.key});
   @override
-  State<HVFUplinkCore> createState() => _HVFUplinkCoreState();
+  State<HVFVaultCore> createState() => _HVFVaultCoreState();
 }
 
-class _HVFUplinkCoreState extends State<HVFUplinkCore> {
+class _HVFVaultCoreState extends State<HVFVaultCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -34,6 +34,7 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
   
   String assetCategory = "LIVESTOCK";
   String selectedState = "OK";
+  String mediaStatus = "NO MEDIA ATTACHED";
   final List<String> states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
 
   @override
@@ -56,9 +57,19 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
         elevation: 1,
         centerTitle: true,
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4)),
-        leading: view != "GATE" ? IconButton(icon: const Icon(Icons.apps_rounded, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")) : null,
+        // PERSISTENT RETURN BUTTON
+        leading: view != "GATE" ? IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFC5A059)), 
+          onPressed: () => setState(() => view = "GATE")
+        ) : null,
+        actions: [
+          if(view != "GATE") TextButton(
+            onPressed: () => setState(() => view = "GATE"),
+            child: const Text("EXIT", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))
+          )
+        ],
       ),
-      body: _buildCurrentInterface(),
+      body: _buildInterface(),
     );
   }
 
@@ -77,9 +88,9 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, children: const [
-              Text("MASTER SERVICE AGREEMENT v5.6.3\n\n"
+              Text("MASTER SERVICE AGREEMENT v5.7.0\n\n"
               "ARTICLE I: PROPRIETARY ASSETS\nAll data is Personal and Confidential. Protected under Federal Patent Law.\n\n"
-              "ARTICLE II: REVENUE\nFarmer: \$200/mo | Buyer: \$25/mo | 10% Platform Override.\n\n"
+              "ARTICLE II: MEDIA PROOF\nProducers must uplink digital proof (Photos/Video) to the Sovereign Ledger to verify asset health.\n\n"
               "ARTICLE III: LOGISTICS\nMandatory State/City Node selection for interstate compliance.\n\n"
               "--- SCROLL FULLY TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
@@ -98,7 +109,7 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
     );
   }
 
-  Widget _buildCurrentInterface() {
+  Widget _buildInterface() {
     switch (view) {
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
@@ -139,7 +150,7 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
   );
 
   Widget _producerTerminal() {
-    final n = TextEditingController(), city = TextEditingController(), p = TextEditingController(), a = TextEditingController();
+    final n = TextEditingController(), city = TextEditingController(), p = TextEditingController(), a = TextEditingController(), d = TextEditingController();
     return Column(children: [
       Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), child: Column(children: [
         Row(children: [
@@ -149,7 +160,7 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
             onChanged: (v) => setState(() => assetCategory = v!),
           )),
           const SizedBox(width: 10),
-          Expanded(child: TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET IDENTITY"))),
+          Expanded(child: TextField(controller: n, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME"))),
         ]),
         Row(children: [
           Expanded(flex: 2, child: TextField(controller: city, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY"))),
@@ -160,27 +171,38 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
             onChanged: (v) => setState(() => selectedState = v!),
           )),
         ]),
+        TextField(controller: d, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH & PEDIGREE DETAILS")),
         Row(children: [
-          Expanded(child: TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION"))),
+          Expanded(child: TextField(controller: p, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE"))),
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: a, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
-        const SizedBox(height: 20),
-        // THIS IS THE DIGITAL UPLINK
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50), shape: const BeveledRectangleBorder()),
-          onPressed: () {
-            if (n.text.isNotEmpty && city.text.isNotEmpty) {
-              _db.collection('sovereign_ledger').add({
-                'category': assetCategory, 'name': n.text, 'location': "${city.text}, $selectedState", 
-                'price': double.tryParse(p.text) ?? 0, 'agent': a.text, 'status': 'LIVE', 'timestamp': FieldValue.serverTimestamp()
-              });
-              n.clear(); city.clear(); p.clear(); a.clear();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET UPLINKED TO SOVEREIGN LEDGER")));
-            }
-          }, 
-          child: const Text("UPLINK TO SOVEREIGN LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
-        ),
+        const SizedBox(height: 15),
+        // MEDIA UPLINK SIMULATOR
+        Row(children: [
+          Expanded(child: OutlinedButton.icon(
+            onPressed: () => setState(() => mediaStatus = "MEDIA_HASH_${Random().nextInt(999999)}_VERIFIED"), 
+            icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)), 
+            label: Text(mediaStatus == "NO MEDIA ATTACHED" ? "ATTACH PROOF" : "ATTACHED", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10))
+          )),
+          const SizedBox(width: 10),
+          Expanded(child: ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
+            onPressed: () {
+              if (n.text.isNotEmpty && city.text.isNotEmpty) {
+                _db.collection('sovereign_ledger').add({
+                  'category': assetCategory, 'name': n.text, 'location': "${city.text}, $selectedState", 
+                  'price': double.tryParse(p.text) ?? 0, 'agent': a.text, 'details': d.text,
+                  'media': mediaStatus, 'status': 'LIVE', 'timestamp': FieldValue.serverTimestamp()
+                });
+                n.clear(); city.clear(); p.clear(); a.clear(); d.clear();
+                setState(() => mediaStatus = "NO MEDIA ATTACHED");
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET VAULTED")));
+              }
+            }, 
+            child: const Text("UPLINK", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+          )),
+        ]),
       ])),
       Expanded(child: _ledgerFeed(true, "ALL"))
     ]);
@@ -236,7 +258,11 @@ class _HVFUplinkCoreState extends State<HVFUplinkCore> {
           bool live = data['status'] == 'LIVE';
           return Card(color: const Color(0xFF0D0D0D), child: ListTile(
             title: Text("${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("${data['location']} | \$${data['price']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+            subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text("${data['location']} | \$${data['price']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+              if(data['details'] != null) Text("DETAILS: ${data['details']}", style: const TextStyle(color: Colors.white38, fontSize: 9)),
+              Text("MEDIA: ${data['media']}", style: const TextStyle(color: Colors.cyanAccent, fontSize: 8)),
+            ]),
             trailing: isAdmin ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
             : (live ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
           ));
