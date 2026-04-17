@@ -21,18 +21,19 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFCommissionCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFStewardCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFCommissionCore extends StatefulWidget {
-  const HVFCommissionCore({super.key});
+class HVFStewardCore extends StatefulWidget {
+  const HVFStewardCore({super.key});
   @override
-  State<HVFCommissionCore> createState() => _HVFCommissionCoreState();
+  State<HVFStewardCore> createState() => _HVFStewardCoreState();
 }
 
-class _HVFCommissionCoreState extends State<HVFCommissionCore> {
+class _HVFStewardCoreState extends State<HVFStewardCore> {
   bool hasAcceptedTerms = false;
   bool paymentVerified = false;
+  bool stewardVerified = false; // STEWARDSHIP AUDIT GATE
   String view = "GATE";
   String? buyerID;
   String? agentID;
@@ -40,17 +41,19 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
   
-  String assetCategory = "LIVESTOCK";
-  String selectedState = "OK";
-  String mediaStatus = "NO_MEDIA";
+  // PRODUCER STEWARDSHIP CONTROLLERS
+  final farmTaxID = TextEditingController();
+  final fsaNumber = TextEditingController();
+  final yearsOp = TextEditingController();
   
+  // ASSET CONTROLLERS
   final nC = TextEditingController();
   final cC = TextEditingController();
   final pC = TextEditingController();
   final aC = TextEditingController();
   final dC = TextEditingController();
   
-  // AGENT ONBOARDING CONTROLLERS
+  // AGENT CONTROLLERS
   final agentNameC = TextEditingController();
   final agentRegionC = TextEditingController();
 
@@ -62,15 +65,6 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
         if (!canAccept) setState(() => canAccept = true);
       }
     });
-  }
-
-  void _processPayment(double amount, String type) {
-    showDialog(context: context, builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF0A0A0A),
-      title: Text("HVF SECURE CHECKOUT: $type", style: const TextStyle(color: Color(0xFFC5A059))),
-      content: Text("TOTAL DUE: \$${amount.toStringAsFixed(2)}", style: const TextStyle(color: Colors.white70)),
-      actions: [ElevatedButton(onPressed: () { setState(() => paymentVerified = true); Navigator.pop(context); }, child: const Text("EXECUTE"))],
-    ));
   }
 
   @override
@@ -85,7 +79,7 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4)),
         leading: IconButton(
           icon: const Icon(Icons.apps_rounded, color: Color(0xFFC5A059)), 
-          onPressed: () { setState(() { view = "GATE"; paymentVerified = false; }); }
+          onPressed: () { setState(() { view = "GATE"; paymentVerified = false; stewardVerified = false; }); }
         ),
       ),
       body: _buildTheater(),
@@ -106,10 +100,10 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v6.3.0\n\n"
-              "ARTICLE I: AGENT COMMISSIONING\nAgents must be formally commissioned through the HVF Onboarding Portal. Residuals are non-transferable.\n\n"
-              "ARTICLE II: AUTONOMOUS PROTOCOLS\nStandard assets are auto-released. CEO Review is reserved for high-valuation exceptions.\n\n"
-              "ARTICLE III: FEDERAL IDENTIFICATION\nHVF LLC maintains its registration as a federal entity in Johnston County, OK.\n\n"
+              Text("MASTER SERVICE AGREEMENT v6.4.0\n\n"
+              "ARTICLE I: STEWARDSHIP VERIFICATION\nOnly vetted Producers with a valid Tax ID and FSA Number are authorized to uplink. Middlemen are strictly prohibited.\n\n"
+              "ARTICLE II: AGENT COMMISSIONING\nAgents must be formally commissioned. All residuals are tied to vetted Agent IDs.\n\n"
+              "ARTICLE III: JURISDICTION\nJohnston County, Oklahoma. All data is Proprietary and Confidential.\n\n"
               "--- SCROLL TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -132,6 +126,7 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
   }
 
   Widget _buildTheater() {
+    if (view == "PRODUCER" && !stewardVerified) return _stewardshipAudit();
     if (!paymentVerified && (view == "PRODUCER" || view == "BUYER")) {
       double fee = (view == "PRODUCER") ? FARMER_NODE_FEE : BUYER_NODE_FEE;
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
@@ -139,7 +134,7 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
         const SizedBox(height: 20),
         Text("NODE ACTIVATION REQUIRED: \$${fee.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059))),
         const SizedBox(height: 30),
-        ElevatedButton(onPressed: () => _processPayment(fee, view), child: const Text("ACTIVATE NODE")),
+        ElevatedButton(onPressed: () { setState(() => paymentVerified = true); }, child: const Text("ACTIVATE NODE")),
       ]));
     }
     switch (view) {
@@ -161,13 +156,42 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
     ]));
   }
 
+  Widget _stewardshipAudit() {
+    return Padding(
+      padding: const EdgeInsets.all(40.0),
+      child: SingleChildScrollView(
+        child: Column(children: [
+          const Icon(Icons.verified_user_outlined, color: Color(0xFFC5A059), size: 50),
+          const SizedBox(height: 20),
+          const Text("PRODUCER STEWARDSHIP AUDIT", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+          const Text("To ensure 'No Rust on the Undercarriage,' please verify your dirt time.", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          const SizedBox(height: 30),
+          TextField(controller: farmTaxID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AG TAX ID / SCHEDULE F PROOF")),
+          TextField(controller: fsaNumber, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA FARM NUMBER")),
+          TextField(controller: yearsOp, keyboardType: TextInputType.number, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "YEARS IN OPERATION")),
+          const SizedBox(height: 40),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+            onPressed: () {
+              if (farmTaxID.text.isNotEmpty && fsaNumber.text.isNotEmpty) {
+                setState(() => stewardVerified = true);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VALID TAX ID & FSA REQUIRED FOR UPLINK")));
+              }
+            }, 
+            child: const Text("VERIFY STEWARDSHIP", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+          )
+        ]),
+      ),
+    );
+  }
+
   void _agentLoginSelector() {
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
       title: const Text("AGENT PORTAL", style: TextStyle(color: Color(0xFFC5A059))),
-      content: const Text("Vetted representative access only.", style: TextStyle(color: Colors.white60)),
       actions: [
-        TextButton(onPressed: () { Navigator.pop(context); setState(() => view = "AGENT_ONBOARD"); }, child: const Text("ONBOARD NEW AGENT", style: TextStyle(color: Color(0xFFC5A059)))),
+        TextButton(onPressed: () { Navigator.pop(context); setState(() => view = "AGENT_ONBOARD"); }, child: const Text("ONBOARD NEW AGENT")),
         ElevatedButton(onPressed: () { Navigator.pop(context); _agentLogin(); }, child: const Text("LOGIN")),
       ],
     ));
@@ -201,83 +225,67 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
   Widget _agentOnboarding() {
     return Padding(
       padding: const EdgeInsets.all(40.0),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.person_add_alt_1, color: Color(0xFFC5A059), size: 50),
-        const SizedBox(height: 20),
+      child: Column(children: [
         const Text("AGENT COMMISSIONING FORM", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-        const SizedBox(height: 30),
         TextField(controller: agentNameC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FULL LEGAL NAME")),
-        TextField(controller: agentRegionC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "OPERATIONAL REGION / CITY")),
-        const SizedBox(height: 40),
-        ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
-          onPressed: () {
-            if (agentNameC.text.isNotEmpty) {
-              String newID = Random().nextInt(9999).toString().padLeft(4, '0');
-              _db.collection('commissioned_agents').add({
-                'name': agentNameC.text, 'region': agentRegionC.text, 'agent_id': newID, 'timestamp': FieldValue.serverTimestamp()
-              });
-              showDialog(context: context, builder: (context) => AlertDialog(
-                backgroundColor: Colors.black, title: const Text("COMMISSIONED SUCCESS", style: TextStyle(color: Colors.green)),
-                content: Text("AGENT ID: $newID\n\nStore this ID securely. It is your key to the residual engine."),
-                actions: [ElevatedButton(onPressed: () { Navigator.pop(context); setState(() => view = "GATE"); }, child: const Text("FINALIZE"))],
-              ));
-            }
-          }, 
-          child: const Text("ACTIVATE COMMISSION", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
-        )
+        TextField(controller: agentRegionC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "REGION")),
+        const SizedBox(height: 30),
+        ElevatedButton(onPressed: () {
+          if (agentNameC.text.isNotEmpty) {
+            String newID = Random().nextInt(9999).toString().padLeft(4, '0');
+            _db.collection('commissioned_agents').add({'name': agentNameC.text, 'region': agentRegionC.text, 'agent_id': newID});
+            setState(() => view = "GATE");
+          }
+        }, child: const Text("ACTIVATE COMMISSION"))
       ]),
     );
   }
 
   Widget _producerTerminal() {
     return SingleChildScrollView(padding: const EdgeInsets.all(20), child: Column(children: [
-        DropdownButton<String>(dropdownColor: Colors.black, value: assetCategory, isExpanded: true, style: const TextStyle(color: Colors.white), items: ["LIVESTOCK", "EQUIPMENT", "LAND", "SERVICE"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(), onChanged: (v) => setState(() => assetCategory = v!)),
         TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
         Row(children: [
           Expanded(child: TextField(controller: cC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY"))),
           const SizedBox(width: 10),
-          Expanded(child: DropdownButton<String>(dropdownColor: Colors.black, value: selectedState, isExpanded: true, style: const TextStyle(color: Colors.white), items: globalStates.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(), onChanged: (v) => setState(() => selectedState = v!))),
+          Expanded(child: DropdownButton<String>(dropdownColor: Colors.black, value: "OK", items: [const DropdownMenuItem(value: "OK", child: Text("OK"))], onChanged: (v){})),
         ]),
         TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE DETAILS")),
         Row(children: [
-          Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION"))),
+          Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE"))),
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
-        const SizedBox(height: 15),
-        OutlinedButton.icon(onPressed: () => setState(() => mediaStatus = "PROVENANCE_READY"), icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)), label: Text(mediaStatus, style: const TextStyle(color: Color(0xFFC5A059)))),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         ElevatedButton(
           style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
           onPressed: () {
             if (nC.text.isNotEmpty) {
               double price = double.tryParse(pC.text) ?? 0;
-              String initialStatus = (price >= EXECUTIVE_THRESHOLD || mediaStatus == "NO_MEDIA" || dC.text.isEmpty) ? "PENDING_SORTER" : "LIVE";
+              String initialStatus = (price >= EXECUTIVE_THRESHOLD || int.tryParse(yearsOp.text)! < 2) ? "PENDING_SORTER" : "LIVE";
               _db.collection('sovereign_ledger').add({
-                'category': assetCategory, 'name': nC.text, 'location': "${cC.text}, $selectedState", 
-                'price': price, 'agent': aC.text, 'details': dC.text,
-                'media': mediaStatus, 'status': initialStatus, 'timestamp': FieldValue.serverTimestamp()
+                'name': nC.text, 'location': "${cC.text}, OK", 'price': price, 'agent': aC.text, 'details': dC.text, 'status': initialStatus, 'steward_tax_id': farmTaxID.text
               });
-              nC.clear(); cC.clear(); pC.clear(); aC.clear(); dC.clear();
+              _resetControllers();
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(initialStatus == "LIVE" ? "UPLINK SUCCESSFUL" : "SUBMITTED FOR CEO REVIEW")));
             }
           }, 
           child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
         ),
-        const SizedBox(height: 20),
-        SizedBox(height: 200, child: _ledgerFeed("PRODUCER_VIEW", "ALL"))
     ]));
+  }
+
+  void _resetControllers() {
+    nC.clear(); cC.clear(); pC.clear(); aC.clear(); dC.clear();
   }
 
   Widget _agentTerminal() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('agent', isEqualTo: agentID).snapshots(),
       builder: (context, snap) {
-        double monthlyResidual = snap.hasData ? snap.data!.docs.where((d) => d['status'] != 'PENDING_SORTER').length * 20.0 : 0;
+        double monthlyResidual = snap.hasData ? snap.data!.docs.length * 20.0 : 0;
         return Column(children: [
           Container(padding: const EdgeInsets.all(30), color: const Color(0xFF0A0A0A), width: double.infinity, child: Column(children: [
-              Text("COMMISSIONED AGENT ID: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Text("AGENT ID: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
               Text("ACTIVE RESIDUAL: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
           ])),
           Expanded(child: _ledgerFeed("AGENT_VIEW", "ALL"))
@@ -302,30 +310,13 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
   }
 
   Widget _ceoTerminal() {
-    return DefaultTabController(length: 3, child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "SORTER"), Tab(text: "LEDGER"), Tab(text: "AGENTS")]),
+    return DefaultTabController(length: 2, child: Column(children: [
+        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "SORTER"), Tab(text: "LEDGER")]),
         Expanded(child: TabBarView(children: [
           _ledgerFeed("CEO_SORTER", "PENDING_SORTER"),
           _ledgerFeed("CEO_VIEW", "ALL"),
-          _agentMasterList(),
         ]))
     ]));
-  }
-
-  Widget _agentMasterList() {
-    return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('commissioned_agents').snapshots(),
-      builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO AGENTS COMMISSIONED", style: TextStyle(color: Colors.white10)));
-        return ListView(padding: const EdgeInsets.all(20), children: snap.data!.docs.map((d) {
-          return Card(color: const Color(0xFF0D0D0D), child: ListTile(
-            title: Text("${d['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("ID: ${d['agent_id']} | REGION: ${d['region']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-            trailing: IconButton(icon: const Icon(Icons.person_remove, color: Colors.red), onPressed: () => d.reference.delete()),
-          ));
-        }).toList());
-      },
-    );
   }
 
   Widget _ledgerFeed(String userRole, String filter) {
@@ -340,32 +331,26 @@ class _HVFCommissionCoreState extends State<HVFCommissionCore> {
         if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO DATA", style: TextStyle(color: Colors.white10)));
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
           final data = d.data() as Map<String, dynamic>;
-          bool isPending = data['status'] == 'PENDING_SORTER';
-          bool isLive = data['status'] == 'LIVE';
-
           return Card(color: const Color(0xFF0D0D0D), margin: const EdgeInsets.only(bottom: 12), child: ListTile(
-            title: Text("${data['name']} ${isPending ? '[REVIEW]' : ''}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("${data['location']} | \$${data['price']}\n${data['details']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
-            trailing: _buildActions(userRole, d, isPending, isLive),
+            title: Text("${data['name']} ${data['status'] == 'PENDING_SORTER' ? '[REVIEW]' : ''}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: Text("${data['location']} | \$${data['price']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
+            trailing: _buildActions(userRole, d, data['status'] == 'PENDING_SORTER'),
           ));
         }).toList());
       },
     );
   }
 
-  Widget _buildActions(String role, DocumentSnapshot d, bool isPending, bool isLive) {
+  Widget _buildActions(String role, DocumentSnapshot d, bool isPending) {
     if (role == "CEO_SORTER") {
       return Row(mainAxisSize: MainAxisSize.min, children: [
         IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
         IconButton(icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () => d.reference.delete()),
       ]);
     }
-    if (role == "BUYER_VIEW" && isLive) {
+    if (role == "BUYER_VIEW" && !isPending) {
       return ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE"));
     }
-    if (role == "CEO_VIEW" || role == "PRODUCER_VIEW") {
-      return IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete());
-    }
-    return isPending ? const Icon(Icons.warning_amber_rounded, color: Colors.orangeAccent) : const Icon(Icons.verified, color: Colors.green);
+    return isPending ? const Icon(Icons.warning, color: Colors.orange) : const Icon(Icons.verified, color: Colors.green);
   }
 }
