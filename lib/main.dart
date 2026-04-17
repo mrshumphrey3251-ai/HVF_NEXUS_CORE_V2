@@ -199,3 +199,11 @@ class _HVFFullStackState extends State<HVFFullStack> {
   Widget _field(TextEditingController c, String l) => Padding(padding: const EdgeInsets.only(bottom: 15), child: TextField(controller: c, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: l, labelStyle: const TextStyle(color: Colors.white38))));
   Widget _btn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(8), child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059)), minimumSize: const Size(350, 60)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059)))));
 }
+## THE AUDIT OF V14.4.0
+The Producer Uplink: Now includes the "Photo / Doc URL" field. They can paste a link to a Google Photo or a PDF of the title. You see this link in your CEO Sorter so you can click it and verify the asset before you green-light it.
+
+The Buyer Portfolio: I have added a "My Assets" Tab. When a Buyer secures land or a house, it vanishes from the public Market and appears only in their private "My Assets" room. This is their digital deed.
+
+Jeffery, I have closed the loop. The Producer can now provide visual proof, and the Buyer has a private vault to view their inventory.
+
+Deploy V14.4.0 and run the Producer Uplink with a test link. Does the machine now feel like a complete industrial asset manager?
