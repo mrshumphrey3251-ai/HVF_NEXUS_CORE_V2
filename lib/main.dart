@@ -5,9 +5,6 @@ import 'dart:math';
 
 // GLOBAL LOGISTICS & FINANCIAL CONSTANTS
 const List<String> globalStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-const double FARMER_NODE_FEE = 200.00;
-const double BUYER_NODE_FEE = 25.00;
-const double EXECUTIVE_THRESHOLD = 100000.00; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,19 +18,17 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFZeroLossCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFSafetyCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFZeroLossCore extends StatefulWidget {
-  const HVFZeroLossCore({super.key});
+class HVFSafetyCore extends StatefulWidget {
+  const HVFSafetyCore({super.key});
   @override
-  State<HVFZeroLossCore> createState() => _HVFZeroLossCoreState();
+  State<HVFSafetyCore> createState() => _HVFSafetyCoreState();
 }
 
-class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
+class _HVFSafetyCoreState extends State<HVFSafetyCore> {
   bool hasAcceptedTerms = false;
-  bool paymentVerified = false;
-  bool stewardVerified = false;
   String view = "GATE";
   String? buyerID;
   String? agentID;
@@ -49,8 +44,6 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
   final dC = TextEditingController();
   final eventCityC = TextEditingController();
   final eventDateC = TextEditingController();
-  final farmTaxID = TextEditingController();
-  final fsaNumber = TextEditingController();
 
   @override
   void initState() {
@@ -62,6 +55,33 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
     });
   }
 
+  // THE SAFETY SWITCH: CONFIRMATION MODAL
+  void _confirmDeletion(BuildContext context, VoidCallback onConfirm) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF111111),
+        shape: const BeveledRectangleBorder(side: BorderSide(color: Colors.red, width: 2)),
+        title: const Text("DESTRUCTIVE COMMAND DETECTED", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14)),
+        content: const Text("DO YOU REALLY WANT TO DELETE THIS DATA?\nThis action cannot be undone on the Sovereign Ledger.", style: TextStyle(color: Colors.white70, fontSize: 12)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context), // RETURNS TO PAGE
+            child: const Text("CANCEL", style: TextStyle(color: Colors.white38)),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+            onPressed: () {
+              onConfirm();
+              Navigator.pop(context);
+            },
+            child: const Text("YES, PERMANENTLY DELETE", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 11)),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!hasAcceptedTerms) return _marshalFederalGate();
@@ -70,11 +90,10 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       appBar: AppBar(
         backgroundColor: Colors.black,
         elevation: 2,
-        centerTitle: true,
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4)),
         leading: IconButton(
           icon: const Icon(Icons.shield_outlined, color: Color(0xFFC5A059)), 
-          onPressed: () { setState(() { view = "GATE"; paymentVerified = false; stewardVerified = false; }); }
+          onPressed: () { setState(() { view = "GATE"; }); }
         ),
       ),
       body: _buildTheater(),
@@ -95,10 +114,9 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v6.7.0\n\n"
-              "ARTICLE I: ZERO LOSS DATA POLICY\nAll nodes, once uplinked, are immutable and archived on the sovereign ledger. Loss of data is not authorized.\n\n"
-              "ARTICLE II: EXECUTIVE OVERSIGHT\nThe CEO maintains absolute authority over tour nodes, asset releases, and agent commissioning.\n\n"
-              "ARTICLE III: PRODUCER VETTING\nStrict stewardship verification required to ensure 'No Rust on the Undercarriage.'\n\n"
+              Text("MASTER SERVICE AGREEMENT v6.8.0\n\n"
+              "ARTICLE I: DESTRUCTIVE COMMAND PROTOCOL\nAll deletions require multi-stage executive verification. Data integrity is the primary directive.\n\n"
+              "ARTICLE II: SOVEREIGN SETTLEMENT\nHVF LLC maintains the final authority on all ledger modifications.\n\n"
               "--- SCROLL TO EXECUTE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -121,18 +139,8 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
   }
 
   Widget _buildTheater() {
-    if (!paymentVerified && (view == "PRODUCER" || view == "BUYER")) {
-      double fee = (view == "PRODUCER") ? FARMER_NODE_FEE : BUYER_NODE_FEE;
-      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Icon(Icons.lock_person_rounded, color: Color(0xFFC5A059), size: 60),
-        const SizedBox(height: 20),
-        Text("NODE ACTIVATION REQUIRED: \$${fee.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059))),
-        const SizedBox(height: 30),
-        ElevatedButton(onPressed: () { setState(() => paymentVerified = true); }, child: const Text("ACTIVATE NODE")),
-      ]));
-    }
     switch (view) {
-      case "PRODUCER": return _stewardCheck();
+      case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
       case "AGENT_DASHBOARD": return _agentMissionDashboard();
       case "CEO": return _ceoTerminal();
@@ -147,22 +155,6 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       _gateBtn("AGENT MISSION CONTROL", () => _vettedAgentLogin()),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
     ]));
-  }
-
-  Widget _stewardCheck() {
-    if (stewardVerified) return _producerTerminal();
-    return Padding(
-      padding: const EdgeInsets.all(40.0),
-      child: Column(children: [
-        const Icon(Icons.verified_user, color: Color(0xFFC5A059), size: 50),
-        const SizedBox(height: 20),
-        const Text("PRODUCER STEWARDSHIP AUDIT", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-        TextField(controller: farmTaxID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "TAX ID")),
-        TextField(controller: fsaNumber, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA NUMBER")),
-        const SizedBox(height: 30),
-        ElevatedButton(onPressed: () => setState(() => stewardVerified = true), child: const Text("VERIFY STEWARD")),
-      ]),
-    );
   }
 
   void _vettedAgentLogin() {
@@ -205,20 +197,26 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
         TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE")),
         const SizedBox(height: 20),
         ElevatedButton(onPressed: () {
-          _db.collection('sovereign_ledger').add({'name': nC.text, 'location': cC.text, 'price': double.parse(pC.text), 'agent': aC.text, 'details': dC.text, 'status': 'PENDING_SORTER'});
-          nC.clear(); cC.clear(); pC.clear(); dC.clear();
+          _db.collection('sovereign_ledger').add({'name': nC.text, 'location': cC.text, 'price': double.tryParse(pC.text) ?? 0, 'agent': aC.text, 'details': dC.text, 'status': 'PENDING_SORTER'});
+          nC.clear(); cC.clear(); pC.clear(); dC.clear(); aC.clear();
         }, child: const Text("UPLINK TO SORTER")),
     ]));
   }
 
   Widget _agentMissionDashboard() {
     return Column(children: [
-      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), width: double.infinity, child: Text("AGENT ID: $agentID | MISSION STATUS: ACTIVE", style: const TextStyle(color: Color(0xFFC5A059)))),
+      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), width: double.infinity, child: Text("AGENT ID: $agentID", style: const TextStyle(color: Color(0xFFC5A059)))),
       Expanded(child: StreamBuilder<QuerySnapshot>(
         stream: _db.collection('tour_calendar').where('agent_id', isEqualTo: agentID).snapshots(),
         builder: (context, snap) {
           if (!snap.hasData) return const LinearProgressIndicator();
-          return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['city'], style: const TextStyle(color: Colors.white)), subtitle: Text(d['status'], style: const TextStyle(color: Colors.white38)))).toList());
+          return ListView(children: snap.data!.docs.map((d) => ListTile(
+            title: Text(d['city'], style: const TextStyle(color: Colors.white)),
+            trailing: IconButton(
+              icon: const Icon(Icons.delete_forever, color: Colors.white12),
+              onPressed: () => _confirmDeletion(context, () => d.reference.delete()),
+            ),
+          )).toList());
         },
       )),
       Container(padding: const EdgeInsets.all(20), child: Column(children: [
@@ -244,7 +242,10 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'LIVE').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const CircularProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'], style: const TextStyle(color: Colors.white)), 
+          trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE"))
+        )).toList());
       },
     );
   }
@@ -265,7 +266,14 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       stream: _db.collection('tour_calendar').where('status', isEqualTo: 'PROPOSED').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO PENDING TOUR NODES", style: TextStyle(color: Colors.white10)));
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['city'], style: const TextStyle(color: Colors.white)), subtitle: Text("Agent: ${d['agent_id']}"), trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'SCHEDULED'})))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['city'], style: const TextStyle(color: Colors.white)),
+          subtitle: Text("Agent: ${d['agent_id']}"), 
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'SCHEDULED'})),
+            IconButton(icon: const Icon(Icons.cancel, color: Colors.red), onPressed: () => _confirmDeletion(context, () => d.reference.delete())),
+          ])
+        )).toList());
       },
     );
   }
@@ -275,7 +283,13 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'PENDING_SORTER').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("SORTER EMPTY", style: TextStyle(color: Colors.white10)));
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'], style: const TextStyle(color: Colors.white)), 
+          trailing: Row(mainAxisSize: MainAxisSize.min, children: [
+            IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
+            IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _confirmDeletion(context, () => d.reference.delete())),
+          ])
+        )).toList());
       },
     );
   }
@@ -289,7 +303,11 @@ class _HVFZeroLossCoreState extends State<HVFZeroLossCore> {
       ])),
       Expanded(child: StreamBuilder<QuerySnapshot>(stream: _db.collection('commissioned_agents').snapshots(), builder: (context, snap) {
         if (!snap.hasData) return const LinearProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), subtitle: Text("ID: ${d['agent_id']}", style: const TextStyle(color: Color(0xFFC5A059))))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'], style: const TextStyle(color: Colors.white)), 
+          subtitle: Text("ID: ${d['agent_id']}", style: const TextStyle(color: Color(0xFFC5A059))),
+          trailing: IconButton(icon: const Icon(Icons.person_remove, color: Colors.red), onPressed: () => _confirmDeletion(context, () => d.reference.delete())),
+        )).toList());
       })),
     ]);
   }
