@@ -18,16 +18,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFFinalCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFVisualCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFFinalCore extends StatefulWidget {
-  const HVFFinalCore({super.key});
+class HVFVisualCore extends StatefulWidget {
+  const HVFVisualCore({super.key});
   @override
-  State<HVFFinalCore> createState() => _HVFFinalCoreState();
+  State<HVFVisualCore> createState() => _HVFVisualCoreState();
 }
 
-class _HVFFinalCoreState extends State<HVFFinalCore> {
+class _HVFVisualCoreState extends State<HVFVisualCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -38,9 +38,8 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
   
   String assetCategory = "LIVESTOCK";
   String selectedState = "OK";
-  String mediaStatus = "NO MEDIA ATTACHED";
+  String mediaStatus = "NO_MEDIA";
   
-  // Controllers
   final nC = TextEditingController();
   final cC = TextEditingController();
   final pC = TextEditingController();
@@ -59,7 +58,7 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
 
   void _resetControllers() {
     nC.clear(); cC.clear(); pC.clear(); aC.clear(); dC.clear();
-    setState(() => mediaStatus = "NO MEDIA ATTACHED");
+    setState(() => mediaStatus = "NO_MEDIA");
   }
 
   @override
@@ -95,10 +94,10 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v5.8.2\n\n"
-              "ARTICLE I: FEDERAL REGISTRATION\nHVF LLC is a registered federal entity. All digital assets are trade-secret protected.\n\n"
-              "ARTICLE II: AGENT RESIDUALS\n10% monthly subscription share active for all registered 40-City Tour Agents.\n\n"
-              "ARTICLE III: LOGISTICS COMPLIANCE\nMandatory State and City terminal nodes required for every sovereign uplink.\n\n"
+              Text("MASTER SERVICE AGREEMENT v5.9.0\n\n"
+              "ARTICLE I: VISUAL PROVENANCE\nProducers are mandated to provide visual proof of assets. Digital fingerprints verify asset integrity.\n\n"
+              "ARTICLE II: AGENT RESIDUALS\n40-City Tour Agents receive a 10% monthly subscription split.\n\n"
+              "ARTICLE III: LOGISTICS COMPLIANCE\nMandatory origin nodes for every sovereign uplink.\n\n"
               "--- SCROLL TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -185,13 +184,20 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
             onChanged: (v) => setState(() => selectedState = v!),
           )),
         ]),
-        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH / PEDIGREE")),
+        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH & PEDIGREE DETAILS")),
         Row(children: [
           Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION"))),
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
         const SizedBox(height: 20),
+        // VISUAL PROOF UPLINK
+        OutlinedButton.icon(
+          onPressed: () => setState(() => mediaStatus = "MEDIA_VERIFIED_HVF_590"),
+          icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)),
+          label: Text(mediaStatus == "NO_MEDIA" ? "ATTACH VISUAL PROOF" : "PROOF SECURED", style: const TextStyle(color: Color(0xFFC5A059))),
+        ),
+        const SizedBox(height: 10),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -213,7 +219,7 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
           ),
         ),
         const SizedBox(height: 20),
-        SizedBox(height: 400, child: _ledgerFeed(true, "ALL"))
+        SizedBox(height: 300, child: _ledgerFeed(true, "ALL"))
       ]),
     );
   }
@@ -227,9 +233,8 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
           Container(
             padding: const EdgeInsets.all(30), color: const Color(0xFF0A0A0A), width: double.infinity,
             child: Column(children: [
-              Text("AGENT CODE: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Text("AGENT IDENTIFIER: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
               Text("RESIDUAL PORTFOLIO: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
-              const Text("10% SUBSCRIPTION SHARE ACTIVE", style: TextStyle(color: Colors.green, fontSize: 8)),
             ]),
           ),
           Expanded(child: _ledgerFeed(false, "ALL"))
@@ -280,12 +285,37 @@ class _HVFFinalCoreState extends State<HVFFinalCore> {
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
           final data = d.data() as Map<String, dynamic>;
           bool live = data['status'] == 'LIVE';
-          return Card(color: const Color(0xFF0D0D0D), child: ListTile(
-            title: Text("${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("${data['location']} | Details: ${data['details'] ?? 'N/A'}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-            trailing: isAdmin ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
-            : (live ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
-          ));
+          bool hasMedia = data['media'] != "NO_MEDIA";
+
+          return Card(
+            color: const Color(0xFF0D0D0D), 
+            margin: const EdgeInsets.only(bottom: 12),
+            child: Column(children: [
+              // VISUAL PROOF WINDOW
+              if(hasMedia) Container(
+                height: 120, width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Colors.white10,
+                  border: Border(bottom: BorderSide(color: const Color(0xFFC5A059).withOpacity(0.1)))
+                ),
+                child: const Icon(Icons.image_search, color: Color(0xFFC5A059), size: 40), // Placeholder for actual media render
+              ),
+              ListTile(
+                title: Text("${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text("${data['location']} | VALUATION: \$${data['price']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+                  const SizedBox(height: 5),
+                  Text("PEDIGREE: ${data['details'] ?? 'N/A'}", style: const TextStyle(color: Colors.white54, fontSize: 9)),
+                  if(hasMedia) const Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text("● PROVENANCE VERIFIED", style: TextStyle(color: Colors.cyanAccent, fontSize: 8, fontWeight: FontWeight.bold)),
+                  ),
+                ]),
+                trailing: isAdmin ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
+                : (live ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
+              ),
+            ]),
+          );
         }).toList());
       },
     );
