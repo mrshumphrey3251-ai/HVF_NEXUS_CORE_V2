@@ -15,25 +15,29 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFExchangeCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFIndustrialCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFExchangeCore extends StatefulWidget {
-  const HVFExchangeCore({super.key});
+class HVFIndustrialCore extends StatefulWidget {
+  const HVFIndustrialCore({super.key});
   @override
-  State<HVFExchangeCore> createState() => _HVFExchangeCoreState();
+  State<HVFIndustrialCore> createState() => _HVFIndustrialCoreState();
 }
 
-class _HVFExchangeCoreState extends State<HVFExchangeCore> {
+class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
   final _db = FirebaseFirestore.instance;
 
-  // Controllers
+  // PRODUCER UPLINK CONTROLLERS
   final nC = TextEditingController();
   final pC = TextEditingController();
   final dC = TextEditingController();
+  final fsaC = TextEditingController(); // FSA Number
+  final taxC = TextEditingController(); // Tax ID
+  bool isAdaCompliant = false;
+  bool bioProtocolMet = false;
 
   @override
   Widget build(BuildContext context) {
@@ -99,52 +103,71 @@ class _HVFExchangeCoreState extends State<HVFExchangeCore> {
     ));
   }
 
-  // --- BUYER EXCHANGE: THE LIVE MARKET ---
-  Widget _buyerExchange() {
-    return Column(children: [
-      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), width: double.infinity, child: const Text("LIVE SOVEREIGN MARKET", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2))),
-      Expanded(
-        child: StreamBuilder<QuerySnapshot>(
-          stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'LIVE').snapshots(),
-          builder: (context, snap) {
-            if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-            if (snap.data!.docs.isEmpty) return const Center(child: Text("NO ASSETS CURRENTLY LIVE", style: TextStyle(color: Colors.white24)));
-            return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) => Card(
-              color: const Color(0xFF0D0D0D),
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                title: Text(d['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Text("Valuation: \$${d['price']} | ${d['details']}", style: const TextStyle(color: Colors.white38, fontSize: 10)),
-                trailing: ElevatedButton(
-                  style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
-                  onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': sessionUID, 'secured_at': FieldValue.serverTimestamp()}), 
-                  child: const Text("SECURE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 10))
-                ),
-              ),
-            )).toList());
-          },
-        ),
-      ),
-    ]);
-  }
-
-  // --- PRODUCER: UPLINK ---
+  // --- REFINED PRODUCER TERMINAL ---
   Widget _producerTerminal() {
-    return SingleChildScrollView(padding: const EdgeInsets.all(25), child: Column(children: [
-      const Text("UPLINK NEW ASSET", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
-      const SizedBox(height: 20),
-      TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
-      TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
-      TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "DETAILS / PEDIGREE")),
-      const SizedBox(height: 30),
-      ElevatedButton(onPressed: () {
-        _db.collection('sovereign_ledger').add({'name': nC.text, 'price': double.tryParse(pC.text) ?? 0, 'details': dC.text, 'status': 'PENDING_SORTER', 'producer_id': sessionUID});
-        nC.clear(); pC.clear(); dC.clear();
-      }, child: const Text("UPLINK TO SORTER"))
-    ]));
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(25),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text("PRODUCER INDUSTRIAL UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
+        const SizedBox(height: 25),
+        TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME / UNIT ID")),
+        TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION ($)")),
+        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE / TECHNICAL SPECS")),
+        const Divider(color: Colors.white10, height: 40),
+        const Text("FEDERAL & STEWARDSHIP IDENTIFIERS", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
+        TextField(controller: fsaC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA FARM NUMBER")),
+        TextField(controller: taxC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AG TAX ID")),
+        const SizedBox(height: 20),
+        CheckboxListTile(
+          title: const Text("ADA ACCESSIBILITY COMPLIANT", style: TextStyle(color: Colors.white70, fontSize: 12)),
+          value: isAdaCompliant,
+          onChanged: (v) => setState(() => isAdaCompliant = v!),
+          activeColor: const Color(0xFFC5A059),
+        ),
+        CheckboxListTile(
+          title: const Text("BIOSECURITY PROTOCOLS ADHERED", style: TextStyle(color: Colors.white70, fontSize: 12)),
+          value: bioProtocolMet,
+          onChanged: (v) => setState(() => bioProtocolMet = v!),
+          activeColor: const Color(0xFFC5A059),
+        ),
+        const SizedBox(height: 40),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+          onPressed: () {
+            _db.collection('sovereign_ledger').add({
+              'name': nC.text, 'price': double.tryParse(pC.text) ?? 0, 'details': dC.text,
+              'fsa_number': fsaC.text, 'tax_id': taxC.text, 'ada_compliant': isAdaCompliant,
+              'biosecurity': bioProtocolMet, 'status': 'PENDING_SORTER', 'producer_id': sessionUID,
+              'foia_exemption': '5_USC_552_B4', 'timestamp': FieldValue.serverTimestamp()
+            });
+            nC.clear(); pC.clear(); dC.clear(); fsaC.clear(); taxC.clear();
+            setState(() { isAdaCompliant = false; bioProtocolMet = false; });
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET VAULTED FOR CEO AUDIT")));
+          }, 
+          child: const Text("UPLINK TO SOVEREIGN LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+        ),
+      ]),
+    );
   }
 
-  // --- CEO: COMMAND ---
+  // --- OTHER TERMINALS ---
+  Widget _buyerExchange() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'LIVE').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) => Card(
+          color: const Color(0xFF0D0D0D),
+          child: ListTile(
+            title: Text(d['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: Text("Price: \$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))),
+            trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': sessionUID}), child: const Text("SECURE")),
+          ),
+        )).toList());
+      },
+    );
+  }
+
   Widget _ceoTerminal() {
     return DefaultTabController(length: 2, child: Column(children: [
       const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "ASSET SORTER"), Tab(text: "VETTED LEDGER")]),
@@ -162,7 +185,7 @@ class _HVFExchangeCoreState extends State<HVFExchangeCore> {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'], style: const TextStyle(color: Colors.white)),
-          subtitle: Text("\$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))),
+          subtitle: Text("FSA: ${d['fsa_number'] ?? 'N/A'}", style: const TextStyle(color: Colors.white24, fontSize: 10)),
           trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
         )).toList());
       },
@@ -176,7 +199,7 @@ class _HVFExchangeCoreState extends State<HVFExchangeCore> {
         if (!snap.hasData) return const LinearProgressIndicator();
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'] ?? "USER", style: const TextStyle(color: Colors.white)),
-          subtitle: Text("ID: ${d['uid']} | PIN: ${d['pin']}", style: const TextStyle(color: Color(0xFFC5A059))),
+          subtitle: Text("ID: ${d['uid']}", style: const TextStyle(color: Color(0xFFC5A059))),
         )).toList());
       },
     );
