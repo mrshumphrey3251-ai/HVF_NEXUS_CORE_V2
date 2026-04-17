@@ -3,8 +3,10 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
-// GLOBAL LOGISTICS LOCK
+// GLOBAL LOGISTICS & FINANCIAL CONSTANTS
 const List<String> globalStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
+const double FARMER_NODE_FEE = 200.00;
+const double BUYER_NODE_FEE = 25.00;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,17 +20,18 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFVisualCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFPaymentCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFVisualCore extends StatefulWidget {
-  const HVFVisualCore({super.key});
+class HVFPaymentCore extends StatefulWidget {
+  const HVFPaymentCore({super.key});
   @override
-  State<HVFVisualCore> createState() => _HVFVisualCoreState();
+  State<HVFPaymentCore> createState() => _HVFPaymentCoreState();
 }
 
-class _HVFVisualCoreState extends State<HVFVisualCore> {
+class _HVFPaymentCoreState extends State<HVFPaymentCore> {
   bool hasAcceptedTerms = false;
+  bool paymentVerified = false; // FINANCIAL GATE
   String view = "GATE";
   String? buyerID;
   String? agentID;
@@ -56,9 +59,26 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
     });
   }
 
-  void _resetControllers() {
-    nC.clear(); cC.clear(); pC.clear(); aC.clear(); dC.clear();
-    setState(() => mediaStatus = "NO_MEDIA");
+  void _processPayment(double amount, String type) {
+    // STRIPE GATEWAY SIMULATION - PREPARING FOR PRODUCTION RAIL
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: const Color(0xFF0A0A0A),
+        title: Text("HVF SECURE CHECKOUT: $type", style: const TextStyle(color: Color(0xFFC5A059))),
+        content: Text("TOTAL DUE: \$${amount.toStringAsFixed(2)}\n\nProcessing through HVF Sovereign Rail...", style: const TextStyle(color: Colors.white70)),
+        actions: [
+          ElevatedButton(
+            onPressed: () {
+              setState(() => paymentVerified = true);
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("PAYMENT VERIFIED: ACCESS GRANTED")));
+            },
+            child: const Text("EXECUTE TRANSACTION"),
+          )
+        ],
+      ),
+    );
   }
 
   @override
@@ -72,8 +92,8 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
         centerTitle: true,
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4)),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, color: Color(0xFFC5A059)), 
-          onPressed: () { _resetControllers(); setState(() => view = "GATE"); }
+          icon: const Icon(Icons.apps_rounded, color: Color(0xFFC5A059)), 
+          onPressed: () { setState(() { view = "GATE"; paymentVerified = false; }); }
         ),
       ),
       body: _buildTheater(),
@@ -94,10 +114,10 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v5.9.0\n\n"
-              "ARTICLE I: VISUAL PROVENANCE\nProducers are mandated to provide visual proof of assets. Digital fingerprints verify asset integrity.\n\n"
-              "ARTICLE II: AGENT RESIDUALS\n40-City Tour Agents receive a 10% monthly subscription split.\n\n"
-              "ARTICLE III: LOGISTICS COMPLIANCE\nMandatory origin nodes for every sovereign uplink.\n\n"
+              Text("MASTER SERVICE AGREEMENT v6.0.0\n\n"
+              "ARTICLE I: FINANCIAL OBLIGATIONS\nAccess to the Sovereign Ledger requires node activation fees (\$200/\$25). All sales are final.\n\n"
+              "ARTICLE II: TRANSACTIONAL OVERRIDE\nHVF LLC retains a 10% platform fee on all gross asset exchanges.\n\n"
+              "ARTICLE III: AGENT SETTLEMENT\nResiduals are disbursed monthly based on verified agent code uplinks.\n\n"
               "--- SCROLL TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -120,6 +140,22 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
   }
 
   Widget _buildTheater() {
+    if (!paymentVerified && view != "GATE" && view != "CEO") {
+      double fee = (view == "PRODUCER") ? FARMER_NODE_FEE : BUYER_NODE_FEE;
+      return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.lock_person_rounded, color: Color(0xFFC5A059), size: 60),
+        const SizedBox(height: 20),
+        Text("NODE ACTIVATION REQUIRED", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        Text("DUE: \$${fee.toStringAsFixed(2)}", style: const TextStyle(color: Colors.white)),
+        const SizedBox(height: 30),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(250, 60)),
+          onPressed: () => _processPayment(fee, view), 
+          child: const Text("ACTIVATE NODE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+        ),
+      ]));
+    }
     switch (view) {
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
@@ -132,7 +168,7 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
   Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
-      _gateBtn("PRODUCER UPLINK", () => _pinAuth("PRODUCER", "2026")),
+      _gateBtn("PRODUCER UPLINK", () => setState(() => view = "PRODUCER")),
       _gateBtn("AGENT RESIDUALS", () => _agentLogin()),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
     ]));
@@ -184,16 +220,15 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
             onChanged: (v) => setState(() => selectedState = v!),
           )),
         ]),
-        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH & PEDIGREE DETAILS")),
+        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH / PEDIGREE")),
         Row(children: [
           Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION"))),
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
         const SizedBox(height: 20),
-        // VISUAL PROOF UPLINK
         OutlinedButton.icon(
-          onPressed: () => setState(() => mediaStatus = "MEDIA_VERIFIED_HVF_590"),
+          onPressed: () => setState(() => mediaStatus = "MEDIA_VERIFIED_HVF_600"),
           icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)),
           label: Text(mediaStatus == "NO_MEDIA" ? "ATTACH VISUAL PROOF" : "PROOF SECURED", style: const TextStyle(color: Color(0xFFC5A059))),
         ),
@@ -207,8 +242,8 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
                 'price': double.tryParse(pC.text) ?? 0, 'agent': aC.text, 'details': dC.text,
                 'media': mediaStatus, 'status': 'LIVE', 'timestamp': FieldValue.serverTimestamp()
               });
-              _resetControllers();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET VAULTED")));
+              nC.clear(); cC.clear(); pC.clear(); aC.clear(); dC.clear();
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VAULTED")));
             }
           },
           child: Container(
@@ -291,28 +326,16 @@ class _HVFVisualCoreState extends State<HVFVisualCore> {
             color: const Color(0xFF0D0D0D), 
             margin: const EdgeInsets.only(bottom: 12),
             child: Column(children: [
-              // VISUAL PROOF WINDOW
-              if(hasMedia) Container(
-                height: 120, width: double.infinity,
-                decoration: BoxDecoration(
-                  color: Colors.white10,
-                  border: Border(bottom: BorderSide(color: const Color(0xFFC5A059).withOpacity(0.1)))
-                ),
-                child: const Icon(Icons.image_search, color: Color(0xFFC5A059), size: 40), // Placeholder for actual media render
-              ),
+              if(hasMedia) Container(height: 100, width: double.infinity, color: Colors.white10, child: const Icon(Icons.image_search, color: Color(0xFFC5A059))),
               ListTile(
                 title: Text("${data['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                  Text("${data['location']} | VALUATION: \$${data['price']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
-                  const SizedBox(height: 5),
-                  Text("PEDIGREE: ${data['details'] ?? 'N/A'}", style: const TextStyle(color: Colors.white54, fontSize: 9)),
-                  if(hasMedia) const Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text("● PROVENANCE VERIFIED", style: TextStyle(color: Colors.cyanAccent, fontSize: 8, fontWeight: FontWeight.bold)),
-                  ),
-                ]),
+                subtitle: Text("${data['location']} | VAL: \$${data['price']}\nPEDIGREE: ${data['details'] ?? 'N/A'}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
                 trailing: isAdmin ? IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()) 
-                : (live ? ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer': buyerID}), child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
+                : (live ? ElevatedButton(onPressed: () {
+                    // TRANSACTION TRIGGER: ASSET ACQUISITION
+                    _processPayment(data['price'] * 0.10, "10% PLATFORM OVERRIDE");
+                    d.reference.update({'status': 'SECURED', 'buyer': buyerID});
+                  }, child: const Text("SECURE")) : const Icon(Icons.verified, color: Colors.green)),
               ),
             ]),
           );
