@@ -72,26 +72,26 @@ class _HVFFederalCoreState extends State<HVFFederalCore> {
           const SizedBox(height: 10),
           const Text("HUMPHREY VIRTUAL FARMS LLC", style: TextStyle(color: Color(0xFFC5A059), fontSize: 18, fontWeight: FontWeight.w900, letterSpacing: 5)),
           const SizedBox(height: 5),
-          const Text("UEI: S1M4ENLHTDH5 | CAGE: [PENDING]", style: TextStyle(color: Colors.white70, fontSize: 10, letterSpacing: 2, fontFamily: 'Courier')),
+          const Text("UEI: S1M4ENLHTDH5 | CAGE: [REGISTERED]", style: TextStyle(color: Colors.white70, fontSize: 10, letterSpacing: 2, fontFamily: 'Courier')),
           const SizedBox(height: 20),
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
               Text(
-                "MASTER SERVICE AGREEMENT v5.6.0\nFEDERAL ENTITY IDENTIFIED | PATENT PENDING\n\n"
-                "ARTICLE I: FEDERAL REGISTRATION & AUTHORITY\n1.1 UEI IDENTIFICATION: HVF LLC is a registered federal entity under UEI S1M4ENLHTDH5.\n1.2 THE BADGE: The Seven-Point Crest represents the Sovereign Seal of Provenance.\n1.3 PATENT PROTECTION: Systems are protected under federal patent filings. Unauthorized use is a federal offense.\n\n"
-                "ARTICLE II: DATA SOVEREIGNTY & CONFIDENTIALITY\nAll information—user data, transaction logs, and metadata—is classified as PERSONAL AND CONFIDENTIAL.\n\n"
-                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200.00/mo | Buyer Node: \$25.00/mo\n• Platform Override: 10% Gross Sales Fee.\n• Agent Residual: 10% Sub-Fee Credit only.\n\n"
+                "MASTER SERVICE AGREEMENT v5.6.1\nFEDERAL ENTITY IDENTIFIED | PATENT PENDING\n\n"
+                "ARTICLE I: FEDERAL REGISTRATION & AUTHORITY\n1.1 UEI IDENTIFICATION: HVF LLC is a registered federal entity under UEI S1M4ENLHTDH5.\n1.2 THE SEVEN-POINT BADGE: The Marshal's Crest represents the Sovereign Seal of Provenance.\n1.3 PATENT PROTECTION: Systems including Nexus Core and HelioGrid are protected under federal patent filings. Unauthorized use is a federal offense.\n\n"
+                "ARTICLE II: DATA SOVEREIGNTY & CONFIDENTIALITY\nAll information processed on this platform—user data, transaction logs, and metadata—is classified as PERSONAL AND CONFIDENTIAL.\n\n"
+                "ARTICLE III: REVENUE & RESIDUALS\n• Farmer Node: \$200.00/mo Access Fee.\n• Buyer Node: \$25.00/mo Portfolio Fee.\n• Platform Override: 10% Gross Sales Fee payable to HVF LLC.\n• Agent Residual: 10% Monthly Subscription Credit only.\n\n"
                 "ARTICLE IV: STEWARDSHIP\nProducers maintain assets at the 'Humphrey Standard.' A \$3.00/day stewardship fee is 100% Producer retained.\n\n"
                 "ARTICLE V: THE HUMPHREY SHIELD\nOptional mortality guarantee (\$5.00/mo). Coverage warrants replacement value EXCEPT IN CASES OF NEGLECT.\n\n"
                 "ARTICLE VI: INTERSTATE LOGISTICS\nMandatory State Node selection. Buyers assume all burden for DOT and CVI compliance.\n\n"
-                "ARTICLE VII: DISPUTE ESCALATION\nJohnston County, Oklahoma. All disputes follow the mandatory 3-stage path.\n\n"
+                "ARTICLE VII: DISPUTE RESOLUTION PATHWAY\n1. Executive Review | 2. Johnston Co. Mediation | 3. Binding Arbitration. Jury Trials Waived.\n\n"
                 "ARTICLE VIII: ELECTRONIC SIGNATURES\nGoverned by the Oklahoma Uniform Electronic Transactions Act (UETA) OK Stat § 12A-15-101.\n\n"
                 "--- END OF MANDATE ---\n"
                 "--- SCROLL FULLY TO EXECUTE ---",
                 style: TextStyle(color: Colors.white70, fontSize: 11, height: 1.8, fontFamily: 'Courier'),
               ),
-              SizedBox(height: 2200),
+              SizedBox(height: 2500),
               Text("MANDATE VALIDATED. SOVEREIGN ACCESS GRANTED.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 10)),
             ]),
           )),
@@ -276,3 +276,4 @@ class _HVFFederalCoreState extends State<HVFFederalCore> {
       },
     );
   }
+}
