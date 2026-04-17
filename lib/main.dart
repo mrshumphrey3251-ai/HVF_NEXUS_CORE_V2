@@ -3,6 +3,9 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
+// GLOBAL LOGISTICS LOCK
+const List<String> globalStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -15,16 +18,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMissionCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFFinalCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMissionCore extends StatefulWidget {
-  const HVFMissionCore({super.key});
+class HVFFinalCore extends StatefulWidget {
+  const HVFFinalCore({super.key});
   @override
-  State<HVFMissionCore> createState() => _HVFMissionCoreState();
+  State<HVFFinalCore> createState() => _HVFFinalCoreState();
 }
 
-class _HVFMissionCoreState extends State<HVFMissionCore> {
+class _HVFFinalCoreState extends State<HVFFinalCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
@@ -37,9 +40,6 @@ class _HVFMissionCoreState extends State<HVFMissionCore> {
   String selectedState = "OK";
   String mediaStatus = "NO MEDIA ATTACHED";
   
-  // SME Hard-Wired States List
-  final List<String> states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-
   // Controllers
   final nC = TextEditingController();
   final cC = TextEditingController();
@@ -95,11 +95,11 @@ class _HVFMissionCoreState extends State<HVFMissionCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v5.8.1\n\n"
-              "ARTICLE I: FEDERAL AUTHORITY\nHVF LLC is a registered federal entity. All data is trade-secret protected.\n\n"
-              "ARTICLE II: AGENT RESIDUALS\n10% monthly subscription split active for all 40-City Tour Agents.\n\n"
-              "ARTICLE III: LOGISTICS LOCK\nOrigin verification mandatory for all sovereign assets.\n\n"
-              "--- SCROLL TO EXECUTE ---", 
+              Text("MASTER SERVICE AGREEMENT v5.8.2\n\n"
+              "ARTICLE I: FEDERAL REGISTRATION\nHVF LLC is a registered federal entity. All digital assets are trade-secret protected.\n\n"
+              "ARTICLE II: AGENT RESIDUALS\n10% monthly subscription share active for all registered 40-City Tour Agents.\n\n"
+              "ARTICLE III: LOGISTICS COMPLIANCE\nMandatory State and City terminal nodes required for every sovereign uplink.\n\n"
+              "--- SCROLL TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
             ]),
@@ -181,7 +181,7 @@ class _HVFMissionCoreState extends State<HVFMissionCore> {
           const SizedBox(width: 10),
           Expanded(child: DropdownButton<String>(
             dropdownColor: Colors.black, value: selectedState, isExpanded: true, style: const TextStyle(color: Colors.white),
-            items: states.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            items: globalStates.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
             onChanged: (v) => setState(() => selectedState = v!),
           )),
         ]),
