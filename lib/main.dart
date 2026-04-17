@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFIndustrialCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFCalibratedCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFIndustrialCore extends StatefulWidget {
-  const HVFIndustrialCore({super.key});
+class HVFCalibratedCore extends StatefulWidget {
+  const HVFCalibratedCore({super.key});
   @override
-  State<HVFIndustrialCore> createState() => _HVFIndustrialCoreState();
+  State<HVFCalibratedCore> createState() => _HVFCalibratedCoreState();
 }
 
-class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
+class _HVFCalibratedCoreState extends State<HVFCalibratedCore> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
@@ -34,8 +34,8 @@ class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
   final nC = TextEditingController();
   final pC = TextEditingController();
   final dC = TextEditingController();
-  final fsaC = TextEditingController(); // FSA Number
-  final taxC = TextEditingController(); // Tax ID
+  final fsaC = TextEditingController();
+  final taxC = TextEditingController();
   bool isAdaCompliant = false;
   bool bioProtocolMet = false;
 
@@ -57,7 +57,6 @@ class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
       case "CEO": return _ceoTerminal();
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerExchange();
-      case "AGENT": return _agentTerminal();
       default: return _gate();
     }
   }
@@ -72,13 +71,12 @@ class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
     ]));
   }
 
-  // --- AUTHENTICATION ---
   void _pinAuth() {
     TextEditingController pC = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
       title: const Text("CEO ACCESS", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: pC, obscureText: true, style: const TextStyle(color: Colors.white)),
+      content: TextField(controller: pC, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter PIN")),
       actions: [ElevatedButton(onPressed: () { if (pC.text == "1978") { setState(() { view = "CEO"; activeRole = "CEO"; }); Navigator.pop(context); } }, child: const Text("ACCESS"))],
     ));
   }
@@ -103,54 +101,50 @@ class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
     ));
   }
 
-  // --- REFINED PRODUCER TERMINAL ---
   Widget _producerTerminal() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(25),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text("PRODUCER INDUSTRIAL UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
         const SizedBox(height: 25),
-        TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME / UNIT ID")),
-        TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION ($)")),
-        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE / TECHNICAL SPECS")),
+        TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
+        // FIX APPLIED BELOW: ESCAPED THE $ SIGN
+        TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION (\$)")),
+        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE / SPECS")),
         const Divider(color: Colors.white10, height: 40),
-        const Text("FEDERAL & STEWARDSHIP IDENTIFIERS", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 1)),
         TextField(controller: fsaC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA FARM NUMBER")),
         TextField(controller: taxC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AG TAX ID")),
-        const SizedBox(height: 20),
+        const SizedBox(height: 10),
         CheckboxListTile(
-          title: const Text("ADA ACCESSIBILITY COMPLIANT", style: TextStyle(color: Colors.white70, fontSize: 12)),
+          title: const Text("ADA COMPLIANT", style: TextStyle(color: Colors.white70, fontSize: 12)),
           value: isAdaCompliant,
           onChanged: (v) => setState(() => isAdaCompliant = v!),
           activeColor: const Color(0xFFC5A059),
         ),
         CheckboxListTile(
-          title: const Text("BIOSECURITY PROTOCOLS ADHERED", style: TextStyle(color: Colors.white70, fontSize: 12)),
+          title: const Text("BIOSECURITY PROTOCOLS", style: TextStyle(color: Colors.white70, fontSize: 12)),
           value: bioProtocolMet,
           onChanged: (v) => setState(() => bioProtocolMet = v!),
           activeColor: const Color(0xFFC5A059),
         ),
-        const SizedBox(height: 40),
+        const SizedBox(height: 30),
         ElevatedButton(
-          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 55)),
           onPressed: () {
             _db.collection('sovereign_ledger').add({
               'name': nC.text, 'price': double.tryParse(pC.text) ?? 0, 'details': dC.text,
-              'fsa_number': fsaC.text, 'tax_id': taxC.text, 'ada_compliant': isAdaCompliant,
-              'biosecurity': bioProtocolMet, 'status': 'PENDING_SORTER', 'producer_id': sessionUID,
-              'foia_exemption': '5_USC_552_B4', 'timestamp': FieldValue.serverTimestamp()
+              'fsa_number': fsaC.text, 'tax_id': taxC.text, 'ada': isAdaCompliant,
+              'bio': bioProtocolMet, 'status': 'PENDING_SORTER', 'producer_id': sessionUID,
+              'timestamp': FieldValue.serverTimestamp()
             });
             nC.clear(); pC.clear(); dC.clear(); fsaC.clear(); taxC.clear();
-            setState(() { isAdaCompliant = false; bioProtocolMet = false; });
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET VAULTED FOR CEO AUDIT")));
           }, 
-          child: const Text("UPLINK TO SOVEREIGN LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+          child: const Text("UPLINK TO LEDGER", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
         ),
       ]),
     );
   }
 
-  // --- OTHER TERMINALS ---
   Widget _buyerExchange() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'LIVE').snapshots(),
@@ -205,6 +199,5 @@ class _HVFIndustrialCoreState extends State<HVFIndustrialCore> {
     );
   }
 
-  Widget _agentTerminal() => const Center(child: Text("AGENT TERMINAL: ACTIVE", style: TextStyle(color: Colors.white)));
   Widget _gateBtn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(8), child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 1.5), minimumSize: const Size(350, 65)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))));
 }
