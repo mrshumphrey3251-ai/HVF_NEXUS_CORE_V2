@@ -15,19 +15,20 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFForceCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFUtilityCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFForceCore extends StatefulWidget {
-  const HVFForceCore({super.key});
+class HVFUtilityCore extends StatefulWidget {
+  const HVFUtilityCore({super.key});
   @override
-  State<HVFForceCore> createState() => _HVFForceCoreState();
+  State<HVFUtilityCore> createState() => _HVFUtilityCoreState();
 }
 
-class _HVFForceCoreState extends State<HVFForceCore> {
+class _HVFUtilityCoreState extends State<HVFUtilityCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
+  String? agentID; // TO TRACK 40-CITY AGENTS
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
@@ -36,7 +37,6 @@ class _HVFForceCoreState extends State<HVFForceCore> {
   String selectedState = "OK";
   String mediaStatus = "NO MEDIA ATTACHED";
   
-  // Controllers moved to State for better persistence
   final nC = TextEditingController();
   final cC = TextEditingController();
   final pC = TextEditingController();
@@ -91,7 +91,7 @@ class _HVFForceCoreState extends State<HVFForceCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v5.7.1\n\nARTICLE I: PROPRIETARY PROTECTION\nAll uplinked media and metadata are trade secrets.\n\nARTICLE II: DISPUTE PATHWAY\nMandatory CEO review for all technical failures.\n\n--- SCROLL TO EXECUTE ---", 
+              Text("MASTER SERVICE AGREEMENT v5.8.0\n\nARTICLE I: AGENT RESIDUALS\nTour Agents are entitled to 10% of monthly subscription fees locked to their unique ID.\n\nARTICLE II: MEDIA INTEGRITY\nProducers must uplink visual proof for every asset. Digital provenance is mandatory.\n\n--- SCROLL TO EXECUTE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
             ]),
@@ -116,6 +116,7 @@ class _HVFForceCoreState extends State<HVFForceCore> {
     switch (view) {
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
+      case "AGENT": return _agentTerminal();
       case "CEO": return _ceoTerminal();
       default: return _gate();
     }
@@ -125,8 +126,19 @@ class _HVFForceCoreState extends State<HVFForceCore> {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
       _gateBtn("PRODUCER UPLINK", () => _pinAuth("PRODUCER", "2026")),
+      _gateBtn("AGENT RESIDUALS", () => _agentLogin()),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
     ]));
+  }
+
+  void _agentLogin() {
+    TextEditingController aID = TextEditingController();
+    showDialog(context: context, builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF0A0A0A),
+      title: const Text("AGENT IDENTIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
+      content: TextField(controller: aID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter 4-Digit Agent Code")),
+      actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT"; }); Navigator.pop(context); }, child: const Text("AUTHORIZE"))],
+    ));
   }
 
   void _pinAuth(String target, String pin) {
@@ -174,7 +186,13 @@ class _HVFForceCoreState extends State<HVFForceCore> {
           Expanded(child: TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
         const SizedBox(height: 20),
-        // HARD-WIRED UPLINK MODULE
+        // MEDIA PIPE UPLINK
+        OutlinedButton.icon(
+          onPressed: () => setState(() => mediaStatus = "MEDIA_VERIFIED_HVF_2026"),
+          icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)),
+          label: Text(mediaStatus, style: const TextStyle(color: Color(0xFFC5A059))),
+        ),
+        const SizedBox(height: 10),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -196,8 +214,32 @@ class _HVFForceCoreState extends State<HVFForceCore> {
           ),
         ),
         const SizedBox(height: 20),
-        SizedBox(height: 400, child: _ledgerFeed(true, "ALL"))
+        SizedBox(height: 300, child: _ledgerFeed(true, "ALL"))
       ]),
+    );
+  }
+
+  Widget _agentTerminal() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('sovereign_ledger').where('agent', isEqualTo: agentID).snapshots(),
+      builder: (context, snap) {
+        double monthlyResidual = 0;
+        if (snap.hasData) {
+          // Calculating 10% of estimated \$200 monthly farmer fees for each asset linked to agent
+          monthlyResidual = snap.data!.docs.length * 20.0;
+        }
+        return Column(children: [
+          Container(
+            padding: const EdgeInsets.all(30), color: const Color(0xFF0A0A0A), width: double.infinity,
+            child: Column(children: [
+              Text("AGENT PORTFOLIO: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Text("EST. MONTHLY RESIDUAL: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text("BASED ON 10% SUBSCRIPTION SPLIT", style: TextStyle(color: Colors.green, fontSize: 8)),
+            ]),
+          ),
+          Expanded(child: _ledgerFeed(false, "ALL"))
+        ]);
+      }
     );
   }
 
@@ -205,7 +247,7 @@ class _HVFForceCoreState extends State<HVFForceCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("PATH FOR SUCCESS", style: TextStyle(color: Color(0xFFC5A059))),
+        const Text("PATH FOR SUCCESS"),
         TextField(controller: b, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
         ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE"))
       ]));
