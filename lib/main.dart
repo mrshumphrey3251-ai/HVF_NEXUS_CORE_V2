@@ -15,20 +15,20 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFUtilityCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFMissionCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFUtilityCore extends StatefulWidget {
-  const HVFUtilityCore({super.key});
+class HVFMissionCore extends StatefulWidget {
+  const HVFMissionCore({super.key});
   @override
-  State<HVFUtilityCore> createState() => _HVFUtilityCoreState();
+  State<HVFMissionCore> createState() => _HVFMissionCoreState();
 }
 
-class _HVFUtilityCoreState extends State<HVFUtilityCore> {
+class _HVFMissionCoreState extends State<HVFMissionCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? buyerID;
-  String? agentID; // TO TRACK 40-CITY AGENTS
+  String? agentID;
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
@@ -37,6 +37,10 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
   String selectedState = "OK";
   String mediaStatus = "NO MEDIA ATTACHED";
   
+  // SME Hard-Wired States List
+  final List<String> states = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
+
+  // Controllers
   final nC = TextEditingController();
   final cC = TextEditingController();
   final pC = TextEditingController();
@@ -91,7 +95,11 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v5.8.0\n\nARTICLE I: AGENT RESIDUALS\nTour Agents are entitled to 10% of monthly subscription fees locked to their unique ID.\n\nARTICLE II: MEDIA INTEGRITY\nProducers must uplink visual proof for every asset. Digital provenance is mandatory.\n\n--- SCROLL TO EXECUTE ---", 
+              Text("MASTER SERVICE AGREEMENT v5.8.1\n\n"
+              "ARTICLE I: FEDERAL AUTHORITY\nHVF LLC is a registered federal entity. All data is trade-secret protected.\n\n"
+              "ARTICLE II: AGENT RESIDUALS\n10% monthly subscription split active for all 40-City Tour Agents.\n\n"
+              "ARTICLE III: LOGISTICS LOCK\nOrigin verification mandatory for all sovereign assets.\n\n"
+              "--- SCROLL TO EXECUTE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
             ]),
@@ -135,9 +143,9 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
     TextEditingController aID = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("AGENT IDENTIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: aID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter 4-Digit Agent Code")),
-      actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT"; }); Navigator.pop(context); }, child: const Text("AUTHORIZE"))],
+      title: const Text("AGENT AUTHORIZATION", style: TextStyle(color: Color(0xFFC5A059))),
+      content: TextField(controller: aID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter Agent Code")),
+      actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT"; }); Navigator.pop(context); }, child: const Text("ACCESS"))],
     ));
   }
 
@@ -147,11 +155,9 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
       backgroundColor: const Color(0xFF111111),
       title: Text("AUTHORIZE: $target", style: const TextStyle(color: Color(0xFFC5A059))),
       content: TextField(controller: pinController, obscureText: true, style: const TextStyle(color: Colors.white)),
-      actions: [
-        ElevatedButton(onPressed: () {
+      actions: [ElevatedButton(onPressed: () {
           if (pinController.text == pin) { setState(() => view = target); Navigator.pop(context); }
-        }, child: const Text("ACCESS"))
-      ],
+      }, child: const Text("ACCESS"))],
     ));
   }
 
@@ -179,20 +185,13 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
             onChanged: (v) => setState(() => selectedState = v!),
           )),
         ]),
-        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH / DETAILS")),
+        TextField(controller: dC, maxLines: 2, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "HEALTH / PEDIGREE")),
         Row(children: [
-          Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE"))),
+          Expanded(child: TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VALUATION"))),
           const SizedBox(width: 10),
           Expanded(child: TextField(controller: aC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AGENT CODE"))),
         ]),
         const SizedBox(height: 20),
-        // MEDIA PIPE UPLINK
-        OutlinedButton.icon(
-          onPressed: () => setState(() => mediaStatus = "MEDIA_VERIFIED_HVF_2026"),
-          icon: const Icon(Icons.camera_enhance, color: Color(0xFFC5A059)),
-          label: Text(mediaStatus, style: const TextStyle(color: Color(0xFFC5A059))),
-        ),
-        const SizedBox(height: 10),
         GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -203,7 +202,7 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
                 'media': mediaStatus, 'status': 'LIVE', 'timestamp': FieldValue.serverTimestamp()
               });
               _resetControllers();
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("VAULTED")));
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("ASSET VAULTED")));
             }
           },
           child: Container(
@@ -214,7 +213,7 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
           ),
         ),
         const SizedBox(height: 20),
-        SizedBox(height: 300, child: _ledgerFeed(true, "ALL"))
+        SizedBox(height: 400, child: _ledgerFeed(true, "ALL"))
       ]),
     );
   }
@@ -223,18 +222,14 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('agent', isEqualTo: agentID).snapshots(),
       builder: (context, snap) {
-        double monthlyResidual = 0;
-        if (snap.hasData) {
-          // Calculating 10% of estimated \$200 monthly farmer fees for each asset linked to agent
-          monthlyResidual = snap.data!.docs.length * 20.0;
-        }
+        double monthlyResidual = snap.hasData ? snap.data!.docs.length * 20.0 : 0;
         return Column(children: [
           Container(
             padding: const EdgeInsets.all(30), color: const Color(0xFF0A0A0A), width: double.infinity,
             child: Column(children: [
-              Text("AGENT PORTFOLIO: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
-              Text("EST. MONTHLY RESIDUAL: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
-              const Text("BASED ON 10% SUBSCRIPTION SPLIT", style: TextStyle(color: Colors.green, fontSize: 8)),
+              Text("AGENT CODE: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Text("RESIDUAL PORTFOLIO: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text("10% SUBSCRIPTION SHARE ACTIVE", style: TextStyle(color: Colors.green, fontSize: 8)),
             ]),
           ),
           Expanded(child: _ledgerFeed(false, "ALL"))
@@ -247,7 +242,7 @@ class _HVFUtilityCoreState extends State<HVFUtilityCore> {
     if (buyerID == null) {
       final b = TextEditingController();
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        const Text("PATH FOR SUCCESS"),
+        const Text("PATH FOR SUCCESS", style: TextStyle(color: Color(0xFFC5A059))),
         TextField(controller: b, textAlign: TextAlign.center, style: const TextStyle(color: Colors.white)),
         ElevatedButton(onPressed: () => setState(() => buyerID = b.text), child: const Text("INITIALIZE"))
       ]));
