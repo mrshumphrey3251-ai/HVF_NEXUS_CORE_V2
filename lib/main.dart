@@ -15,27 +15,30 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFFinalityCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFTotalSovereignty(), debugShowCheckedModeBanner: false));
 }
 
-class HVFFinalityCore extends StatefulWidget {
-  const HVFFinalityCore({super.key});
+class HVFTotalSovereignty extends StatefulWidget {
+  const HVFTotalSovereignty({super.key});
   @override
-  State<HVFFinalityCore> createState() => _HVFFinalityCoreState();
+  State<HVFTotalSovereignty> createState() => _HVFTotalSovereigntyState();
 }
 
-class _HVFFinalityCoreState extends State<HVFFinalityCore> {
+class _HVFTotalSovereigntyState extends State<HVFTotalSovereignty> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
   final _db = FirebaseFirestore.instance;
 
-  // PRODUCER CONTROLLERS
-  final nC = TextEditingController();
-  final pC = TextEditingController();
-  final dC = TextEditingController();
-  final fsaC = TextEditingController();
-  final taxC = TextEditingController();
+  // CONTROLLERS
+  final nC = TextEditingController(); // Name
+  final pC = TextEditingController(); // Price
+  final dC = TextEditingController(); // Details
+  final fsaC = TextEditingController(); // FSA
+  final taxC = TextEditingController(); // Tax ID
+  final cityC = TextEditingController(); // Tour City
+  final statsC = TextEditingController(); // Regional Stats
+  final goalC = TextEditingController(); // Justified Goal
   bool isAda = false;
   bool isBio = false;
 
@@ -45,18 +48,20 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
       backgroundColor: const Color(0xFF030303),
       appBar: view == "GATE" ? null : AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS | $activeRole", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
-        leading: IconButton(icon: const Icon(Icons.shield, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; })),
+        title: Text("HVF NEXUS | $activeRole | $sessionUID", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
+        leading: IconButton(icon: const Icon(Icons.shield, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; sessionUID = null; })),
+        actions: const [Center(child: Text("PROPRIETARY / FOIA EXEMPT   ", style: TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold)))],
       ),
-      body: _buildTheater(),
+      body: _buildActiveTerminal(),
     );
   }
 
-  Widget _buildTheater() {
+  Widget _buildActiveTerminal() {
     switch (view) {
       case "CEO": return _ceoTerminal();
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
+      case "AGENT": return _agentTerminal();
       default: return _gate();
     }
   }
@@ -101,9 +106,10 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
     ));
   }
 
+  // --- PRODUCER: FULL INDUSTRIAL UPLINK ---
   Widget _producerTerminal() {
     return SingleChildScrollView(padding: const EdgeInsets.all(25), child: Column(children: [
-      const Text("INDUSTRIAL UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+      const Text("INDUSTRIAL ASSET UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
       TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
       TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: r"VALUATION ($)")),
       TextField(controller: dC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE")),
@@ -112,12 +118,13 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
       CheckboxListTile(title: const Text("ADA COMPLIANT", style: TextStyle(color: Colors.white70)), value: isAda, onChanged: (v)=>setState(()=>isAda=v!), activeColor: const Color(0xFFC5A059)),
       CheckboxListTile(title: const Text("BIOSECURITY MET", style: TextStyle(color: Colors.white70)), value: isBio, onChanged: (v)=>setState(()=>isBio=v!), activeColor: const Color(0xFFC5A059)),
       ElevatedButton(onPressed: () {
-        _db.collection('sovereign_ledger').add({'name': nC.text, 'price': pC.text, 'details': dC.text, 'fsa': fsaC.text, 'tax': taxC.text, 'ada': isAda, 'bio': isBio, 'status': 'PENDING_SORTER', 'producer': sessionUID});
+        _db.collection('sovereign_ledger').add({'name': nC.text, 'price': pC.text, 'details': dC.text, 'fsa': fsaC.text, 'tax': taxC.text, 'ada': isAda, 'bio': isBio, 'status': 'PENDING_SORTER', 'producer': sessionUID, 'foia_shield': '5_USC_552_B4'});
         nC.clear(); pC.clear(); dC.clear(); fsaC.clear(); taxC.clear();
       }, child: const Text("UPLINK"))
     ]));
   }
 
+  // --- BUYER: MARKET & PORTFOLIO VAULT ---
   Widget _buyerTerminal() {
     return DefaultTabController(length: 2, child: Column(children: [
       const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "PORTFOLIO")]),
@@ -158,11 +165,27 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
     );
   }
 
+  // --- AGENT: STRATEGIC TOUR CALENDAR ---
+  Widget _agentTerminal() {
+    return SingleChildScrollView(padding: const EdgeInsets.all(25), child: Column(children: [
+      const Text("STRATEGIC TOUR PROPOSAL", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+      TextField(controller: cityC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY/STATE")),
+      TextField(controller: statsC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "REGIONAL STATISTICS")),
+      TextField(controller: goalC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "JUSTIFIED GOAL")),
+      ElevatedButton(onPressed: () {
+        _db.collection('tour_calendar').add({'city': cityC.text, 'stats': statsC.text, 'goal': goalC.text, 'status': 'PROPOSED', 'agent': sessionUID});
+        cityC.clear(); statsC.clear(); goalC.clear();
+      }, child: const Text("SUBMIT NODE"))
+    ]));
+  }
+
+  // --- CEO: COMMAND DECK ---
   Widget _ceoTerminal() {
-    return DefaultTabController(length: 2, child: Column(children: [
-      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "SORTER"), Tab(text: "LEDGER")]),
+    return DefaultTabController(length: 3, child: Column(children: [
+      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "ASSETS"), Tab(text: "TOUR"), Tab(text: "LEDGER")]),
       Expanded(child: TabBarView(children: [
         _ceoAssetReview(),
+        _ceoTourReview(),
         _ceoLidView(),
       ])),
     ]));
@@ -175,7 +198,22 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'], style: const TextStyle(color: Colors.white)),
+          subtitle: Text("FSA: ${d['fsa']}"),
           trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
+        )).toList());
+      },
+    );
+  }
+
+  Widget _ceoTourReview() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('tour_calendar').where('status', isEqualTo: 'PROPOSED').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['city'], style: const TextStyle(color: Colors.white)),
+          subtitle: Text("GOAL: ${d['goal']}"),
+          trailing: IconButton(icon: const Icon(Icons.bolt, color: Colors.green), onPressed: () => d.reference.update({'status': 'ACTIVE'})),
         )).toList());
       },
     );
@@ -188,7 +226,7 @@ class _HVFFinalityCoreState extends State<HVFFinalityCore> {
         if (!snap.hasData) return const LinearProgressIndicator();
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'] ?? "USER", style: const TextStyle(color: Colors.white)),
-          subtitle: Text("ID: ${d['uid']} | PIN: ${d['pin']}", style: const TextStyle(color: Color(0xFFC5A059))),
+          subtitle: Text("ID: ${d['uid']} | PIN: ${d['pin']}"),
         )).toList());
       },
     );
