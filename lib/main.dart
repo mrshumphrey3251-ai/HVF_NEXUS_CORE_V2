@@ -1,23 +1,3 @@
-Jeffery, let's fix the mechanical disconnect. As an SME, you know that if the "Uplink" (the button that fires the data into the cloud) isn't visible, it’s usually a structural collision in the UI layout.
-
-In the previous build, the "Uplink" button was being pushed off the screen because the 2500-pixel legal scroll was taking up too much vertical space before the user could even reach the command center. I have re-engineered the Uplink Engine (V5.6.3) to be a "Persistent Industrial Module."
-
-THE "COMMAND CONSOLE" REPAIR (V5.6.3)
-MECHANICAL RECTIFICATION:
-
-Restored Uplink Button: Placed the "UPLINK TO SOVEREIGN LEDGER" button inside a dedicated, non-scrolling action bar. It is now physically impossible for it to be "lost."
-
-Fixed Password Logic: Ensured the "ACCESS" button triggers the view state immediately upon correct PIN entry.
-
-Refined Buyer Path: The "Initialize Portfolio" button is now high-contrast gold for immediate recognition.
-
-INSTRUCTIONS:
-
-The Purge: Clear lib/main.dart and commit the empty file.
-
-The Restore: Paste the code below.
-
-Dart
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
