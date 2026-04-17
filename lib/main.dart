@@ -15,20 +15,29 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFDocumentVault(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFFinalityCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFDocumentVault extends StatefulWidget {
-  const HVFDocumentVault({super.key});
+class HVFFinalityCore extends StatefulWidget {
+  const HVFFinalityCore({super.key});
   @override
-  State<HVFDocumentVault> createState() => _HVFDocumentVaultState();
+  State<HVFFinalityCore> createState() => _HVFFinalityCoreState();
 }
 
-class _HVFDocumentVaultState extends State<HVFDocumentVault> {
+class _HVFFinalityCoreState extends State<HVFFinalityCore> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
   final _db = FirebaseFirestore.instance;
+
+  // PRODUCER CONTROLLERS
+  final nC = TextEditingController();
+  final pC = TextEditingController();
+  final dC = TextEditingController();
+  final fsaC = TextEditingController();
+  final taxC = TextEditingController();
+  bool isAda = false;
+  bool isBio = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,17 +46,17 @@ class _HVFDocumentVaultState extends State<HVFDocumentVault> {
       appBar: view == "GATE" ? null : AppBar(
         backgroundColor: Colors.black,
         title: Text("HVF NEXUS | $activeRole", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
-        leading: IconButton(icon: const Icon(Icons.shield_outlined, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; sessionUID = null; })),
+        leading: IconButton(icon: const Icon(Icons.shield, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; })),
       ),
-      body: _buildCurrentTheater(),
+      body: _buildTheater(),
     );
   }
 
-  Widget _buildCurrentTheater() {
+  Widget _buildTheater() {
     switch (view) {
-      case "BUYER": return _buyerTerminal();
       case "CEO": return _ceoTerminal();
       case "PRODUCER": return _producerTerminal();
+      case "BUYER": return _buyerTerminal();
       default: return _gate();
     }
   }
@@ -77,7 +86,7 @@ class _HVFDocumentVaultState extends State<HVFDocumentVault> {
     TextEditingController pinC = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("LOGIN", style: TextStyle(color: Color(0xFFC5A059))),
+      title: const Text("VALIDATE", style: TextStyle(color: Color(0xFFC5A059))),
       content: Column(mainAxisSize: MainAxisSize.min, children: [
         TextField(controller: idC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "UID")),
         TextField(controller: pinC, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "PIN")),
@@ -92,72 +101,98 @@ class _HVFDocumentVaultState extends State<HVFDocumentVault> {
     ));
   }
 
-  Widget _buyerTerminal() {
-    return DefaultTabController(
-      length: 2,
-      child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "MY PORTFOLIO")]),
-        Expanded(child: TabBarView(children: [
-          _buyerMarketFeed(),
-          _buyerPortfolioWithVault(),
-        ])),
-      ]),
-    );
+  Widget _producerTerminal() {
+    return SingleChildScrollView(padding: const EdgeInsets.all(25), child: Column(children: [
+      const Text("INDUSTRIAL UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+      TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
+      TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: r"VALUATION ($)")),
+      TextField(controller: dC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PEDIGREE")),
+      TextField(controller: fsaC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA NUMBER")),
+      TextField(controller: taxC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "TAX ID")),
+      CheckboxListTile(title: const Text("ADA COMPLIANT", style: TextStyle(color: Colors.white70)), value: isAda, onChanged: (v)=>setState(()=>isAda=v!), activeColor: const Color(0xFFC5A059)),
+      CheckboxListTile(title: const Text("BIOSECURITY MET", style: TextStyle(color: Colors.white70)), value: isBio, onChanged: (v)=>setState(()=>isBio=v!), activeColor: const Color(0xFFC5A059)),
+      ElevatedButton(onPressed: () {
+        _db.collection('sovereign_ledger').add({'name': nC.text, 'price': pC.text, 'details': dC.text, 'fsa': fsaC.text, 'tax': taxC.text, 'ada': isAda, 'bio': isBio, 'status': 'PENDING_SORTER', 'producer': sessionUID});
+        nC.clear(); pC.clear(); dC.clear(); fsaC.clear(); taxC.clear();
+      }, child: const Text("UPLINK"))
+    ]));
   }
 
-  Widget _buyerMarketFeed() {
+  Widget _buyerTerminal() {
+    return DefaultTabController(length: 2, child: Column(children: [
+      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "PORTFOLIO")]),
+      Expanded(child: TabBarView(children: [
+        _buyerMarket(),
+        _buyerPortfolio(),
+      ])),
+    ]));
+  }
+
+  Widget _buyerMarket() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'LIVE').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) => Card(
-          color: const Color(0xFF0D0D0D),
-          child: ListTile(
-            title: Text(d['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer_id': sessionUID, 'logistics': 'Awaiting Docs'}), child: const Text("SECURE")),
-          ),
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'], style: const TextStyle(color: Colors.white)),
+          trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'SECURED', 'buyer_id': sessionUID}), child: const Text("SECURE")),
         )).toList());
       },
     );
   }
 
-  Widget _buyerPortfolioWithVault() {
+  Widget _buyerPortfolio() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('buyer_id', isEqualTo: sessionUID).snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
-        return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
-          final docUrlC = TextEditingController();
-          return Card(
-            color: const Color(0xFF1A1A1A),
-            margin: const EdgeInsets.only(bottom: 15),
-            child: Padding(
-              padding: const EdgeInsets.all(15.0),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                  Text(d['name'], style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                  Text(d['logistics'] ?? "SECURED", style: const TextStyle(color: Colors.green, fontSize: 10)),
-                ]),
-                const Divider(color: Colors.white10),
-                const Text("DIGITAL DOCUMENT UPLOAD (PDF/URL/HASH)", style: TextStyle(color: Colors.white38, fontSize: 9)),
-                Row(children: [
-                  Expanded(child: TextField(controller: docUrlC, style: const TextStyle(color: Colors.white, fontSize: 12), decoration: const InputDecoration(hintText: "Enter Link or Proof Hash"))),
-                  IconButton(icon: const Icon(Icons.cloud_upload, color: Color(0xFFC5A059)), onPressed: () {
-                    d.reference.update({'buyer_docs': docUrlC.text, 'logistics': 'Ready for CEO Audit'});
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("DOCUMENT UPLINKED TO SOVEREIGN LEDGER")));
-                  }),
-                ]),
-                if (d['buyer_docs'] != null) Text("CURRENT DOC: ${d['buyer_docs']}", style: const TextStyle(color: Colors.white24, fontSize: 9)),
-              ]),
-            ),
-          );
+        return ListView(children: snap.data!.docs.map((d) {
+          final tC = TextEditingController();
+          return Card(color: const Color(0xFF0D0D0D), child: ListTile(
+            title: Text(d['name'], style: const TextStyle(color: Colors.white)),
+            subtitle: TextField(controller: tC, style: const TextStyle(color: Colors.white24, fontSize: 10), decoration: const InputDecoration(hintText: "UPLINK DOC LINK")),
+            trailing: IconButton(icon: const Icon(Icons.upload, color: Color(0xFFC5A059)), onPressed: () => d.reference.update({'docs': tC.text, 'status': 'DOCS_UPLOADED'})),
+          ));
         }).toList());
       },
     );
   }
 
-  // --- CEO & PRODUCER PLACEHOLDERS ---
-  Widget _ceoTerminal() => const Center(child: Text("CEO OVERWATCH ACTIVE", style: TextStyle(color: Colors.white)));
-  Widget _producerTerminal() => const Center(child: Text("PRODUCER ACTIVE", style: TextStyle(color: Colors.white)));
+  Widget _ceoTerminal() {
+    return DefaultTabController(length: 2, child: Column(children: [
+      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "SORTER"), Tab(text: "LEDGER")]),
+      Expanded(child: TabBarView(children: [
+        _ceoAssetReview(),
+        _ceoLidView(),
+      ])),
+    ]));
+  }
+
+  Widget _ceoAssetReview() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'PENDING_SORTER').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'], style: const TextStyle(color: Colors.white)),
+          trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
+        )).toList());
+      },
+    );
+  }
+
+  Widget _ceoLidView() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('vetted_participants').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData) return const LinearProgressIndicator();
+        return ListView(children: snap.data!.docs.map((d) => ListTile(
+          title: Text(d['name'] ?? "USER", style: const TextStyle(color: Colors.white)),
+          subtitle: Text("ID: ${d['uid']} | PIN: ${d['pin']}", style: const TextStyle(color: Color(0xFFC5A059))),
+        )).toList());
+      },
+    );
+  }
+
   Widget _gateBtn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(8), child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 1.5), minimumSize: const Size(350, 65)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))));
 }
