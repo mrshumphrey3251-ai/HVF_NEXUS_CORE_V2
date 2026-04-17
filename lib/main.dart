@@ -3,9 +3,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
 
-// GLOBAL CONSTANTS
-const List<String> globalStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
@@ -18,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFMissionControl(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFVettedForce(), debugShowCheckedModeBanner: false));
 }
 
-class HVFMissionControl extends StatefulWidget {
-  const HVFMissionControl({super.key});
+class HVFVettedForce extends StatefulWidget {
+  const HVFVettedForce({super.key});
   @override
-  State<HVFMissionControl> createState() => _HVFMissionControlState();
+  State<HVFVettedForce> createState() => _HVFVettedForceState();
 }
 
-class _HVFMissionControlState extends State<HVFMissionControl> {
+class _HVFVettedForceState extends State<HVFVettedForce> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? agentID;
@@ -35,7 +32,6 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
 
-  // AGENT EVENT INPUTS
   final eventCityC = TextEditingController();
   final eventDateC = TextEditingController();
 
@@ -60,7 +56,7 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
         centerTitle: true,
         title: const Text("HVF NEXUS CORE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, letterSpacing: 4)),
         leading: IconButton(
-          icon: const Icon(Icons.apps_rounded, color: Color(0xFFC5A059)), 
+          icon: const Icon(Icons.shield_outlined, color: Color(0xFFC5A059)), 
           onPressed: () { setState(() => view = "GATE"); }
         ),
       ),
@@ -82,10 +78,9 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v6.5.0\n\n"
-              "ARTICLE I: AGENT MISSION PARAMETERS\nAgents are logistics facilitators. Access is restricted to event calendars and real-time commission tracking.\n\n"
-              "ARTICLE II: 40-CITY TOUR SETTLEMENT\nPost-event audits verify actual sales vs. projections. Residuals are settled within 24 hours of event closure.\n\n"
-              "ARTICLE III: PROPRIETARY DATA LOCK\nAgents do not have authorization to view Producer pedigree or Buyer personal data.\n\n"
+              Text("MASTER SERVICE AGREEMENT v6.6.0\n\n"
+              "ARTICLE I: VETTED AGENT ACCESS\nUnauthorized attempts to access the Agent Terminal are strictly prohibited. Access is granted only to Commissioned Agents with valid IDs.\n\n"
+              "ARTICLE II: DATA INTEGRITY\nAll mission data, calendar nodes, and revenue tickers are the proprietary property of HVF LLC.\n\n"
               "--- SCROLL TO EXECUTE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -110,7 +105,7 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
   Widget _buildTheater() {
     switch (view) {
       case "AGENT_DASHBOARD": return _agentMissionDashboard();
-      case "CEO": return _ceoTerminal(); // To manage the tour
+      case "CEO": return _ceoTerminal();
       default: return _gate();
     }
   }
@@ -118,17 +113,32 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
   Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
-      _gateBtn("AGENT MISSION CONTROL", () => _agentLogin()),
+      _gateBtn("AGENT MISSION CONTROL", () => _vettedAgentLogin()),
     ]));
   }
 
-  void _agentLogin() {
+  // REINFORCED: NO ID, NO ACCESS.
+  void _vettedAgentLogin() {
     TextEditingController aID = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("AGENT ID VERIFICATION", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: aID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter 4-Digit Agent Code")),
-      actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT_DASHBOARD"; }); Navigator.pop(context); }, child: const Text("INITIALIZE DASHBOARD"))],
+      title: const Text("AGENT ID VALIDATION", style: TextStyle(color: Color(0xFFC5A059))),
+      content: TextField(controller: aID, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter Vetted Agent ID")),
+      actions: [
+        ElevatedButton(
+          onPressed: () async {
+            // DATABASE CHECK: DOES THIS AGENT EXIST?
+            var agentSnap = await _db.collection('commissioned_agents').where('agent_id', isEqualTo: aID.text).get();
+            if (agentSnap.docs.isNotEmpty) {
+              setState(() { agentID = aID.text; view = "AGENT_DASHBOARD"; });
+              Navigator.pop(context);
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("INVALID AGENT ID: ACCESS DENIED")));
+            }
+          }, 
+          child: const Text("VALIDATE")
+        )
+      ],
     ));
   }
 
@@ -149,7 +159,6 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
 
   Widget _agentMissionDashboard() {
     return Column(children: [
-      // TOP HEADER: REVENUE TICKER
       StreamBuilder<QuerySnapshot>(
         stream: _db.collection('sovereign_ledger').where('agent', isEqualTo: agentID).snapshots(),
         builder: (context, snap) {
@@ -162,38 +171,32 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
           return Container(
             padding: const EdgeInsets.all(25), color: const Color(0xFF0A0A0A), width: double.infinity,
             child: Column(children: [
-              const Text("LIVE EVENT SALES REVENUE", style: TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
-              Text("\$${realTimeSales.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 28, fontWeight: FontWeight.bold)),
-              Text("EST. AGENT RESIDUAL: \$${(realTimeSales * 0.10).toStringAsFixed(2)}", style: const TextStyle(color: Colors.green, fontSize: 12, fontWeight: FontWeight.bold)),
+              Text("ID: $agentID | REAL-TIME COMMISSION", style: const TextStyle(color: Colors.white38, fontSize: 10, letterSpacing: 2)),
+              Text("\$${(realTimeSales * 0.10).toStringAsFixed(2)}", style: const TextStyle(color: Colors.green, fontSize: 28, fontWeight: FontWeight.bold)),
+              Text("GROSS EVENT SALES: \$${realTimeSales.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 12)),
             ]),
           );
         }
       ),
-      // MIDDLE SECTION: LOGISTICS CALENDAR
       Expanded(
         child: Container(
           padding: const EdgeInsets.all(20),
           child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            const Row(children: [
-              Icon(Icons.calendar_today, color: Color(0xFFC5A059), size: 16),
-              SizedBox(width: 10),
-              Text("40-CITY TOUR CALENDAR", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
-            ]),
+            const Text("40-CITY MISSION LOG", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, letterSpacing: 2)),
             const SizedBox(height: 15),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                 stream: _db.collection('tour_calendar').where('agent_id', isEqualTo: agentID).snapshots(),
                 builder: (context, snap) {
-                  if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO SCHEDULED EVENTS", style: TextStyle(color: Colors.white10)));
+                  if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("LOG EMPTY", style: TextStyle(color: Colors.white10)));
                   return ListView(children: snap.data!.docs.map((d) {
                     bool isPassed = d['status'] == 'COMPLETED';
                     return Card(
                       color: const Color(0xFF0D0D0D),
                       child: ListTile(
-                        leading: Icon(isPassed ? Icons.check_circle : Icons.pending_actions, color: isPassed ? Colors.green : Colors.orangeAccent),
-                        title: Text("${d['city']}, ${d['state']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-                        subtitle: Text("DATE: ${d['date']} | SALES: \$${d['actual_sales'] ?? '0.00'}", style: const TextStyle(color: Colors.white38, fontSize: 10)),
-                        trailing: Text(isPassed ? "SETTLED" : "UPCOMING", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
+                        leading: Icon(isPassed ? Icons.check_circle : Icons.gps_fixed, color: isPassed ? Colors.green : Colors.cyanAccent),
+                        title: Text("${d['city']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                        subtitle: Text("DATE: ${d['date']} | VOLUME: \$${d['actual_sales']}", style: const TextStyle(color: Colors.white38, fontSize: 10)),
                       ),
                     );
                   }).toList());
@@ -203,15 +206,14 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
           ]),
         ),
       ),
-      // BOTTOM: INPUT FOR UPCOMING EVENTS
       Container(
         padding: const EdgeInsets.all(20), decoration: const BoxDecoration(color: Color(0xFF0A0A0A), border: Border(top: BorderSide(color: Colors.white10))),
         child: Column(children: [
-          const Text("PROPOSE NEW EVENT NODE", style: TextStyle(color: Colors.white38, fontSize: 10)),
+          const Text("PROPOSE TOUR NODE", style: TextStyle(color: Colors.white38, fontSize: 10)),
           Row(children: [
-            Expanded(child: TextField(controller: eventCityC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY/STATE"))),
+            Expanded(child: TextField(controller: eventCityC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY"))),
             const SizedBox(width: 10),
-            Expanded(child: TextField(controller: eventDateC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "DATE (MM/DD)"))),
+            Expanded(child: TextField(controller: eventDateC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "DATE"))),
           ]),
           const SizedBox(height: 15),
           ElevatedButton(
@@ -219,14 +221,13 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
             onPressed: () {
               if (eventCityC.text.isNotEmpty) {
                 _db.collection('tour_calendar').add({
-                  'agent_id': agentID, 'city': eventCityC.text, 'state': 'TBD', 'date': eventDateC.text,
+                  'agent_id': agentID, 'city': eventCityC.text, 'date': eventDateC.text,
                   'status': 'PROPOSED', 'actual_sales': 0, 'timestamp': FieldValue.serverTimestamp()
                 });
                 eventCityC.clear(); eventDateC.clear();
-                ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("EVENT NODE PROPOSED FOR CEO APPROVAL")));
               }
             }, 
-            child: const Text("SUBMIT EVENT NODE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+            child: const Text("SUBMIT FOR CEO APPROVAL", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
           ),
         ]),
       )
@@ -234,11 +235,12 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
   }
 
   Widget _ceoTerminal() {
-    return DefaultTabController(length: 2, child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "APPROVE TOUR NODES"), Tab(text: "SETTLE EVENTS")]),
+    return DefaultTabController(length: 3, child: Column(children: [
+        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "TOUR NODES"), Tab(text: "COMMISSION AGENTS"), Tab(text: "GLOBAL LEDGER")]),
         Expanded(child: TabBarView(children: [
           _tourApprovalList(),
-          _eventSettlementList(),
+          _agentManagementList(),
+          _globalLedgerView(),
         ]))
     ]));
   }
@@ -247,30 +249,56 @@ class _HVFMissionControlState extends State<HVFMissionControl> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('tour_calendar').where('status', isEqualTo: 'PROPOSED').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO PENDING TOUR NODES", style: TextStyle(color: Colors.white10)));
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO NODES PENDING", style: TextStyle(color: Colors.white10)));
         return ListView(padding: const EdgeInsets.all(20), children: snap.data!.docs.map((d) {
           return Card(color: const Color(0xFF0D0D0D), child: ListTile(
-            title: Text("${d['city']} (Agent: ${d['agent_id']})", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: Text("DATE: ${d['date']}", style: const TextStyle(color: Colors.white38)),
-            trailing: IconButton(icon: const Icon(Icons.check_circle, color: Colors.green), onPressed: () => d.reference.update({'status': 'SCHEDULED'})),
+            title: Text("${d['city']} (Agent: ${d['agent_id']})"),
+            trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'SCHEDULED'})),
           ));
         }).toList());
       }
     );
   }
 
-  Widget _eventSettlementList() {
+  Widget _agentManagementList() {
+    final aNC = TextEditingController();
+    return Column(children: [
+      Padding(
+        padding: const EdgeInsets.all(20),
+        child: Row(children: [
+          Expanded(child: TextField(controller: aNC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "NEW AGENT NAME"))),
+          const SizedBox(width: 15),
+          ElevatedButton(
+            onPressed: () {
+              if (aNC.text.isNotEmpty) {
+                String newID = Random().nextInt(9999).toString().padLeft(4, '0');
+                _db.collection('commissioned_agents').add({'name': aNC.text, 'agent_id': newID});
+                aNC.clear();
+              }
+            }, 
+            child: const Text("COMMISSION")
+          )
+        ]),
+      ),
+      Expanded(child: StreamBuilder<QuerySnapshot>(
+        stream: _db.collection('commissioned_agents').snapshots(),
+        builder: (context, snap) {
+          if (!snap.hasData) return const LinearProgressIndicator();
+          return ListView(children: snap.data!.docs.map((d) {
+            return ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), subtitle: Text("ID: ${d['agent_id']}", style: const TextStyle(color: Color(0xFFC5A059))), trailing: IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => d.reference.delete()));
+          }).toList());
+        }
+      ))
+    ]);
+  }
+
+  Widget _globalLedgerView() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('tour_calendar').where('status', isEqualTo: 'SCHEDULED').snapshots(),
+      stream: _db.collection('sovereign_ledger').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO EVENTS READY FOR SETTLEMENT", style: TextStyle(color: Colors.white10)));
-        return ListView(padding: const EdgeInsets.all(20), children: snap.data!.docs.map((d) {
-          final sC = TextEditingController();
-          return Card(color: const Color(0xFF0D0D0D), child: ListTile(
-            title: Text("${d['city']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-            subtitle: SizedBox(width: 100, child: TextField(controller: sC, decoration: const InputDecoration(hintText: "ENTER TOTAL SALES"))),
-            trailing: ElevatedButton(onPressed: () => d.reference.update({'status': 'COMPLETED', 'actual_sales': double.parse(sC.text)}), child: const Text("SETTLE")),
-          ));
+        if (!snap.hasData) return const Center(child: CircularProgressIndicator());
+        return ListView(children: snap.data!.docs.map((d) {
+          return ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), subtitle: Text("\$${d['price']} | Status: ${d['status']}", style: const TextStyle(color: Colors.white38)));
         }).toList());
       }
     );
