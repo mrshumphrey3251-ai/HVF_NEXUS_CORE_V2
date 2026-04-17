@@ -7,7 +7,7 @@ import 'dart:math';
 const List<String> globalStates = ["AL", "AK", "AZ", "AR", "CA", "CO", "CT", "DE", "FL", "GA", "HI", "ID", "IL", "IN", "IA", "KS", "KY", "LA", "ME", "MD", "MA", "MI", "MN", "MS", "MO", "MT", "NE", "NV", "NH", "NJ", "NM", "NY", "NC", "ND", "OH", "OK", "OR", "PA", "RI", "SC", "SD", "TN", "TX", "UT", "VT", "VA", "WA", "WV", "WI", "WY"];
 const double FARMER_NODE_FEE = 200.00;
 const double BUYER_NODE_FEE = 25.00;
-const double EXECUTIVE_THRESHOLD = 100000.00; // ASSETS OVER 100K REQUIRE CEO REVIEW
+const double EXECUTIVE_THRESHOLD = 100000.00; 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,16 +21,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFAutonomousCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFCommissionCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFAutonomousCore extends StatefulWidget {
-  const HVFAutonomousCore({super.key});
+class HVFCommissionCore extends StatefulWidget {
+  const HVFCommissionCore({super.key});
   @override
-  State<HVFAutonomousCore> createState() => _HVFAutonomousCoreState();
+  State<HVFCommissionCore> createState() => _HVFCommissionCoreState();
 }
 
-class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
+class _HVFCommissionCoreState extends State<HVFCommissionCore> {
   bool hasAcceptedTerms = false;
   bool paymentVerified = false;
   String view = "GATE";
@@ -49,6 +49,10 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
   final pC = TextEditingController();
   final aC = TextEditingController();
   final dC = TextEditingController();
+  
+  // AGENT ONBOARDING CONTROLLERS
+  final agentNameC = TextEditingController();
+  final agentRegionC = TextEditingController();
 
   @override
   void initState() {
@@ -102,10 +106,10 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v6.2.0\n\n"
-              "ARTICLE I: THE AUTONOMOUS SORTER\nStandard assets are auto-released by Nexus protocol. High-valuation or incomplete assets are held for CEO review.\n\n"
-              "ARTICLE II: FINANCIAL NODE ACTIVATION\nMandatory Node Fees apply for all Producer and Buyer accounts.\n\n"
-              "ARTICLE III: PROPRIETARY PROVENANCE\nVisual proof is required for automatic release.\n\n"
+              Text("MASTER SERVICE AGREEMENT v6.3.0\n\n"
+              "ARTICLE I: AGENT COMMISSIONING\nAgents must be formally commissioned through the HVF Onboarding Portal. Residuals are non-transferable.\n\n"
+              "ARTICLE II: AUTONOMOUS PROTOCOLS\nStandard assets are auto-released. CEO Review is reserved for high-valuation exceptions.\n\n"
+              "ARTICLE III: FEDERAL IDENTIFICATION\nHVF LLC maintains its registration as a federal entity in Johnston County, OK.\n\n"
               "--- SCROLL TO EXECUTE MANDATE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -128,7 +132,7 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
   }
 
   Widget _buildTheater() {
-    if (!paymentVerified && view != "GATE" && view != "CEO") {
+    if (!paymentVerified && (view == "PRODUCER" || view == "BUYER")) {
       double fee = (view == "PRODUCER") ? FARMER_NODE_FEE : BUYER_NODE_FEE;
       return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         const Icon(Icons.lock_person_rounded, color: Color(0xFFC5A059), size: 60),
@@ -142,6 +146,7 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
       case "PRODUCER": return _producerTerminal();
       case "BUYER": return _buyerTerminal();
       case "AGENT": return _agentTerminal();
+      case "AGENT_ONBOARD": return _agentOnboarding();
       case "CEO": return _ceoTerminal();
       default: return _gate();
     }
@@ -151,16 +156,28 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
       _gateBtn("PRODUCER UPLINK", () => setState(() => view = "PRODUCER")),
-      _gateBtn("AGENT RESIDUALS", () => _agentLogin()),
+      _gateBtn("AGENT RESIDUALS", () => _agentLoginSelector()),
       _gateBtn("BUYER EXCHANGE", () => setState(() => view = "BUYER")),
     ]));
+  }
+
+  void _agentLoginSelector() {
+    showDialog(context: context, builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF0A0A0A),
+      title: const Text("AGENT PORTAL", style: TextStyle(color: Color(0xFFC5A059))),
+      content: const Text("Vetted representative access only.", style: TextStyle(color: Colors.white60)),
+      actions: [
+        TextButton(onPressed: () { Navigator.pop(context); setState(() => view = "AGENT_ONBOARD"); }, child: const Text("ONBOARD NEW AGENT", style: TextStyle(color: Color(0xFFC5A059)))),
+        ElevatedButton(onPressed: () { Navigator.pop(context); _agentLogin(); }, child: const Text("LOGIN")),
+      ],
+    ));
   }
 
   void _agentLogin() {
     TextEditingController aID = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("AGENT AUTHORIZATION", style: TextStyle(color: Color(0xFFC5A059))),
+      title: const Text("AUTHORIZE AGENT ID", style: TextStyle(color: Color(0xFFC5A059))),
       content: TextField(controller: aID, style: const TextStyle(color: Colors.white)),
       actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT"; }); Navigator.pop(context); }, child: const Text("ACCESS"))],
     ));
@@ -180,6 +197,38 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
     padding: const EdgeInsets.all(10),
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(300, 70)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
+
+  Widget _agentOnboarding() {
+    return Padding(
+      padding: const EdgeInsets.all(40.0),
+      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+        const Icon(Icons.person_add_alt_1, color: Color(0xFFC5A059), size: 50),
+        const SizedBox(height: 20),
+        const Text("AGENT COMMISSIONING FORM", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+        const SizedBox(height: 30),
+        TextField(controller: agentNameC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FULL LEGAL NAME")),
+        TextField(controller: agentRegionC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "OPERATIONAL REGION / CITY")),
+        const SizedBox(height: 40),
+        ElevatedButton(
+          style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 60)),
+          onPressed: () {
+            if (agentNameC.text.isNotEmpty) {
+              String newID = Random().nextInt(9999).toString().padLeft(4, '0');
+              _db.collection('commissioned_agents').add({
+                'name': agentNameC.text, 'region': agentRegionC.text, 'agent_id': newID, 'timestamp': FieldValue.serverTimestamp()
+              });
+              showDialog(context: context, builder: (context) => AlertDialog(
+                backgroundColor: Colors.black, title: const Text("COMMISSIONED SUCCESS", style: TextStyle(color: Colors.green)),
+                content: Text("AGENT ID: $newID\n\nStore this ID securely. It is your key to the residual engine."),
+                actions: [ElevatedButton(onPressed: () { Navigator.pop(context); setState(() => view = "GATE"); }, child: const Text("FINALIZE"))],
+              ));
+            }
+          }, 
+          child: const Text("ACTIVATE COMMISSION", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+        )
+      ]),
+    );
+  }
 
   Widget _producerTerminal() {
     return SingleChildScrollView(padding: const EdgeInsets.all(20), child: Column(children: [
@@ -204,12 +253,7 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
           onPressed: () {
             if (nC.text.isNotEmpty) {
               double price = double.tryParse(pC.text) ?? 0;
-              // AUTONOMOUS SORTER LOGIC
-              String initialStatus = "LIVE";
-              if (price >= EXECUTIVE_THRESHOLD || mediaStatus == "NO_MEDIA" || dC.text.isEmpty) {
-                initialStatus = "PENDING_SORTER";
-              }
-
+              String initialStatus = (price >= EXECUTIVE_THRESHOLD || mediaStatus == "NO_MEDIA" || dC.text.isEmpty) ? "PENDING_SORTER" : "LIVE";
               _db.collection('sovereign_ledger').add({
                 'category': assetCategory, 'name': nC.text, 'location': "${cC.text}, $selectedState", 
                 'price': price, 'agent': aC.text, 'details': dC.text,
@@ -233,7 +277,7 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
         double monthlyResidual = snap.hasData ? snap.data!.docs.where((d) => d['status'] != 'PENDING_SORTER').length * 20.0 : 0;
         return Column(children: [
           Container(padding: const EdgeInsets.all(30), color: const Color(0xFF0A0A0A), width: double.infinity, child: Column(children: [
-              Text("AGENT ID: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
+              Text("COMMISSIONED AGENT ID: $agentID", style: const TextStyle(color: Colors.white38, fontSize: 10)),
               Text("ACTIVE RESIDUAL: \$${monthlyResidual.toStringAsFixed(2)}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 24, fontWeight: FontWeight.bold)),
           ])),
           Expanded(child: _ledgerFeed("AGENT_VIEW", "ALL"))
@@ -258,13 +302,30 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
   }
 
   Widget _ceoTerminal() {
-    return DefaultTabController(length: 2, child: Column(children: [
-        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "EXCEPTIONS (SORTER)"), Tab(text: "GLOBAL LEDGER")]),
+    return DefaultTabController(length: 3, child: Column(children: [
+        const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "SORTER"), Tab(text: "LEDGER"), Tab(text: "AGENTS")]),
         Expanded(child: TabBarView(children: [
           _ledgerFeed("CEO_SORTER", "PENDING_SORTER"),
-          _ledgerFeed("CEO_VIEW", "ALL")
+          _ledgerFeed("CEO_VIEW", "ALL"),
+          _agentMasterList(),
         ]))
     ]));
+  }
+
+  Widget _agentMasterList() {
+    return StreamBuilder<QuerySnapshot>(
+      stream: _db.collection('commissioned_agents').snapshots(),
+      builder: (context, snap) {
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO AGENTS COMMISSIONED", style: TextStyle(color: Colors.white10)));
+        return ListView(padding: const EdgeInsets.all(20), children: snap.data!.docs.map((d) {
+          return Card(color: const Color(0xFF0D0D0D), child: ListTile(
+            title: Text("${d['name']}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            subtitle: Text("ID: ${d['agent_id']} | REGION: ${d['region']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
+            trailing: IconButton(icon: const Icon(Icons.person_remove, color: Colors.red), onPressed: () => d.reference.delete()),
+          ));
+        }).toList());
+      },
+    );
   }
 
   Widget _ledgerFeed(String userRole, String filter) {
@@ -283,7 +344,7 @@ class _HVFAutonomousCoreState extends State<HVFAutonomousCore> {
           bool isLive = data['status'] == 'LIVE';
 
           return Card(color: const Color(0xFF0D0D0D), margin: const EdgeInsets.only(bottom: 12), child: ListTile(
-            title: Text("${data['name']} ${isPending ? '[REVIEW REQUIRED]' : ''}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            title: Text("${data['name']} ${isPending ? '[REVIEW]' : ''}", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             subtitle: Text("${data['location']} | \$${data['price']}\n${data['details']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 9)),
             trailing: _buildActions(userRole, d, isPending, isLive),
           ));
