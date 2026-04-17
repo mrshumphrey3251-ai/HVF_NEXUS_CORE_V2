@@ -1,1 +1,1 @@
-firebase deploy
+flutter clean
