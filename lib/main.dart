@@ -15,22 +15,29 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFOverwatchCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFJustificationCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFOverwatchCore extends StatefulWidget {
-  const HVFOverwatchCore({super.key});
+class HVFJustificationCore extends StatefulWidget {
+  const HVFJustificationCore({super.key});
   @override
-  State<HVFOverwatchCore> createState() => _HVFOverwatchCoreState();
+  State<HVFJustificationCore> createState() => _HVFJustificationCoreState();
 }
 
-class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
+class _HVFJustificationCoreState extends State<HVFJustificationCore> {
   bool hasAcceptedTerms = false;
   String view = "GATE";
   String? agentID;
   final _db = FirebaseFirestore.instance;
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
+
+  // AGENT INTELLIGENCE CONTROLLERS
+  final cityC = TextEditingController();
+  final dateC = TextEditingController();
+  final statsC = TextEditingController(); // REGIONAL STATISTICS
+  final goalC = TextEditingController();  // JUSTIFIED GOAL
+  final potentialC = TextEditingController(); // KEY POTENTIALS
 
   @override
   void initState() {
@@ -42,19 +49,15 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
     });
   }
 
-  void _confirmAction(BuildContext context, String title, VoidCallback onConfirm) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: const Color(0xFF111111),
-        shape: const BeveledRectangleBorder(side: BorderSide(color: Color(0xFFC5A059), width: 1)),
-        title: Text(title, style: const TextStyle(color: Color(0xFFC5A059), fontSize: 14, fontWeight: FontWeight.bold)),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL", style: TextStyle(color: Colors.white24))),
-          ElevatedButton(onPressed: () { onConfirm(); Navigator.pop(context); }, style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)), child: const Text("EXECUTE", style: TextStyle(color: Colors.black))),
-        ],
-      ),
-    );
+  void _confirmDeletion(BuildContext context, VoidCallback onConfirm) {
+    showDialog(context: context, builder: (context) => AlertDialog(
+      backgroundColor: const Color(0xFF111111),
+      title: const Text("PERMANENT DELETION?", style: TextStyle(color: Colors.red, fontSize: 12)),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: const Text("CANCEL")),
+        ElevatedButton(onPressed: () { onConfirm(); Navigator.pop(context); }, style: ElevatedButton.styleFrom(backgroundColor: Colors.red), child: const Text("DELETE")),
+      ],
+    ));
   }
 
   @override
@@ -86,9 +89,9 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
           Expanded(child: Container(
             decoration: BoxDecoration(border: Border.all(color: const Color(0xFFC5A059).withOpacity(0.2))),
             child: ListView(controller: _legalScroll, padding: const EdgeInsets.all(25), children: const [
-              Text("MASTER SERVICE AGREEMENT v6.9.0\n\n"
-              "ARTICLE I: STRATEGIC TOUR OVERSIGHT\nThe CEO maintains absolute control over the 40-City Tour Timeline. No node is active without SME verification.\n\n"
-              "ARTICLE II: REVENUE DATA\nProjected vs. Actual sales data is trade-secret protected and restricted to Executive Overwatch.\n\n"
+              Text("MASTER SERVICE AGREEMENT v7.0.0\n\n"
+              "ARTICLE I: STRATEGIC JUSTIFICATION\nNo tour node shall be scheduled without regional statistics and a justified economic goal.\n\n"
+              "ARTICLE II: DATA INTEGRITY\nAll intelligence reports submitted by agents are the proprietary property of HVF LLC.\n\n"
               "--- SCROLL TO EXECUTE ---", 
               style: TextStyle(color: Colors.white70, fontSize: 12, height: 1.8, fontFamily: 'Courier')),
               SizedBox(height: 1800),
@@ -112,7 +115,7 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
 
   Widget _buildTheater() {
     switch (view) {
-      case "AGENT": return _agentMissionControl();
+      case "AGENT": return _agentStrategicTerminal();
       case "CEO": return _ceoExecutiveOverwatch();
       default: return _gate();
     }
@@ -121,7 +124,7 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
   Widget _gate() {
     return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
       _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
-      _gateBtn("AGENT MISSION CONTROL", () => _agentLogin()),
+      _gateBtn("AGENT STRATEGIC TERMINAL", () => _agentLogin()),
     ]));
   }
 
@@ -129,7 +132,7 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
     TextEditingController aID = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("AGENT ID", style: TextStyle(color: Color(0xFFC5A059))),
+      title: const Text("AGENT VALIDATION", style: TextStyle(color: Color(0xFFC5A059))),
       content: TextField(controller: aID, style: const TextStyle(color: Colors.white)),
       actions: [ElevatedButton(onPressed: () { setState(() { agentID = aID.text; view = "AGENT"; }); Navigator.pop(context); }, child: const Text("ACCESS"))],
     ));
@@ -150,76 +153,79 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 2), minimumSize: const Size(320, 75)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
 
-  Widget _agentMissionControl() {
-    final cityC = TextEditingController(), dateC = TextEditingController(), projC = TextEditingController();
-    return Column(children: [
-      Container(padding: const EdgeInsets.all(20), color: const Color(0xFF0A0A0A), child: Column(children: [
-        const Text("PROPOSE NEW TOUR NODE", style: TextStyle(color: Colors.white38, fontSize: 10)),
-        TextField(controller: cityC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY/STATE")),
-        Row(children: [
-          Expanded(child: TextField(controller: dateC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "DATE (MM/DD)"))),
-          const SizedBox(width: 10),
-          Expanded(child: TextField(controller: projC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PROJECTED SALES \$"))),
-        ]),
-        const SizedBox(height: 15),
-        ElevatedButton(onPressed: () {
-          _db.collection('tour_calendar').add({
-            'agent_id': agentID, 'city': cityC.text, 'date': dateC.text, 'projected': double.tryParse(projC.text) ?? 0,
-            'status': 'PROPOSED', 'actual': 0, 'notes': '', 'timestamp': FieldValue.serverTimestamp()
-          });
-          cityC.clear(); dateC.clear(); projC.clear();
-        }, child: const Text("SUBMIT NODE")),
-      ])),
-      Expanded(child: StreamBuilder<QuerySnapshot>(
-        stream: _db.collection('tour_calendar').where('agent_id', isEqualTo: agentID).snapshots(),
-        builder: (context, snap) {
-          if (!snap.hasData) return const LinearProgressIndicator();
-          return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['city'], style: const TextStyle(color: Colors.white)), subtitle: Text("${d['date']} | Status: ${d['status']}", style: const TextStyle(color: Colors.white38)))).toList());
-        },
-      ))
-    ]);
+  Widget _agentStrategicTerminal() {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(20),
+      child: Column(children: [
+        Container(
+          padding: const EdgeInsets.all(20), decoration: BoxDecoration(color: const Color(0xFF0A0A0A), border: Border.all(color: Colors.white10)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            const Text("INTELLIGENCE REPORT: NEW TOUR NODE", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold, fontSize: 12)),
+            const SizedBox(height: 15),
+            TextField(controller: cityC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "CITY/STATE")),
+            TextField(controller: dateC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PROPOSED DATE")),
+            TextField(controller: statsC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "REGIONAL STATISTICS (Vets, Ag Density, etc)")),
+            TextField(controller: goalC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "JUSTIFIED ECONOMIC GOAL")),
+            TextField(controller: potentialC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "KEY POTENTIALS / STAKEHOLDERS")),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 50)),
+              onPressed: () {
+                if (cityC.text.isNotEmpty && statsC.text.isNotEmpty) {
+                  _db.collection('tour_calendar').add({
+                    'agent_id': agentID, 'city': cityC.text, 'date': dateC.text, 'stats': statsC.text,
+                    'goal': goalC.text, 'potentials': potentialC.text, 'status': 'PROPOSED', 'timestamp': FieldValue.serverTimestamp()
+                  });
+                  cityC.clear(); dateC.clear(); statsC.clear(); goalC.clear(); potentialC.clear();
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("STRATEGIC REPORT SUBMITTED")));
+                }
+              }, 
+              child: const Text("SUBMIT FOR CEO AUDIT", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+            ),
+          ]),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(height: 300, child: StreamBuilder<QuerySnapshot>(
+          stream: _db.collection('tour_calendar').where('agent_id', isEqualTo: agentID).snapshots(),
+          builder: (context, snap) {
+            if (!snap.hasData) return const LinearProgressIndicator();
+            return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['city'], style: const TextStyle(color: Colors.white)), subtitle: Text(d['status'], style: const TextStyle(color: Colors.white38)))).toList());
+          },
+        ))
+      ]),
+    );
   }
 
   Widget _ceoExecutiveOverwatch() {
     return DefaultTabController(length: 2, child: Column(children: [
-      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "STRATEGIC TIMELINE"), Tab(text: "PIPELINE APPROVAL")]),
+      const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "STRATEGIC AUDIT"), Tab(text: "ACTIVE TIMELINE")]),
       Expanded(child: TabBarView(children: [
-        _ceoMasterTimeline(),
-        _ceoPipelineApproval(),
+        _ceoAuditView(),
+        _ceoActiveTimeline(),
       ])),
     ]));
   }
 
-  Widget _ceoMasterTimeline() {
+  Widget _ceoAuditView() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('tour_calendar').where('status', isNotEqualTo: 'PROPOSED').snapshots(),
+      stream: _db.collection('tour_calendar').where('status', isEqualTo: 'PROPOSED').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("TIMELINE EMPTY", style: TextStyle(color: Colors.white10)));
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO NODES PENDING AUDIT", style: TextStyle(color: Colors.white10)));
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) {
-          double proj = (d['projected'] as num).toDouble();
-          double act = (d['actual'] as num).toDouble();
-          double delta = act - proj;
-          bool isCompleted = d['status'] == 'COMPLETED';
-
           return Card(color: const Color(0xFF0D0D0D), margin: const EdgeInsets.only(bottom: 15), child: Padding(
             padding: const EdgeInsets.all(15),
             child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                Text(d['city'].toUpperCase(), style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.w900, fontSize: 16)),
-                Text(d['date'], style: const TextStyle(color: Colors.white38, fontSize: 12)),
-              ]),
-              const Divider(color: Colors.white10, height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                _statNode("PROJECTED", "\$${proj.toStringAsFixed(0)}", Colors.white70),
-                _statNode("ACTUAL", "\$${act.toStringAsFixed(0)}", isCompleted ? Colors.green : Colors.white24),
-                _statNode("DELTA", "\$${delta.toStringAsFixed(0)}", delta >= 0 ? Colors.green : Colors.red),
-              ]),
+              Text(d['city'].toUpperCase(), style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
+              const SizedBox(height: 10),
+              _intelRow("STATS", d['stats']),
+              _intelRow("GOAL", d['goal']),
+              _intelRow("POTENTIALS", d['potentials']),
               const SizedBox(height: 15),
-              if (!isCompleted) ElevatedButton(
-                onPressed: () => _settleEvent(d), 
-                style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059), minimumSize: const Size(double.infinity, 40)),
-                child: const Text("SETTLE EVENT & CLOSE NODE", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 11)),
-              )
+              Row(children: [
+                Expanded(child: ElevatedButton(onPressed: () => d.reference.update({'status': 'ACTIVE'}), style: ElevatedButton.styleFrom(backgroundColor: Colors.green), child: const Text("RELEASE TO TIMELINE"))),
+                const SizedBox(width: 10),
+                IconButton(icon: const Icon(Icons.delete, color: Colors.red), onPressed: () => _confirmDeletion(context, () => d.reference.delete())),
+              ]),
             ]),
           ));
         }).toList());
@@ -227,31 +233,17 @@ class _HVFOverwatchCoreState extends State<HVFOverwatchCore> {
     );
   }
 
-  Widget _statNode(String label, String val, Color c) => Column(children: [
-    Text(label, style: const TextStyle(color: Colors.white38, fontSize: 8)),
-    Text(val, style: TextStyle(color: c, fontWeight: FontWeight.bold, fontSize: 14)),
-  ]);
+  Widget _intelRow(String label, String val) => Padding(
+    padding: const EdgeInsets.only(bottom: 5),
+    child: Text("$label: $val", style: const TextStyle(color: Colors.white70, fontSize: 10)),
+  );
 
-  void _settleEvent(DocumentSnapshot d) {
-    final sC = TextEditingController();
-    showDialog(context: context, builder: (context) => AlertDialog(
-      backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("SETTLE EVENT NODE", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: sC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FINAL ACTUAL SALES \$")),
-      actions: [ElevatedButton(onPressed: () { d.reference.update({'status': 'COMPLETED', 'actual': double.parse(sC.text)}); Navigator.pop(context); }, child: const Text("SETTLE"))],
-    ));
-  }
-
-  Widget _ceoPipelineApproval() {
+  Widget _ceoActiveTimeline() {
     return StreamBuilder<QuerySnapshot>(
-      stream: _db.collection('tour_calendar').where('status', isEqualTo: 'PROPOSED').snapshots(),
+      stream: _db.collection('tour_calendar').where('status', isEqualTo: 'ACTIVE').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO PENDING NODES", style: TextStyle(color: Colors.white10)));
-        return ListView(padding: const EdgeInsets.all(20), children: snap.data!.docs.map((d) => ListTile(
-          title: Text(d['city'], style: const TextStyle(color: Colors.white)),
-          subtitle: Text("PROJ: \$${d['projected']} | AGENT: ${d['agent_id']}"),
-          trailing: IconButton(icon: const Icon(Icons.bolt, color: Colors.green), onPressed: () => d.reference.update({'status': 'ACTIVE'})),
-        )).toList());
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("TIMELINE EMPTY", style: TextStyle(color: Colors.white10)));
+        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['city'], style: const TextStyle(color: Colors.white)), subtitle: Text(d['date']))).toList());
       },
     );
   }
