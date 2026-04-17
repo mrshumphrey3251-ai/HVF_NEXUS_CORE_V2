@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:math';
@@ -88,7 +89,7 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
       stream: _db.collection('sovereign_ledger').where('buyer_id', isEqualTo: sessionUID).snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const LinearProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), subtitle: Text("\$${d['price']}"))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), subtitle: Text("\$${d['price']}"))).toList());
       },
     );
   }
@@ -98,7 +99,7 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'PENDING').snapshots(),
       builder: (context, snap) {
         if (!snap.hasData) return const LinearProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'], style: const TextStyle(color: Colors.white)), trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})))).toList());
+        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})))).toList());
       },
     );
   }
@@ -106,8 +107,8 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
   Widget _reg() {
     final t = TextEditingController(); String r = "PRODUCER";
     return Center(child: Column(children: [
-      DropdownButton<String>(value: r, items: ["PRODUCER", "BUYER"].map((e)=>DropdownMenuItem(value:e, child:Text(e))).toList(), onChanged: (v)=>setState(()=>r=v!)),
-      TextField(controller: t, decoration: const InputDecoration(labelText: "NAME")),
+      const Text("REGISTRATION", style: TextStyle(color: Colors.white)),
+      TextField(controller: t, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "NAME")),
       ElevatedButton(onPressed: () async {
         String uid = "HVF-${Random().nextInt(9999)}";
         await _db.collection('vetted_participants').add({'name': t.text, 'uid': uid, 'pin': "1234", 'role': r});
@@ -129,6 +130,6 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
     }, child: const Text("LOGIN"))]));
   }
 
-  Widget _field(TextEditingController c, String l) => TextField(controller: c, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: l));
-  Widget _btn(String t, VoidCallback a) => OutlinedButton(onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059))));
+  Widget _field(TextEditingController c, String l) => TextField(controller: c, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: l, labelStyle: const TextStyle(color: Colors.white54)));
+  Widget _btn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(10), child: OutlinedButton(onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059)))));
 }
