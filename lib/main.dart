@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFStabilizedCore(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFIntegrityCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFStabilizedCore extends StatefulWidget {
-  const HVFStabilizedCore({super.key});
+class HVFIntegrityCore extends StatefulWidget {
+  const HVFIntegrityCore({super.key});
   @override
-  State<HVFStabilizedCore> createState() => _HVFStabilizedCoreState();
+  State<HVFIntegrityCore> createState() => _HVFIntegrityCoreState();
 }
 
-class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
+class _HVFIntegrityCoreState extends State<HVFIntegrityCore> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
@@ -41,6 +41,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
       backgroundColor: const Color(0xFF030303),
       appBar: view == "GATE" ? null : AppBar(
         backgroundColor: Colors.black,
+        elevation: 2,
         title: Text("HVF COMMAND | $activeRole", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 11, fontWeight: FontWeight.bold)),
         leading: IconButton(
           icon: const Icon(Icons.shield, color: Color(0xFFC5A059)), 
@@ -75,8 +76,8 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     TextEditingController pC = TextEditingController();
     showDialog(context: context, builder: (context) => AlertDialog(
       backgroundColor: const Color(0xFF0A0A0A),
-      title: const Text("CEO PIN", style: TextStyle(color: Color(0xFFC5A059))),
-      content: TextField(controller: pC, obscureText: true, style: const TextStyle(color: Colors.white)),
+      title: const Text("CEO ACCESS", style: TextStyle(color: Color(0xFFC5A059))),
+      content: TextField(controller: pC, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "Enter PIN")),
       actions: [ElevatedButton(onPressed: () { if (pC.text == "1978") { setState(() { view = "CEO"; activeRole = "CEO"; }); Navigator.pop(context); } }, child: const Text("ACCESS"))],
     ));
   }
@@ -101,13 +102,12 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     ));
   }
 
-  // CEO TERMINAL WITH FRAME STABILIZATION
   Widget _ceoTerminal() {
     return DefaultTabController(length: 2, child: Column(children: [
       const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "ASSET SORTER"), Tab(text: "VETTED LEDGER")]),
       Expanded(child: TabBarView(children: [
         _ceoAssetReview(),
-        _ceoLidViewStabilized(), // REINFORCED
+        _ceoLidViewStabilized(),
       ])),
     ]));
   }
@@ -118,7 +118,7 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
       builder: (context, snap) {
         if (!snap.hasData) return const Center(child: CircularProgressIndicator());
         return ListView(padding: const EdgeInsets.all(15), children: snap.data!.docs.map((d) => ListTile(
-          title: Text(d['name'], style: const TextStyle(color: Colors.white)),
+          title: Text(d['name'] ?? "ASSET", style: const TextStyle(color: Colors.white)),
           trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'})),
         )).toList());
       },
@@ -129,13 +129,8 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('vetted_participants').snapshots(),
       builder: (context, snap) {
-        // Stabilizes the "Flash" by handling the waiting state explicitly
-        if (snap.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
-        }
-        if (!snap.hasData || snap.data!.docs.isEmpty) {
-          return const Center(child: Text("NO VETTED DATA FOUND", style: TextStyle(color: Colors.white24)));
-        }
+        if (snap.connectionState == ConnectionState.waiting) return const Center(child: CircularProgressIndicator(color: Color(0xFFC5A059)));
+        if (!snap.hasData || snap.data!.docs.isEmpty) return const Center(child: Text("NO VETTED DATA", style: TextStyle(color: Colors.white24)));
 
         return ListView.builder(
           padding: const EdgeInsets.all(15),
@@ -158,18 +153,21 @@ class _HVFStabilizedCoreState extends State<HVFStabilizedCore> {
   }
 
   Widget _producerTerminal() => SingleChildScrollView(padding: const EdgeInsets.all(25), child: Column(children: [
+    const Text("UPLINK NEW ASSET", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
     TextField(controller: nC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "ASSET NAME")),
     TextField(controller: pC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "PRICE")),
     TextField(controller: dC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "DETAILS")),
+    const SizedBox(height: 20),
     ElevatedButton(onPressed: () {
       _db.collection('sovereign_ledger').add({'name': nC.text, 'price': double.tryParse(pC.text) ?? 0, 'details': dC.text, 'status': 'PENDING_SORTER'});
       nC.clear(); pC.clear(); dC.clear();
     }, child: const Text("UPLINK"))
   ]));
 
-  Widget _buyerTerminal() => const Center(child: Text("MARKET ACTIVE", style: TextStyle(color: Colors.white)));
+  Widget _buyerTerminal() => const Center(child: Text("BUYER EXCHANGE ACTIVE", style: TextStyle(color: Colors.white)));
 
   Widget _gateBtn(String t, VoidCallback a) => Padding(
     padding: const EdgeInsets.all(8),
     child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059), width: 1.5), minimumSize: const Size(350, 65)), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold))),
   );
+}
