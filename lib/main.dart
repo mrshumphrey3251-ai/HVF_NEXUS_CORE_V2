@@ -1,4 +1,3 @@
-// V15.0.0: THE IRONCLAD SOVEREIGN - FINAL DEPLOYMENT BUILD
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -16,22 +15,20 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(
-    home: HVFCoreSystem(),
-    debugShowCheckedModeBanner: false,
-  ));
+  runApp(const MaterialApp(home: HVFMasterNexus(), debugShowCheckedModeBanner: false));
 }
 
-class HVFCoreSystem extends StatefulWidget {
-  const HVFCoreSystem({super.key});
+class HVFMasterNexus extends StatefulWidget {
+  const HVFMasterNexus({super.key});
   @override
-  State<HVFCoreSystem> createState() => _HVFCoreSystemState();
+  State<HVFMasterNexus> createState() => _HVFMasterNexusState();
 }
 
-class _HVFCoreSystemState extends State<HVFCoreSystem> {
+class _HVFMasterNexusState extends State<HVFMasterNexus> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
+  bool msaAccepted = false;
   final _db = FirebaseFirestore.instance;
 
   // Controllers
@@ -47,24 +44,19 @@ class _HVFCoreSystemState extends State<HVFCoreSystem> {
       appBar: view == "GATE" ? null : AppBar(
         backgroundColor: Colors.black,
         title: Text("HVF NEXUS | $activeRole", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
-        leading: IconButton(
-          icon: const Icon(Icons.shield_outlined, color: Color(0xFFC5A059)),
-          onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; }),
-        ),
-        actions: const [
-          Center(child: Text("5 USC 552(B)(4) SECURED   ", style: TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold)))
-        ],
+        leading: IconButton(icon: const Icon(Icons.shield_outlined, color: Color(0xFFC5A059)), onPressed: () => setState(() { view = "GATE"; activeRole = "GUEST"; })),
+        actions: const [Center(child: Text("5 USC 552(B)(4) SECURED   ", style: TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold)))],
       ),
-      body: _activeModule(),
+      body: _buildTheater(),
     );
   }
 
-  Widget _activeModule() {
+  Widget _buildTheater() {
     switch (view) {
-      case "CEO": return _ceoView();
-      case "PRODUCER": return _producerView();
-      case "BUYER": return _buyerView();
-      case "REGISTER": return _onboarding();
+      case "CEO": return _ceoTerminal();
+      case "PRODUCER": return _producerTerminal();
+      case "BUYER": return _buyerTerminal();
+      case "REGISTER": return _onboardingGate();
       default: return _gate();
     }
   }
@@ -81,7 +73,7 @@ class _HVFCoreSystemState extends State<HVFCoreSystem> {
   }
 
   // --- PRODUCER TERMINAL ---
-  Widget _producerView() {
+  Widget _producerTerminal() {
     return SingleChildScrollView(padding: const EdgeInsets.all(30), child: Column(children: [
       const Text("INDUSTRIAL ASSET UPLINK", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
       const SizedBox(height: 25),
@@ -105,17 +97,17 @@ class _HVFCoreSystemState extends State<HVFCoreSystem> {
   }
 
   // --- BUYER TERMINAL ---
-  Widget _buyerView() {
+  Widget _buyerTerminal() {
     return DefaultTabController(length: 2, child: Column(children: [
       const TabBar(indicatorColor: Color(0xFFC5A059), tabs: [Tab(text: "MARKET"), Tab(text: "MY ASSETS")]),
       Expanded(child: TabBarView(children: [
-        _ledgerQuery('LIVE'),
-        _ledgerQuery('SECURED', portfolio: true),
+        _queryLedger('LIVE'),
+        _queryLedger('SECURED', portfolio: true),
       ])),
     ]));
   }
 
-  Widget _ledgerQuery(String stat, {bool portfolio = false}) {
+  Widget _queryLedger(String stat, {bool portfolio = false}) {
     Query q = _db.collection('sovereign_ledger').where('status', isEqualTo: stat);
     if (portfolio) q = q.where('buyer_id', isEqualTo: sessionUID);
     return StreamBuilder<QuerySnapshot>(
@@ -137,7 +129,7 @@ class _HVFCoreSystemState extends State<HVFCoreSystem> {
   }
 
   // --- CEO TERMINAL ---
-  Widget _ceoView() {
+  Widget _ceoTerminal() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'PENDING_SORTER').snapshots(),
       builder: (context, snap) {
@@ -151,19 +143,26 @@ class _HVFCoreSystemState extends State<HVFCoreSystem> {
     );
   }
 
-  // --- ONBOARDING ---
-  Widget _onboarding() {
+  // --- ONBOARDING WITH MSA ---
+  Widget _onboardingGate() {
     final t = TextEditingController();
     String r = "PRODUCER";
-    return Center(child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-      DropdownButton<String>(value: r, dropdownColor: Colors.black, items: ["PRODUCER", "BUYER"].map((e)=>DropdownMenuItem(value:e, child:Text(e, style:const TextStyle(color:Colors.white)))).toList(), onChanged: (v)=>setState(()=>r=v!)),
-      SizedBox(width: 300, child: _input(t, "NAME")),
-      ElevatedButton(onPressed: () async {
-        String uid = "HVF-${Random().nextInt(9999)}";
-        await _db.collection('vetted_participants').add({'name': t.text, 'uid': uid, 'pin': "1234", 'role': r});
-        setState(() => view = "GATE");
-      }, child: const Text("REGISTER"))
-    ]));
+    return Column(children: [
+      if (!msaAccepted) Expanded(child: ListView(padding: const EdgeInsets.all(20), children: [
+        const Text("MASTER SERVICE AGREEMENT\n\nSection 1: Trade Secrets\nAll information shared within Humphrey Virtual Farms is protected under 5 U.S.C. § 552(b)(4)...\n\nSCROLL TO ACCEPT", style: TextStyle(color: Colors.white70)),
+        const SizedBox(height: 800),
+        ElevatedButton(onPressed: () => setState(() => msaAccepted = true), child: const Text("I ACCEPT TERMS"))
+      ])),
+      if (msaAccepted) Padding(padding: const EdgeInsets.all(30), child: Column(children: [
+        DropdownButton<String>(value: r, dropdownColor: Colors.black, items: ["PRODUCER", "BUYER"].map((e)=>DropdownMenuItem(value:e, child:Text(e, style:const TextStyle(color:Colors.white)))).toList(), onChanged: (v)=>setState(()=>r=v!)),
+        _input(t, "FULL NAME"),
+        ElevatedButton(onPressed: () async {
+          String uid = "HVF-${Random().nextInt(9999)}";
+          await _db.collection('vetted_participants').add({'name': t.text, 'uid': uid, 'pin': "1234", 'role': r});
+          setState(() { view = "GATE"; msaAccepted = false; });
+        }, child: const Text("GENERATE COMMISSION CREDENTIALS"))
+      ])),
+    ]);
   }
 
   void _ceoLogin() {
