@@ -15,16 +15,16 @@ void main() async {
       appId: "1:892263251736:web:899cc6ab03f6f5e9d8286d",
     ),
   );
-  runApp(const MaterialApp(home: HVFSecureDispatch(), debugShowCheckedModeBanner: false));
+  runApp(const MaterialApp(home: HVFIroncladCore(), debugShowCheckedModeBanner: false));
 }
 
-class HVFSecureDispatch extends StatefulWidget {
-  const HVFSecureDispatch({super.key});
+class HVFIroncladCore extends StatefulWidget {
+  const HVFIroncladCore({super.key});
   @override
-  State<HVFSecureDispatch> createState() => _HVFSecureDispatchState();
+  State<HVFIroncladCore> createState() => _HVFIroncladCoreState();
 }
 
-class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
+class _HVFIroncladCoreState extends State<HVFIroncladCore> {
   String view = "GATE";
   String? sessionUID;
   String activeRole = "GUEST";
@@ -32,11 +32,13 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
   final ScrollController _legalScroll = ScrollController();
   bool canAccept = false;
 
-  // REGISTRATION CONTROLLERS
+  // REFINED EXAM CONTROLLERS
   final nameC = TextEditingController();
   final emailC = TextEditingController();
-  final taxC = TextEditingController();
-  String selectedRole = "BUYER";
+  final taxC = TextEditingController(); // AG TAX ID
+  final fsaC = TextEditingController(); // FSA NUMBER
+  final opC = TextEditingController();  // OPERATIONAL CAPACITY (ADA/BIO)
+  String selectedRole = "PRODUCER";
 
   @override
   void initState() {
@@ -54,7 +56,10 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
       backgroundColor: const Color(0xFF030303),
       appBar: view == "GATE" ? null : AppBar(
         backgroundColor: Colors.black,
-        title: Text("HVF NEXUS | $activeRole | $sessionUID", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
+        title: Text("HVF IRONCLAD | $activeRole | $sessionUID", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10, fontWeight: FontWeight.bold)),
+        actions: [
+          const Center(child: Text("PROPRIETARY & CONFIDENTIAL   ", style: TextStyle(color: Colors.red, fontSize: 8, fontWeight: FontWeight.bold))),
+        ],
         leading: IconButton(icon: const Icon(Icons.security, color: Color(0xFFC5A059)), onPressed: () => setState(() => view = "GATE")),
       ),
       body: _buildTheater(),
@@ -66,9 +71,7 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
       case "GATE": return _gate();
       case "REGISTER": return _registrationPortal();
       case "AUDIT_WAIT": return _nexusAuditLoading();
-      case "PRODUCER": return const Center(child: Text("PRODUCER TERMINAL ACTIVE", style: TextStyle(color: Colors.white)));
-      case "BUYER": return const Center(child: Text("BUYER EXCHANGE ACTIVE", style: TextStyle(color: Colors.white)));
-      case "AGENT": return const Center(child: Text("MISSION CONTROL ACTIVE", style: TextStyle(color: Colors.white)));
+      case "DASHBOARD": return _roleDashboard();
       case "CEO": return _ceoTerminal();
       default: return _gate();
     }
@@ -80,17 +83,16 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
         const Icon(Icons.stars_rounded, color: Color(0xFFC5A059), size: 100),
         const SizedBox(height: 10),
         const Text("HUMPHREY VIRTUAL FARMS", style: TextStyle(color: Color(0xFFC5A059), fontSize: 20, fontWeight: FontWeight.w900, letterSpacing: 5)),
-        const Text("FEDERAL ID: S1M4ENLHTDH5", style: TextStyle(color: Colors.white24, fontSize: 9)),
+        const Text("UEI: S1M4ENLHTDH5 | CAGE: 1AHA8", style: TextStyle(color: Colors.white24, fontSize: 9)),
         const SizedBox(height: 50),
         _gateBtn("EXECUTIVE COMMAND", () => _pinAuth("CEO", "1978")),
         _gateBtn("SECURE ENTRY (UID/PIN)", () => _idPinLoginPrompt()),
         const Padding(padding: EdgeInsets.symmetric(vertical: 20), child: Text("OR", style: TextStyle(color: Colors.white10))),
-        _gateBtn("REQUEST PARTICIPATION", () => setState(() => view = "REGISTER")),
+        _gateBtn("REQUEST COMMISSION", () => setState(() => view = "REGISTER")),
       ]),
     );
   }
 
-  // REINFORCED 2FA LOGIN: UID + PIN
   void _idPinLoginPrompt() {
     TextEditingController idC = TextEditingController();
     TextEditingController pinC = TextEditingController();
@@ -105,16 +107,11 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
       actions: [
         ElevatedButton(onPressed: () async {
           var snap = await _db.collection('vetted_participants').where('uid', isEqualTo: idC.text).get();
-          if (snap.docs.isNotEmpty) {
-            var data = snap.docs.first.data();
-            if (data['pin'] == pinC.text) {
-              setState(() { sessionUID = idC.text; activeRole = data['role']; view = data['role']; });
-              Navigator.pop(context);
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("INVALID PIN: ACCESS TERMINATED")));
-            }
+          if (snap.docs.isNotEmpty && snap.docs.first['pin'] == pinC.text) {
+            setState(() { sessionUID = idC.text; activeRole = snap.docs.first['role']; view = "DASHBOARD"; });
+            Navigator.pop(context);
           } else {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("UID NOT FOUND")));
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("INVALID CREDENTIALS")));
           }
         }, child: const Text("VALIDATE"))
       ],
@@ -137,31 +134,40 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
         padding: const EdgeInsets.all(40),
         decoration: const BoxDecoration(border: Border(right: BorderSide(color: Colors.white10))),
         child: ListView(controller: _legalScroll, children: const [
-          Text("MASTER LEGAL MANDATE v7.3.0\n\n- Access is granted solely via encrypted PIN dispatch.\n- Misrepresentation of federal identifiers results in banishment.\n- All data remains confidential.\n\n--- SCROLL TO ACCEPT ---", style: TextStyle(color: Colors.white70, height: 1.6)),
+          Text("MASTER LEGAL MANDATE v8.0.0\n\n"
+          "ARTICLE I: PROPRIETARY DESIGNATION\nAll data submitted is classified as a Trade Secret under the DTSA and is exempt from FOIA disclosure as per 5 U.S.C. § 552(b)(4).\n\n"
+          "ARTICLE II: STEWARDSHIP AUDIT\nApplicant warrants that all agricultural activity meets HVF Industrial Standards, including 100% ADA compliance and biosecurity protocols.\n\n"
+          "--- SCROLL TO ACCEPT ---", style: TextStyle(color: Colors.white70, height: 1.6)),
           SizedBox(height: 1500),
           Text("MANDATE READY.", style: TextStyle(color: Color(0xFFC5A059), fontWeight: FontWeight.bold)),
         ]),
       )),
       Expanded(flex: 1, child: Padding(
         padding: const EdgeInsets.all(40.0),
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          const Text("CREDENTIAL REQUEST", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 30),
-          DropdownButton<String>(
-            dropdownColor: Colors.black, value: selectedRole, isExpanded: true, style: const TextStyle(color: Color(0xFFC5A059)),
-            items: ["BUYER", "PRODUCER", "AGENT"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-            onChanged: (v) => setState(() => selectedRole = v!),
-          ),
-          TextField(controller: nameC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "LEGAL NAME")),
-          TextField(controller: emailC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VERIFIED EMAIL")),
-          if (selectedRole == "PRODUCER") TextField(controller: taxC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "TAX ID / FSA")),
-          const SizedBox(height: 40),
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 50)),
-            onPressed: canAccept ? () => _submitToAudit() : null, 
-            child: const Text("SUBMIT FOR DISPATCH", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
-          ),
-        ]),
+        child: SingleChildScrollView(
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            const Text("STEWARDSHIP COMMISSION REQUEST", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+            const SizedBox(height: 30),
+            DropdownButton<String>(
+              dropdownColor: Colors.black, value: selectedRole, isExpanded: true, style: const TextStyle(color: Color(0xFFC5A059)),
+              items: ["PRODUCER", "BUYER", "AGENT"].map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+              onChanged: (v) => setState(() => selectedRole = v!),
+            ),
+            TextField(controller: nameC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "LEGAL NAME")),
+            TextField(controller: emailC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "VERIFIED EMAIL")),
+            if (selectedRole == "PRODUCER") ...[
+              TextField(controller: taxC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "AG TAX ID / SCHEDULE F")),
+              TextField(controller: fsaC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FSA FARM NUMBER")),
+              TextField(controller: opC, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "BIOSECURITY/ADA ATTESTATION")),
+            ],
+            const SizedBox(height: 40),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: canAccept ? const Color(0xFFC5A059) : Colors.white10, minimumSize: const Size(double.infinity, 50)),
+              onPressed: canAccept ? () => _submitToAudit() : null, 
+              child: const Text("SUBMIT FOR IRONCLAD AUDIT", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold))
+            ),
+          ]),
+        ),
       )),
     ]);
   }
@@ -170,11 +176,14 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
     setState(() => view = "AUDIT_WAIT");
     Future.delayed(const Duration(seconds: 4), () async {
       String newUID = "HVF-${Random().nextInt(9999)}-${selectedRole[0]}";
-      String newPIN = (1000 + Random().nextInt(8999)).toString(); // Generate 4-digit PIN
+      String newPIN = (1000 + Random().nextInt(8999)).toString();
       
+      // RED TEAM IMPLEMENTATION: MARKING DATA AS FOIA EXEMPT
       await _db.collection('vetted_participants').add({
         'uid': newUID, 'pin': newPIN, 'name': nameC.text, 'email': emailC.text,
-        'role': selectedRole, 'status': 'VETTED', 'timestamp': FieldValue.serverTimestamp()
+        'role': selectedRole, 'fsa': fsaC.text, 'tax_id': taxC.text,
+        'foia_exemption': '5_USC_552_B4', // LEGAL SHIELD
+        'status': 'VETTED', 'timestamp': FieldValue.serverTimestamp()
       });
       _showSuccess(newUID, emailC.text);
     });
@@ -184,11 +193,13 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
 
   void _showSuccess(String uid, String email) {
     showDialog(context: context, barrierDismissible: false, builder: (context) => AlertDialog(
-      backgroundColor: Colors.black, title: const Text("AUDIT COMPLETE", style: TextStyle(color: Colors.green)),
-      content: Text("IDENTIFIER: $uid\n\nA SECURE PIN HAS BEEN DISPATCHED TO: $email\n\nPlease check your inbox to complete secure entry."),
-      actions: [ElevatedButton(onPressed: () { Navigator.pop(context); setState(() => view = "GATE"); }, child: const Text("RETURN TO GATE"))],
+      backgroundColor: Colors.black, title: const Text("AUDIT PASSED", style: TextStyle(color: Colors.green)),
+      content: Text("IDENTIFIER: $uid\n\nPIN DISPATCHED TO: $email\n\nCREDENTIALS PROTECTED UNDER HVF TRADE SECRET PROTOCOL."),
+      actions: [ElevatedButton(onPressed: () { Navigator.pop(context); setState(() => view = "GATE"); }, child: const Text("FINALIZE"))],
     ));
   }
+
+  Widget _roleDashboard() => Center(child: Text("$activeRole TERMINAL ACTIVE", style: const TextStyle(color: Colors.white)));
 
   Widget _ceoTerminal() {
     return StreamBuilder<QuerySnapshot>(
@@ -197,8 +208,7 @@ class _HVFSecureDispatchState extends State<HVFSecureDispatch> {
         if (!snap.hasData) return const LinearProgressIndicator();
         return ListView(children: snap.data!.docs.map((d) => ListTile(
           title: Text(d['name'], style: const TextStyle(color: Colors.white)),
-          subtitle: Text("ID: ${d['uid']} | PIN: ${d['pin']}", style: const TextStyle(color: Color(0xFFC5A059))),
-          trailing: Text(d['role'], style: const TextStyle(color: Colors.white24, fontSize: 10)),
+          subtitle: Text("UID: ${d['uid']} | PIN: ${d['pin']} | SHIELD: ${d['foia_exemption']}", style: const TextStyle(color: Color(0xFFC5A059), fontSize: 10)),
         )).toList());
       },
     );
