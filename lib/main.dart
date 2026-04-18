@@ -139,4 +139,6 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
 
   Widget _field(TextEditingController c, String l) => TextField(controller: c, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: l, labelStyle: const TextStyle(color: Colors.white54)));
   Widget _btn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(10), child: OutlinedButton(onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059)))));
-}
+} 
+firebase deploy
+  
