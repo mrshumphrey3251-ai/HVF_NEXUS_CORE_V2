@@ -91,9 +91,13 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
   Widget _buyer() {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('buyer_id', isEqualTo: sessionUID).snapshots(),
-      builder: (context, snap) {
-        if (!snap.hasData) return const LinearProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), subtitle: Text("\$${d['price']}", style: const TextStyle(color: Color(0xFFC5A059))))).toList());
+      builder: (context, snap){
+        return ListView(
+          children: (snap.data?.docs ?? []).map((d) => ListTile(
+            title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), 
+            subtitle: Text("\$${d['price'] ?? '0.00'}", style: const TextStyle(color: Color(0xFFC5A059)))
+          )).toList()
+        );
       },
     );
   }
@@ -102,11 +106,12 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
     return StreamBuilder<QuerySnapshot>(
       stream: _db.collection('sovereign_ledger').where('status', isEqualTo: 'PENDING').snapshots(),
       builder: (context, snap) {
-        if (!snap.hasData) return const LinearProgressIndicator();
-        return ListView(children: snap.data!.docs.map((d) => ListTile(
-          title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), 
-          trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'}))
-        )).toList());
+        return ListView(
+          children: (snap.data?.docs ?? []).map((d) => ListTile(
+            title: Text(d['name'] ?? 'ASSET', style: const TextStyle(color: Colors.white)), 
+            trailing: IconButton(icon: const Icon(Icons.check, color: Colors.green), onPressed: () => d.reference.update({'status': 'LIVE'}))
+          )).toList()
+        );
       },
     );
   }
@@ -114,31 +119,38 @@ class _HVFMasterSystemState extends State<HVFMasterSystem> {
   Widget _reg() {
     final t = TextEditingController(); String r = "PRODUCER";
     return Center(child: Column(children: [
-      const Text("REGISTRATION", style: TextStyle(color: Colors.white)),
-      TextField(controller: t, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "NAME")),
-      ElevatedButton(onPressed: () async {
-        String uid = "HVF-${Random().nextInt(9999)}";
-        await _db.collection('vetted_participants').add({'name': t.text, 'uid': uid, 'pin': "1234", 'role': r});
-        setState(() => view = "GATE");
-      }, child: const Text("REGISTER"))
+      const SizedBox(height: 100),
+      const Text("REGISTRATION", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+      Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 40),
+        child: TextField(controller: t, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(labelText: "FULL NAME", labelStyle: TextStyle(color: Colors.white54))),
+      ),
+      const SizedBox(height: 20),
+      ElevatedButton(
+        style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFFC5A059)),
+        onPressed: () async {
+          String uid = "HVF-${Random().nextInt(9999)}";
+          await _db.collection('vetted_participants').add({'name': t.text, 'uid': uid, 'pin': "1234", 'role': r});
+          setState(() => view = "GATE");
+        }, 
+        child: const Text("REGISTER", style: TextStyle(color: Colors.black))
+      )
     ]));
   }
 
   void _auth(String r) {
     TextEditingController p = TextEditingController();
-    showDialog(context: context, builder: (context) => AlertDialog(title: const Text("EXECUTIVE PIN"), content: TextField(controller: p, obscureText: true), actions: [ElevatedButton(onPressed: () { if (p.text == "1978") { Navigator.pop(context); setState(() { view = r; activeRole = r; }); } }, child: const Text("ENTER"))]));
+    showDialog(context: context, builder: (context) => AlertDialog(backgroundColor: Colors.black, title: const Text("EXECUTIVE PIN", style: TextStyle(color: Color(0xFFC5A059))), content: TextField(controller: p, obscureText: true, style: const TextStyle(color: Colors.white)), actions: [ElevatedButton(onPressed: () { if (p.text == "1978") { Navigator.pop(context); setState(() { view = r; activeRole = r; }); } }, child: const Text("ENTER"))]));
   }
 
   void _login() {
     TextEditingController u = TextEditingController(); TextEditingController p = TextEditingController();
-    showDialog(context: context, builder: (context) => AlertDialog(content: Column(mainAxisSize: MainAxisSize.min, children: [TextField(controller: u, decoration: const InputDecoration(hintText: "UID")), TextField(controller: p, obscureText: true, decoration: const InputDecoration(hintText: "PIN"))]), actions: [ElevatedButton(onPressed: () async {
+    showDialog(context: context, builder: (context) => AlertDialog(backgroundColor: Colors.black, content: Column(mainAxisSize: MainAxisSize.min, children: [TextField(controller: u, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "UID", hintStyle: TextStyle(color: Colors.white24))), TextField(controller: p, obscureText: true, style: const TextStyle(color: Colors.white), decoration: const InputDecoration(hintText: "PIN", hintStyle: TextStyle(color: Colors.white24)))]), actions: [ElevatedButton(onPressed: () async {
       var snap = await _db.collection('vetted_participants').where('uid', isEqualTo: u.text).get();
       if (snap.docs.isNotEmpty && snap.docs.first['pin'] == p.text) { Navigator.pop(context); setState(() { sessionUID = u.text; activeRole = snap.docs.first['role']; view = activeRole; }); }
     }, child: const Text("LOGIN"))]));
   }
 
   Widget _field(TextEditingController c, String l) => TextField(controller: c, style: const TextStyle(color: Colors.white), decoration: InputDecoration(labelText: l, labelStyle: const TextStyle(color: Colors.white54)));
-  Widget _btn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(10), child: OutlinedButton(onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059)))));
-} 
-firebase deploy
-  
+  Widget _btn(String t, VoidCallback a) => Padding(padding: const EdgeInsets.all(10), child: SizedBox(width: 250, child: OutlinedButton(style: OutlinedButton.styleFrom(side: const BorderSide(color: Color(0xFFC5A059))), onPressed: a, child: Text(t, style: const TextStyle(color: Color(0xFFC5A059), letterSpacing: 2)))));
+}
