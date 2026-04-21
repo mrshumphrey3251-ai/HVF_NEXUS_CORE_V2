@@ -1,0 +1,33 @@
+{
+  "name": "HVF Industrial Forge",
+  "short_name": "HVF Forge",
+  "id": "/",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#002D62",
+  "theme_color": "#002D62",
+  "description": "Proprietary Sovereign Infrastructure Management for Humphrey Virtual Farms.",
+  "orientation": "portrait-primary",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/Icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "icons/Icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "HVF Command Center"
+    }
+  ]
+}
