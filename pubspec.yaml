@@ -1,1 +1,34 @@
-flutter pub get
+name: hvf_nexus_core_v2
+description: "HVF Nexus Core - Sovereign Enterprise System"
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.2.0 <4.0.0' # Hardened for modern stability
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # SOVEREIGN DATA LAYER (Replacing Cloud with Local-First)
+  hive: ^2.2.3            # Local encrypted database for S-Node logic
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.0.0 # Hardware-level encryption for the S-Node keys
+
+  # HARDWARE HANDSHAKE (The Chronus Link)
+  flutter_reactive_ble: ^5.0.0  # High-gain mesh comms for the S-Node
+  geolocator: ^12.0.0          # GNSS location for the Autonomous Strike
+  connectivity_plus: ^6.0.0     # Monitoring the Quectel LTE-M status
+
+  # MISSION CRITICAL UTILITIES
+  url_launcher: ^6.3.0
+  intl: ^0.19.0                 # Global time-stamping for the Forensic Loop
+  crypto: ^3.0.3                # SHA-256 for the Sovereign Handshake
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  hive_generator: ^2.0.1
+  build_runner: ^2.4.9
+
+flutter:
+  uses-material-design: true
